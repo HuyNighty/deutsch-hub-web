@@ -343,3 +343,68 @@ Living in Germany
 → Discover More Stories
 
 ---
+
+# Account
+
+Account is the personal hub of DeutschHub.
+
+Unlike other business areas that provide learning content or information, Account focuses on the user's personal journey across the platform.
+
+It brings together learning progress, study preparation, saved content and personal settings into one personalized experience.
+
+---
+
+## User Goal
+
+Users visit Account to:
+
+- Continue their learning journey.
+- Track their progress.
+- Manage study preparation.
+- Access saved content.
+- Manage personal settings.
+
+---
+
+## Information Architecture
+
+Account
+│
+├── Dashboard
+│ ├── Continue Learning
+│ ├── Germany Journey
+│ ├── Recent Activity
+│ └── Recommended Next Steps
+│
+├── My Learning
+│ ├── Current Courses
+│ ├── Completed Courses
+│ ├── Certificates
+│ └── Learning Progress
+│
+├── My Germany Journey
+│ ├── Planning
+│ ├── Requirements
+│ ├── Application
+│ └── Preparation
+│
+├── Saved Content
+│ ├── Saved Articles
+│ ├── Saved Stories
+│ └── Bookmarked Courses
+│
+└── Settings
+├── Profile
+├── Security
+├── Preferences
+└── Notifications
+
+---
+
+## Business Boundary
+
+Account focuses on the user's personalized experience across DeutschHub.
+
+It does not contain learning content, cultural knowledge, study guides or community content.
+
+Instead, it provides a single place where users can continue and manage their personal journey.
