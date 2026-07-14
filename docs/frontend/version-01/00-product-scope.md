@@ -12,14 +12,14 @@ The product is not yet a complete encyclopedia about Germany, a study-abroad ser
 
 ### V1 capabilities
 
-| Capability | Included outcome |
-| --- | --- |
-| Public course discovery | Browse, search, and open published courses without signing in. |
-| Identity | Register, sign in, restore a session, sign out, and view/update a profile. |
-| Enrollment | An authenticated learner enrolls once in a free published course. |
-| Learning | An enrolled learner opens lesson content and marks a lesson complete. |
-| Progress | The learner sees course completion and a clear next action. |
-| Course operations | An administrator can create, structure, publish, and maintain a course; this can ship as V1.1 if a temporary internal tool is sufficient. |
+| Capability              | Included outcome                                                                                                                          |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Public course discovery | Browse, search, and open published courses without signing in.                                                                            |
+| Identity                | Register, sign in, restore a session, sign out, and view/update a profile.                                                                |
+| Enrollment              | An authenticated learner enrolls once in a free published course.                                                                         |
+| Learning                | An enrolled learner opens lesson content and marks a lesson complete.                                                                     |
+| Progress                | The learner sees course completion and a clear next action.                                                                               |
+| Course operations       | An administrator can create, structure, publish, and maintain a course; this can ship as V1.1 if a temporary internal tool is sufficient. |
 
 ### Explicit V1 decisions
 
@@ -44,11 +44,11 @@ Each future area needs its own product brief and vertical slice before it enters
 
 ## Priorities
 
-| Priority | Work |
-| --- | --- |
-| P0 | Course catalog/detail, authentication, enrollment, learning player, lesson completion, progress, error states, API contract. |
-| P1 | Profile/settings, session management, responsive polish, an admin authoring web UI, dashboard aggregation. |
-| P2 | Assessments, certificates, editorial content, study journeys, bookmarks, search improvements. |
+| Priority | Work                                                                                                                         |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| P0       | Course catalog/detail, authentication, enrollment, learning player, lesson completion, progress, error states, API contract. |
+| P1       | Profile/settings, session management, responsive polish, an admin authoring web UI, dashboard aggregation.                   |
+| P2       | Assessments, certificates, editorial content, study journeys, bookmarks, search improvements.                                |
 
 ## Success measures
 
