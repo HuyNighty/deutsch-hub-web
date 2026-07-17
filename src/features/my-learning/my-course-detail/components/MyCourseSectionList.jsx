@@ -1,4 +1,6 @@
-export default function MyCourseSectionList({ sections }) {
+import { Link } from "react-router-dom";
+
+export default function MyCourseSectionList({ courseId, sections }) {
   return (
     <>
       <h2>Sections</h2>
@@ -11,7 +13,13 @@ export default function MyCourseSectionList({ sections }) {
 
           <ul>
             {section.lessons.map((lesson) => (
-              <li key={lesson.id}>{lesson.title}</li>
+              <li key={lesson.id}>
+                <Link
+                  to={`/my-learning/courses/${courseId}/lessons/${lesson.id}`}
+                >
+                  {lesson.title}
+                </Link>
+              </li>
             ))}
           </ul>
         </div>

@@ -22,7 +22,7 @@ export default function MyCourseDetailPage() {
     <>
       <MyCourseHeader course={course} />
       <MyCourseProgress course={course} />
-      <MyCourseSectionList sections={course.sections} />
+      <MyCourseSectionList courseId={courseId} sections={course.sections} />
     </>
   );
 }
