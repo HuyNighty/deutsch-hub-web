@@ -11,6 +11,7 @@ import LoginForm from "@/features/auth/components/LoginForm";
 import RegisterForm from "@/features/auth/components/RegisterForm";
 import MyCourseDetailPage from "@/features/my-learning/my-course-detail";
 import LessonPage from "@/pages/LearnGerman/Lesson";
+import MyLearningPage from "@/features/my-learning/my-learning-list";
 
 export const router = createBrowserRouter([
   {
@@ -53,5 +54,9 @@ export const router = createBrowserRouter([
   {
     path: "/my-learning/courses/:courseId/lessons/:lessonId",
     element: <LessonPage />,
+  },
+  {
+    path: "/my-learning",
+    element: <MyLearningPage />,
   },
 ]);

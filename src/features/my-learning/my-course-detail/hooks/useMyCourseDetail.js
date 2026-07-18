@@ -8,6 +8,8 @@ function useMyCourseDetail(courseId) {
 
   useEffect(() => {
     async function fetchCourse() {
+      setLoading(true);
+      setError(null);
       try {
         const data = await getMyCourseDetail(courseId);
 
@@ -19,7 +21,7 @@ function useMyCourseDetail(courseId) {
       }
     }
 
-    fetchCourse(course);
+    fetchCourse();
   }, [courseId]);
 
   return { course, loading, error };

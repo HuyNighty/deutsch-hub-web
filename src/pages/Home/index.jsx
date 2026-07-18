@@ -12,6 +12,10 @@ export default function Home() {
           </li>
 
           <li>
+            <Link to="/my-learning">My Learning</Link>
+          </li>
+
+          <li>
             <Link to="/explore-germany">Explore Germany</Link>
           </li>
 
