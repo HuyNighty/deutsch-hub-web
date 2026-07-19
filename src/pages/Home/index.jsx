@@ -1,4 +1,4 @@
-import LogoutButton from "@/features/auth/components/LogoutButton";
+import LogoutButton from "@/features/auth/login/components/LogoutButton";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { Link } from "react-router-dom";
 

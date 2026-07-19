@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { login } from "../services/auth.service";
 import { saveAccessToken, saveRefreshToken } from "@/shared/auth/token";
+import { login } from "../services/login.service";
 
 function useLogin() {
   const navigate = useNavigate();

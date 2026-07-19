@@ -7,11 +7,12 @@ import StudyInGermany from "../../pages/StudyInGermany";
 import Experiences from "../../pages/Experiences";
 import Account from "../../pages/Account";
 import CourseDetailPage from "@/pages/LearnGerman/CourseDetail";
-import LoginForm from "@/features/auth/components/LoginForm";
-import RegisterForm from "@/features/auth/components/RegisterForm";
+import LoginForm from "@/features/auth/login/components/LoginForm";
+import RegisterForm from "@/features/auth/register/components/RegisterForm";
 import MyCourseDetailPage from "@/features/my-learning/my-course-detail";
 import LessonPage from "@/pages/LearnGerman/Lesson";
 import MyLearningPage from "@/features/my-learning/my-learning-list";
+import RegisterPage from "@/pages/Auth/Register";
 
 export const router = createBrowserRouter([
   {
@@ -58,5 +59,9 @@ export const router = createBrowserRouter([
   {
     path: "/my-learning",
     element: <MyLearningPage />,
+  },
+  {
+    path: "/register",
+    element: <RegisterPage />,
   },
 ]);
