@@ -1,11 +1,10 @@
-import MyCourseDetail from "@/features/my-learning/my-course-detail";
 import { useParams } from "react-router-dom";
-import useMyCourseDetail from "./hooks/useMyCourseDetail";
 import MyCourseHeader from "./components/MyCourseHeader";
 import MyCourseProgress from "./components/MyCourseProgress";
 import MyCourseSectionList from "./components/MyCourseSectionList";
+import useMyCourseDetail from "./hooks/useMyCourseDetail";
 
-export default function MyCourseDetailPage() {
+function MyCourseDetail() {
   const { courseId } = useParams();
 
   const { course, loading, error } = useMyCourseDetail(courseId);
@@ -26,3 +25,5 @@ export default function MyCourseDetailPage() {
     </>
   );
 }
+
+export default MyCourseDetail;

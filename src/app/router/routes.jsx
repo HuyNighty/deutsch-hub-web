@@ -1,18 +1,17 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import Home from "../../pages/Home";
-import LearnGerman from "../../pages/LearnGerman";
-import ExploreGermany from "../../pages/ExploreGermany";
-import StudyInGermany from "../../pages/StudyInGermany";
-import Experiences from "../../pages/Experiences";
-import Account from "../../pages/Account";
-import CourseDetailPage from "@/pages/LearnGerman/CourseDetail";
-import LoginForm from "@/features/auth/login/components/LoginForm";
-import RegisterForm from "@/features/auth/register/components/RegisterForm";
-import MyCourseDetailPage from "@/features/my-learning/my-course-detail";
-import LessonPage from "@/pages/LearnGerman/Lesson";
-import MyLearningPage from "@/features/my-learning/my-learning-list";
-import RegisterPage from "@/pages/Auth/Register";
+import Home from "../../pages/home";
+import ExploreGermany from "../../pages/explore-germany";
+import StudyInGermany from "../../pages/study-in-germany";
+import Experiences from "../../pages/experiences";
+import Account from "../../pages/account";
+import LoginPage from "@/pages/auth/login";
+import RegisterPage from "@/pages/auth/register";
+import MyCourseDetailPage from "@/pages/learn-german/my-course-detail";
+import MyLearningPage from "@/pages/learn-german/my-learning";
+import LearnGerman from "@/pages/learn-german";
+import CourseDetailPage from "@/pages/learn-german/course-detail";
+import LessonPage from "@/pages/learn-german/lesson";
 
 export const router = createBrowserRouter([
   {
@@ -45,11 +44,11 @@ export const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <LoginForm />,
+    element: <LoginPage />,
   },
   {
     path: "/register",
-    element: <RegisterForm />,
+    element: <RegisterPage />,
   },
   { path: "/my-learning/courses/:courseId", element: <MyCourseDetailPage /> },
   {
@@ -59,9 +58,5 @@ export const router = createBrowserRouter([
   {
     path: "/my-learning",
     element: <MyLearningPage />,
-  },
-  {
-    path: "/register",
-    element: <RegisterPage />,
   },
 ]);

@@ -25,3 +25,5 @@ function ResourceState({
 
   return children;
 }
+
+export default ResourceState;
