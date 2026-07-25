@@ -6,32 +6,27 @@ import CourseHeader from "./components/CourseHeader";
 import CourseOverview from "./components/CourseOverview";
 import CourseSectionList from "./components/CourseSectionList";
 import CourseAction from "./components/CourseAction";
+import ResourceState from "@/shared/ui/state/ResourceState";
 
 export default function CourseDetail() {
   const { courseId } = useParams();
 
   const { course, loading, error } = useCourseDetail(courseId);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>Something went wrong.</p>;
-  }
-
   return (
-    <>
-      <CourseHeader course={course} />
+    <ResourceState loading={loading} error={error}>
+      <>
+        <CourseHeader course={course} />
 
-      <CourseOverview course={course} />
+        <CourseOverview course={course} />
 
-      <CourseSectionList sections={course.sections} />
+        <CourseSectionList sections={course.sections} />
 
-      <CourseAction
-        courseId={course.id}
-        enrollmentStatus={course.enrollmentStatus}
-      />
-    </>
+        <CourseAction
+          courseId={course.id}
+          enrollmentStatus={course.enrollmentStatus}
+        />
+      </>
+    </ResourceState>
   );
 }

@@ -5,6 +5,7 @@ import LessonNavigation from "./components/LessonNavigation";
 import LessonHeader from "./components/LessonHeader";
 import CompleteLessonButton from "../lesson-complete/components/CompleteLessonButton";
 import { useEffect, useState } from "react";
+import ResourceState from "@/shared/ui/state/ResourceState";
 
 function LessonDetail() {
   const { courseId, lessonId } = useParams();
@@ -17,35 +18,35 @@ function LessonDetail() {
     setLessonState(lesson);
   }, [lesson]);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>Some thing went wrong...!</p>;
-  }
-
-  if (!lessonState) return null;
-
   return (
-    <>
-      <LessonHeader lesson={lessonState} />
-      <LessonItemRenderer items={lessonState.items} />
-      <CompleteLessonButton
-        courseId={courseId}
-        lessonId={lessonState.id}
-        estimatedMinutes={lessonState.estimatedMinutes}
-        completed={lessonState.completed}
-        onCompleted={() => {
-          setLessonState({ ...lessonState, completed: true });
-        }}
-      />
-      <LessonNavigation
-        courseId={courseId}
-        previousLessonId={lessonState.previousLessonId}
-        nextLessonId={lessonState.nextLessonId}
-      />
-    </>
+    <ResourceState loading={loading} error={error}>
+      {lessonState && (
+        <>
+          <LessonHeader lesson={lessonState} />
+
+          <LessonItemRenderer items={lessonState.items} />
+
+          <CompleteLessonButton
+            courseId={courseId}
+            lessonId={lessonState.id}
+            estimatedMinutes={lessonState.estimatedMinutes}
+            completed={lessonState.completed}
+            onCompleted={() =>
+              setLessonState({
+                ...lessonState,
+                completed: true,
+              })
+            }
+          />
+
+          <LessonNavigation
+            courseId={courseId}
+            previousLessonId={lessonState.previousLessonId}
+            nextLessonId={lessonState.nextLessonId}
+          />
+        </>
+      )}
+    </ResourceState>
   );
 }
 
