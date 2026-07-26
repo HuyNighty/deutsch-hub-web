@@ -1,24 +1,19 @@
-import { useState } from "react";
 import { completeLesson } from "../services/lesson-complete.service";
+import { useMutation } from "@tanstack/react-query";
 
 function useCompleteLesson() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const { mutateAsync, isPending, error } = useMutation({
+    mutationFn: ({ courseId, lessonId, studyMinutes }) =>
+      completeLesson(courseId, lessonId, studyMinutes),
+    onError(error) {
+      console.log(error);
+    },
+  });
 
-  async function handleComplete(courseId, lessonId, studyMinutes) {
-    try {
-      setLoading(true);
-      setError(null);
-      await completeLesson(courseId, lessonId, studyMinutes);
-
-      return true;
-    } catch (error) {
-      setError(error);
-    } finally {
-      setLoading(false);
-    }
+  function handleComplete(courseId, lessonId, studyMinutes) {
+    return mutateAsync({ courseId, lessonId, studyMinutes });
   }
-  return { loading, error, handleComplete };
+  return { loading: isPending, error, handleComplete };
 }
 
 export default useCompleteLesson;

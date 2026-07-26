@@ -13,13 +13,15 @@ function MyCourseDetail() {
 
   return (
     <ResourceState loading={loading} error={error}>
-      <>
-        <MyCourseHeader course={course} />
+      {course && (
+        <>
+          <MyCourseHeader course={course} />
 
-        <MyCourseProgress course={course} />
+          <MyCourseProgress course={course} />
 
-        <MyCourseSectionList courseId={courseId} sections={course.sections} />
-      </>
+          <MyCourseSectionList courseId={courseId} sections={course.sections} />
+        </>
+      )}
     </ResourceState>
   );
 }

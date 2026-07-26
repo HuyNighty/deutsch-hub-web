@@ -1,37 +1,29 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { register } from "../services/register.service";
+import { useMutation } from "@tanstack/react-query";
 
 export default function useRegister() {
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: register,
+    onSuccess() {
+      alert("Register successfully!");
 
-  const [error, setError] = useState(null);
+      navigate("/login", { replace: true });
+    },
 
-  async function handleRegister(form) {
-    try {
-      setLoading(true);
-      setError(null);
+    onError(error) {
+      console.log(error);
+    },
+  });
 
-      await register(form);
-
-      alert("Register successfully.");
-
-      navigate("/login", {
-        replace: true,
-      });
-    } catch (err) {
-      console.error(err);
-
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
+  function handleRegister(form) {
+    mutate(form);
   }
 
   return {
-    loading,
+    loading: isPending,
     error,
     handleRegister,
   };
