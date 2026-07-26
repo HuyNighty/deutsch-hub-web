@@ -1,30 +1,16 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { getLessonDetail } from "../services/lesson-detail.service";
 
 export default function useLessonDetail(courseId, lessonId) {
-  const [lesson, setLesson] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (!courseId || !lessonId) return;
-
-    async function fetchLesson() {
-      try {
-        setLoading(true);
-
-        const data = await getLessonDetail(courseId, lessonId);
-
-        setLesson(data);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchLesson();
-  }, [courseId, lessonId]);
+  const {
+    data: lesson,
+    isLoading: loading,
+    error,
+  } = useQuery({
+    queryKey: ["courses", courseId, "lessons", lessonId],
+    queryFn: () => getLessonDetail(courseId, lessonId),
+    enabled: !!courseId && !!lessonId,
+  });
 
   return {
     lesson,

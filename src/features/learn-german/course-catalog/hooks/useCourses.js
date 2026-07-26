@@ -1,26 +1,15 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { getCourses } from "../services/course.service";
 
 export function useCourses() {
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    async function fetchCourses() {
-      try {
-        const data = await getCourses();
-
-        setCourses(data);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchCourses();
-  }, []);
+  const {
+    data: courses = [],
+    isLoading: loading,
+    error,
+  } = useQuery({
+    queryKey: ["courses"],
+    queryFn: getCourses,
+  });
 
   return {
     courses,

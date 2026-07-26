@@ -15,18 +15,17 @@ export default function CourseDetail() {
 
   return (
     <ResourceState loading={loading} error={error}>
-      <>
-        <CourseHeader course={course} />
-
-        <CourseOverview course={course} />
-
-        <CourseSectionList sections={course.sections} />
-
-        <CourseAction
-          courseId={course.id}
-          enrollmentStatus={course.enrollmentStatus}
-        />
-      </>
+      {course && (
+        <>
+          <CourseHeader course={course} />
+          <CourseOverview course={course} />
+          <CourseSectionList sections={course.sections} />
+          <CourseAction
+            courseId={course.id}
+            enrollmentStatus={course.enrollmentStatus}
+          />
+        </>
+      )}
     </ResourceState>
   );
 }
