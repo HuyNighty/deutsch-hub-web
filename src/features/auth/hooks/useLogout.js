@@ -3,12 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { logout } from "../services/auth.service";
 
 import { getRefreshToken, clearTokens } from "@/shared/auth/token";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function useLogout() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   function logoutLocally() {
+    queryClient.clear();
+
     clearTokens();
 
     navigate("/login", {
