@@ -14,7 +14,7 @@ export function useEnrollAction(courseId) {
   const { mutate, isPending, error } = useMutation({
     mutationFn: enrollCourse,
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ["my-learning"] });
+      queryClient.invalidateQueries({ queryKey: ["my-courses"] });
       navigate(`/my-learning/courses/${courseId}`, { replace: true });
     },
     onError(error) {

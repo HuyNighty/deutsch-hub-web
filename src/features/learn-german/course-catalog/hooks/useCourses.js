@@ -6,6 +6,7 @@ export function useCourses() {
     data: courses = [],
     isLoading: loading,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["courses"],
     queryFn: getCourses,
@@ -15,5 +16,6 @@ export function useCourses() {
     courses,
     loading,
     error,
+    refetch,
   };
 }

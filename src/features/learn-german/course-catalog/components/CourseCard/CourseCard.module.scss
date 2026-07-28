@@ -12,10 +12,17 @@
   background: var(--color-white);
 
   transition: var(--transition-normal);
-}
 
-.card:hover {
-  transform: translateY(-4px);
+  @include hover {
+    &:hover {
+      transform: translateY(-4px);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
+  }
 }
 
 .header {
@@ -48,6 +55,8 @@
   font-weight: 700;
 
   color: var(--color-text);
+
+  overflow-wrap: anywhere;
 }
 
 .description {
@@ -56,6 +65,8 @@
   line-height: 1.6;
 
   opacity: 0.8;
+
+  overflow-wrap: anywhere;
 }
 
 .footer {
@@ -68,8 +79,15 @@
   font-weight: 600;
 
   text-decoration: none;
-}
 
-.link:hover {
-  text-decoration: underline;
+  @include hover {
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
 }

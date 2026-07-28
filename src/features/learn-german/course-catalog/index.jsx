@@ -8,7 +8,7 @@ import styles from "./CourseCatalog.module.scss";
 const cx = classNames.bind(styles);
 
 export default function CourseCatalog() {
-  const { courses, loading, error } = useCourses();
+  const { courses, loading, error, refetch } = useCourses();
 
   return (
     <ResourceState
@@ -18,6 +18,9 @@ export default function CourseCatalog() {
       emptyProps={{
         title: "No courses found",
         description: "There are no available courses at the moment.",
+      }}
+      errorProps={{
+        onRetry: refetch,
       }}
     >
       <div className={cx("catalog")}>

@@ -9,10 +9,16 @@ import ResourceState from "@/shared/ui/state/ResourceState";
 function MyCourseDetail() {
   const { courseId } = useParams();
 
-  const { course, loading, error } = useMyCourseDetail(courseId);
+  const { course, loading, error, refetch } = useMyCourseDetail(courseId);
 
   return (
-    <ResourceState loading={loading} error={error}>
+    <ResourceState
+      loading={loading}
+      error={error}
+      errorProps={{
+        onRetry: refetch,
+      }}
+    >
       {course && (
         <>
           <MyCourseHeader course={course} />

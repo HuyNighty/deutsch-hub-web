@@ -6,6 +6,7 @@ export function useCourseDetail(courseId) {
     data: course,
     isLoading: loading,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["courses", courseId],
     queryFn: () => getViewerCourseDetail(courseId),
@@ -16,5 +17,6 @@ export function useCourseDetail(courseId) {
     course,
     loading,
     error,
+    refetch,
   };
 }

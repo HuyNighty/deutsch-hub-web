@@ -6,6 +6,7 @@ function useMyLearning() {
     data: courses = [],
     isLoading: loading,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["my-courses"],
     queryFn: getMyCourse,
@@ -15,6 +16,7 @@ function useMyLearning() {
     courses,
     loading,
     error,
+    refetch,
   };
 }
 

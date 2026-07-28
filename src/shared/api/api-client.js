@@ -38,6 +38,7 @@ function handleRequestError(error) {
 
   if (!error.response) {
     throw toApiError({
+      code: error.code ?? "NETWORK_ERROR",
       message:
         error.code === "ECONNABORTED"
           ? "The request timed out. Please try again."

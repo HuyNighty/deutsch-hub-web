@@ -3,7 +3,7 @@ import MyCourseCard from "./components/MyCourseCard";
 import useMyLearning from "./hooks/useMyLearning";
 
 function MyLearning() {
-  const { courses, loading, error } = useMyLearning();
+  const { courses, loading, error, refetch } = useMyLearning();
 
   return (
     <ResourceState
@@ -13,6 +13,9 @@ function MyLearning() {
       emptyProps={{
         title: "No courses yet",
         description: "Start learning your first course.",
+      }}
+      errorProps={{
+        onRetry: refetch,
       }}
     >
       <>

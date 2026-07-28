@@ -3,12 +3,17 @@ import NetworkErrorState from "../NetworkErrorState";
 import NotFoundState from "../NotFoundState";
 import ServerErrorState from "../ServerErrorState";
 
+export const ERROR_CODES = {
+  NETWORK: "NETWORK_ERROR",
+  TIMEOUT: "ECONNABORTED",
+};
+
 function ErrorState({ error, onRetry, actions = {} }) {
   if (!error) {
     return null;
   }
 
-  if (error.code === "ERR_NETWORK") {
+  if (error.code === "ERR_NETWORK" || error.code === ERROR_CODES.NETWORK) {
     return <NetworkErrorState onRetry={onRetry} />;
   }
 
@@ -18,6 +23,9 @@ function ErrorState({ error, onRetry, actions = {} }) {
 
     case 404:
       return <NotFoundState action={actions.notFound} />;
+
+    case 401:
+      return <ServerErrorState onRetry={onRetry} />;
 
     default:
       return <ServerErrorState onRetry={onRetry} />;

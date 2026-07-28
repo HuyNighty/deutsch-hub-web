@@ -10,7 +10,10 @@ import ResourceState from "@/shared/ui/state/ResourceState";
 function LessonDetail() {
   const { courseId, lessonId } = useParams();
 
-  const { lesson, loading, error } = useLessonDetail(courseId, lessonId);
+  const { lesson, loading, error, refetch } = useLessonDetail(
+    courseId,
+    lessonId,
+  );
 
   const [lessonState, setLessonState] = useState(null);
 
@@ -20,6 +23,11 @@ function LessonDetail() {
 
   return (
     <ResourceState loading={loading} error={error}>
+      {" "}
+      errorProps=
+      {{
+        onRetry: refetch,
+      }}
       {lessonState && (
         <>
           <LessonHeader lesson={lessonState} />

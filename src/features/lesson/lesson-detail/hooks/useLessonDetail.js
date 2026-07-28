@@ -6,6 +6,7 @@ export default function useLessonDetail(courseId, lessonId) {
     data: lesson,
     isLoading: loading,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["courses", courseId, "lessons", lessonId],
     queryFn: () => getLessonDetail(courseId, lessonId),
@@ -16,5 +17,6 @@ export default function useLessonDetail(courseId, lessonId) {
     lesson,
     loading,
     error,
+    refetch,
   };
 }

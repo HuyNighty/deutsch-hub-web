@@ -1,0 +1,31 @@
+@use "./breakpoints" as *;
+
+@mixin xl {
+  @media (max-width: $breakpoint-xl) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (max-width: $breakpoint-lg) {
+    @content;
+  }
+}
+
+@mixin md {
+  @media (max-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin sm {
+  @media (max-width: $breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin hover {
+  @media (hover: hover) {
+    @content;
+  }
+}

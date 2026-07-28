@@ -6,6 +6,7 @@ function useMyCourseDetail(courseId) {
     data: course,
     isLoading: loading,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["my-courses", courseId],
     queryFn: () => getMyCourseDetail(courseId),
@@ -16,6 +17,7 @@ function useMyCourseDetail(courseId) {
     course,
     loading,
     error,
+    refetch,
   };
 }
 
