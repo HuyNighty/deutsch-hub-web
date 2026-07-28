@@ -1,0 +1,33 @@
+.page {
+  @include container;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 2rem;
+
+  padding-block: 2rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.75rem;
+}
+
+.title {
+  margin: 0;
+}
+
+.description {
+  margin: 0;
+
+  color: var(--color-text-secondary);
+}
+
+.courses {
+  display: grid;
+
+  gap: 1.5rem;
+}

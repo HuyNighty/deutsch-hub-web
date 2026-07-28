@@ -1,15 +1,28 @@
-import LogoutButton from "@/features/auth/login/components/LogoutButton";
-import { useAuth } from "@/features/auth/hooks/useAuth";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+
+import classNames from "classnames/bind";
+
+import styles from "./Home.module.scss";
+import LogoutButton from "@/features/auth/login/components/LogoutButton";
+
+const cx = classNames.bind(styles);
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <div>
-      <h1>DeutschHub</h1>
-      <nav>
-        <ul>
+    <main className={cx("page")}>
+      <header className={cx("hero")}>
+        <h1 className={cx("title")}>DeutschHub</h1>
+
+        <p className={cx("subtitle")}>
+          Learn German, explore Germany, and achieve your study goals.
+        </p>
+      </header>
+
+      <nav className={cx("navigation")}>
+        <ul className={cx("list")}>
           <li>
             <Link to="/learn-german">Learn German</Link>
           </li>
@@ -53,6 +66,6 @@ export default function Home() {
           )}
         </ul>
       </nav>
-    </div>
+    </main>
   );
 }

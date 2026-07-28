@@ -1,0 +1,47 @@
+.form {
+  width: min(100%, 420px);
+
+  margin-inline: auto;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 2rem;
+}
+
+.title {
+  margin: 0 0 0.5rem;
+
+  text-align: center;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.5rem;
+}
+
+.field label {
+  font-weight: 600;
+}
+
+.field input {
+  width: 100%;
+
+  padding: 0.75rem 1rem;
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-md);
+
+  font-size: 1rem;
+
+  transition: border-color 0.2s ease;
+}
+
+.field input:focus {
+  outline: none;
+
+  border-color: var(--color-primary);
+}

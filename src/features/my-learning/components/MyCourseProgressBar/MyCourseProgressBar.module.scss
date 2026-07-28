@@ -1,0 +1,21 @@
+.progress {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.5rem;
+}
+
+.header {
+  display: flex;
+
+  justify-content: space-between;
+
+  font-size: 0.9rem;
+
+  color: var(--color-text-secondary);
+}
+
+.bar {
+  width: 100%;
+  background-color: var(--color-primary);
+}

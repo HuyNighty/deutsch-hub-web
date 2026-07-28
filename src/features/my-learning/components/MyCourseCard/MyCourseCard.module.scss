@@ -1,0 +1,37 @@
+.card {
+  display: flex;
+  flex-direction: column;
+
+  gap: 1.5rem;
+
+  padding: 1.5rem;
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-lg);
+
+  background: var(--color-surface);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.5rem;
+}
+
+.title {
+  margin: 0;
+}
+
+.description {
+  margin: 0;
+
+  color: var(--color-text-secondary);
+}
+
+.footer {
+  display: flex;
+
+  justify-content: flex-end;
+}

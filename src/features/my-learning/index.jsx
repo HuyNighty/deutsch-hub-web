@@ -1,6 +1,11 @@
+import classNames from "classnames/bind";
+import styles from "./MyLearning.module.scss";
+
 import ResourceState from "@/shared/ui/state/ResourceState";
-import MyCourseCard from "./components/MyCourseCard";
+import MyCourseCard from "./components/MyCourseCard/MyCourseCard";
 import useMyLearning from "./hooks/useMyLearning";
+
+const cx = classNames.bind(styles);
 
 function MyLearning() {
   const { courses, loading, error, refetch } = useMyLearning();
@@ -18,13 +23,19 @@ function MyLearning() {
         onRetry: refetch,
       }}
     >
-      <>
-        <h1>My Learning</h1>
+      <main className={cx("page")}>
+        <header className={cx("header")}>
+          <h1 className={cx("title")}>My Learning</h1>
 
-        {courses.map((course) => (
-          <MyCourseCard key={course.id} course={course} />
-        ))}
-      </>
+          <p className={cx("description")}>Continue your enrolled courses.</p>
+        </header>
+
+        <section className={cx("courses")}>
+          {courses.map((course) => (
+            <MyCourseCard key={course.id} course={course} />
+          ))}
+        </section>
+      </main>
     </ResourceState>
   );
 }
