@@ -1,6 +1,7 @@
 import LogoutButton from "@/features/auth/login/components/LogoutButton";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { Link } from "react-router-dom";
+import Button from "@/shared/ui/component/button/Button";
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
@@ -26,6 +27,7 @@ export default function Home() {
           <li>
             <Link to="/experiences">Experiences</Link>
           </li>
+          <Button>Click here</Button>
 
           {isAuthenticated ? (
             <>
