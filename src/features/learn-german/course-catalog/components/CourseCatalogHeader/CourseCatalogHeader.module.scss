@@ -1,0 +1,28 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  margin-bottom: 2rem;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+
+  color: var(--color-text);
+}
+
+.description {
+  font-size: 1rem;
+  color: var(--color-text);
+  opacity: 0.75;
+
+  max-width: 600px;
+}

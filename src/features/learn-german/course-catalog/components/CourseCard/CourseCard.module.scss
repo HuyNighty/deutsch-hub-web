@@ -1,0 +1,75 @@
+.card {
+  display: flex;
+  flex-direction: column;
+
+  gap: 1rem;
+
+  padding: 1.5rem;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-white);
+
+  transition: var(--transition-normal);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.header {
+  display: flex;
+}
+
+.level {
+  padding: 0.35rem 0.75rem;
+
+  border-radius: var(--radius-sm);
+
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.75rem;
+
+  flex: 1;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+
+  color: var(--color-text);
+}
+
+.description {
+  color: var(--color-text);
+
+  line-height: 1.6;
+
+  opacity: 0.8;
+}
+
+.footer {
+  margin-top: auto;
+}
+
+.link {
+  color: var(--color-primary);
+
+  font-weight: 600;
+
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

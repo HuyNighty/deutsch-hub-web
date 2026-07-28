@@ -1,6 +1,11 @@
+import { CourseGrid } from "./components/CourseGrid";
+import { CourseCatalogHeader } from "./components/CourseCatalogHeader";
 import { useCourses } from "./hooks/useCourses";
-import CourseList from "./components/CourseList";
 import ResourceState from "@/shared/ui/state/ResourceState";
+import classNames from "classnames/bind";
+import styles from "./CourseCatalog.module.scss";
+
+const cx = classNames.bind(styles);
 
 export default function CourseCatalog() {
   const { courses, loading, error } = useCourses();
@@ -15,11 +20,11 @@ export default function CourseCatalog() {
         description: "There are no available courses at the moment.",
       }}
     >
-      <>
-        <h1>Course Catalog</h1>
+      <div className={cx("catalog")}>
+        <CourseCatalogHeader />
 
-        <CourseList courses={courses} />
-      </>
+        <CourseGrid courses={courses} />
+      </div>
     </ResourceState>
   );
 }
