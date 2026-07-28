@@ -1,0 +1,11 @@
+.page {
+  width: min(1200px, 100%);
+  margin-inline: auto;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 2rem;
+
+  padding-block: 2rem;
+}

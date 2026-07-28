@@ -1,11 +1,19 @@
-import { useParams } from "react-router-dom";
-import useLessonDetail from "./hooks/useLessonDetail";
-import LessonItemRenderer from "./components/LessonItemRenderer";
-import LessonNavigation from "./components/LessonNavigation";
-import LessonHeader from "./components/LessonHeader";
-import CompleteLessonButton from "../lesson-complete/components/CompleteLessonButton";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import classNames from "classnames/bind";
+
+import useLessonDetail from "./hooks/useLessonDetail";
+
+import LessonHeader from "./components/LessonHeader/LessonHeader";
+import LessonItemRenderer from "./components/LessonItemRenderer/LessonItemRenderer";
+import LessonNavigation from "./components/LessonNavigation/LessonNavigation";
+import CompleteLessonButton from "../lesson-complete/components/CompleteLessonButton";
+
 import ResourceState from "@/shared/ui/state/ResourceState";
+
+import styles from "./LessonDetail.module.scss";
+
+const cx = classNames.bind(styles);
 
 function LessonDetail() {
   const { courseId, lessonId } = useParams();
@@ -15,44 +23,50 @@ function LessonDetail() {
     lessonId,
   );
 
-  const [lessonState, setLessonState] = useState(null);
+  const [lessonData, setLessonData] = useState(null);
 
   useEffect(() => {
-    setLessonState(lesson);
+    setLessonData(lesson);
   }, [lesson]);
 
+  const handleLessonCompleted = () => {
+    setLessonData((prev) => ({
+      ...prev,
+      completed: true,
+    }));
+  };
+
   return (
-    <ResourceState loading={loading} error={error}>
-      {" "}
-      errorProps=
-      {{
+    <ResourceState
+      loading={loading}
+      error={error}
+      errorProps={{
         onRetry: refetch,
       }}
-      {lessonState && (
-        <>
-          <LessonHeader lesson={lessonState} />
+    >
+      {lessonData && (
+        <main className={cx("page")}>
+          <LessonHeader lesson={lessonData} />
 
-          <LessonItemRenderer items={lessonState.items} />
+          <section className={cx("content")}>
+            <LessonItemRenderer items={lessonData.items} />
+          </section>
 
-          <CompleteLessonButton
-            courseId={courseId}
-            lessonId={lessonState.id}
-            estimatedMinutes={lessonState.estimatedMinutes}
-            completed={lessonState.completed}
-            onCompleted={() =>
-              setLessonState({
-                ...lessonState,
-                completed: true,
-              })
-            }
-          />
+          <section className={cx("actions")}>
+            <CompleteLessonButton
+              courseId={courseId}
+              lessonId={lessonData.id}
+              lesson={lessonData}
+              onCompleted={handleLessonCompleted}
+            />
 
-          <LessonNavigation
-            courseId={courseId}
-            previousLessonId={lessonState.previousLessonId}
-            nextLessonId={lessonState.nextLessonId}
-          />
-        </>
+            <LessonNavigation
+              courseId={courseId}
+              previousLessonId={lessonData.previousLessonId}
+              nextLessonId={lessonData.nextLessonId}
+            />
+          </section>
+        </main>
       )}
     </ResourceState>
   );

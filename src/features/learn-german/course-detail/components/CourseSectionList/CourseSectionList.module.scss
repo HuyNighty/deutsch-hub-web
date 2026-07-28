@@ -1,0 +1,17 @@
+.section-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 1.5rem;
+}
+
+.heading {
+  margin: 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 1rem;
+}

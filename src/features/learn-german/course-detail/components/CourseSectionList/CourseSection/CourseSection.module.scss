@@ -1,0 +1,30 @@
+.section {
+  display: flex;
+  flex-direction: column;
+
+  gap: 1rem;
+
+  padding: 1.5rem;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  background: var(--color-white);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.5rem;
+}
+
+.title {
+  margin: 0;
+}
+
+.description {
+  margin: 0;
+
+  line-height: 1.6;
+}

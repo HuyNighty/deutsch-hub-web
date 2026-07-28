@@ -1,0 +1,28 @@
+.video {
+  display: flex;
+  flex-direction: column;
+
+  gap: 1.5rem;
+}
+
+.title {
+  margin: 0;
+}
+
+.description {
+  margin: 0;
+
+  color: var(--color-text-secondary);
+
+  line-height: 1.7;
+}
+
+.player {
+  width: 100%;
+
+  aspect-ratio: 16 / 9;
+
+  border-radius: var(--radius-lg);
+
+  background: #000;
+}

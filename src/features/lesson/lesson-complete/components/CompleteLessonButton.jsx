@@ -1,39 +1,38 @@
+import { Button } from "@/shared/ui/component/button";
 import useCompleteLesson from "../hooks/useCompleteLesson";
 
-function CompleteLessonButton({
+export default function CompleteLessonButton({
   courseId,
-  lessonId,
-  estimatedMinutes,
-  completed,
+  lesson,
   onCompleted,
 }) {
+  const { id, completed, estimatedMinutes } = lesson;
+
   const { loading, error, handleComplete } = useCompleteLesson();
 
-  async function onClick() {
-    const success = await handleComplete(courseId, lessonId, estimatedMinutes);
+  const handleClick = async () => {
+    const success = await handleComplete(courseId, id, estimatedMinutes);
 
     if (success) {
       onCompleted();
     }
-  }
+  };
 
   if (completed) {
     return (
-      <>
-        <button disabled>COMPLETED</button>
-      </>
+      <Button fullWidth disabled>
+        Completed
+      </Button>
     );
   }
 
   return (
     <>
-      <button disabled={loading} onClick={onClick}>
-        {loading ? "COMPLETING..." : "COMPLETE LESSON"}
-      </button>
+      <Button fullWidth loading={loading} onClick={handleClick}>
+        Complete Lesson
+      </Button>
 
-      {error && <p>Failed to complete lesson.</p>}
+      {error && <p className="error">Failed to complete lesson.</p>}
     </>
   );
 }
-
-export default CompleteLessonButton;

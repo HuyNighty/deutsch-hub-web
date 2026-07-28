@@ -1,12 +1,17 @@
 import { useParams } from "react-router-dom";
+import classNames from "classnames/bind";
 
 import { useCourseDetail } from "./hooks/useCourseDetail";
 
-import CourseHeader from "./components/CourseHeader";
-import CourseOverview from "./components/CourseOverview";
-import CourseSectionList from "./components/CourseSectionList";
-import CourseAction from "./components/CourseAction";
+import CourseHeader from "./components/CourseHeader/CourseHeader";
+import CourseOverview from "./components/CourseOverview/CourseOverview";
 import ResourceState from "@/shared/ui/state/ResourceState";
+
+import styles from "./CourseDetail.module.scss";
+import { CourseAction } from "./components/CourseAction";
+import { CourseSectionList } from "./components/CourseSectionList";
+
+const cx = classNames.bind(styles);
 
 export default function CourseDetail() {
   const { courseId } = useParams();
@@ -22,15 +27,20 @@ export default function CourseDetail() {
       }}
     >
       {course && (
-        <>
+        <main className={cx("page")}>
           <CourseHeader course={course} />
-          <CourseOverview course={course} />
+
+          <div className={cx("content")}>
+            <CourseOverview course={course} />
+
+            <CourseAction
+              courseId={course.id}
+              enrollmentStatus={course.enrollmentStatus}
+            />
+          </div>
+
           <CourseSectionList sections={course.sections} />
-          <CourseAction
-            courseId={course.id}
-            enrollmentStatus={course.enrollmentStatus}
-          />
-        </>
+        </main>
       )}
     </ResourceState>
   );
