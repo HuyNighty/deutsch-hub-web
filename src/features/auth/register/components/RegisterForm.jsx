@@ -3,8 +3,17 @@ import { Link } from "react-router-dom";
 
 import useRegister from "../hooks/useRegister";
 
+import { getFieldMessage } from "@/shared/api/api-error";
+
 export default function RegisterForm() {
-  const { handleRegister } = useRegister();
+  const emailError = getFieldMessage(error, "email");
+  const passwordError = getFieldMessage(error, "password");
+  const usernameError = getFieldMessage(error, "username");
+  const firstNameError = getFieldMessage(error, "firstName");
+  const lastNameError = getFieldMessage(error, "lastName");
+  const phoneNumberError = getFieldMessage(error, "phoneNumber");
+
+  const { handleRegister, error } = useRegister();
 
   const [form, setForm] = useState({
     username: "",
@@ -44,6 +53,7 @@ export default function RegisterForm() {
         value={form.username}
         onChange={handleChange}
       />
+      {usernameError && <p>{usernameError}</p>}
 
       <br />
       <br />
@@ -55,6 +65,7 @@ export default function RegisterForm() {
         value={form.email}
         onChange={handleChange}
       />
+      {emailError && <p>{emailError}</p>}
 
       <br />
       <br />
@@ -66,6 +77,7 @@ export default function RegisterForm() {
         value={form.password}
         onChange={handleChange}
       />
+      {passwordError && <p>{passwordError}</p>}
 
       <br />
       <br />
@@ -76,6 +88,7 @@ export default function RegisterForm() {
         value={form.firstName}
         onChange={handleChange}
       />
+      {firstNameError && <p>{firstNameError}</p>}
 
       <br />
       <br />
@@ -86,6 +99,7 @@ export default function RegisterForm() {
         value={form.lastName}
         onChange={handleChange}
       />
+      {lastNameError && <p>{lastNameError}</p>}
 
       <br />
       <br />
@@ -96,6 +110,7 @@ export default function RegisterForm() {
         value={form.phoneNumber}
         onChange={handleChange}
       />
+      {phoneNumberError && <p>{phoneNumberError}</p>}
 
       <br />
       <br />

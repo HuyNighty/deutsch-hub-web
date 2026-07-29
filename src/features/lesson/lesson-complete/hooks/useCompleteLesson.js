@@ -7,6 +7,9 @@ function useCompleteLesson() {
     mutationFn: ({ courseId, lessonId, studyMinutes }) =>
       completeLesson(courseId, lessonId, studyMinutes),
     onSuccess(data, { courseId }) {
+      queryClient.invalidateQueries({
+        queryKey: ["my-courses"],
+      });
       queryClient.invalidateQueries({ queryKey: ["my-courses", courseId] });
     },
     onError(error) {

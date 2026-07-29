@@ -7,6 +7,10 @@ async function request(config) {
   try {
     const response = await api.request(config);
 
+    if (response.status == 204) {
+      return undefined;
+    }
+
     return unwrapApiResponse(response.data);
   } catch (error) {
     handleRequestError(error);

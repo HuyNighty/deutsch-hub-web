@@ -13,9 +13,12 @@ function useLogin() {
       saveAccessToken(session.accessToken);
       saveRefreshToken(session.refreshToken);
 
-      const redirectTo = location.state?.redirectTo || "/account";
+      const from = location.state?.from;
 
-      navigate(redirectTo, { replace: true });
+      navigate(
+        from ? `${from.pathname}${from.search}${from.hash}` : "/account",
+        { replace: true },
+      );
     },
     onError(error) {
       console.log(error);
