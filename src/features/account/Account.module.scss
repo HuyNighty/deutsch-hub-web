@@ -1,0 +1,91 @@
+.page {
+  @include container;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  padding-block: 3rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+
+  color: var(--color-text-primary);
+}
+
+.description {
+  color: var(--color-text-secondary);
+
+  line-height: 1.6;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+
+  overflow: hidden;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.5rem;
+
+  padding: 1.5rem 2rem;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--color-border);
+  }
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+
+  color: var(--color-text-secondary);
+}
+
+.value {
+  font-size: 1rem;
+
+  color: var(--color-text-primary);
+
+  word-break: break-word;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding-block: 2rem;
+  }
+
+  .card {
+    border-radius: 10px;
+  }
+
+  .item {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+}

@@ -1,5 +1,7 @@
-function Account() {
-  return <>Account</>;
+import Account from "@/features/account";
+
+function AccountPage() {
+  return <Account />;
 }
 
-export default Account;
+export default AccountPage;

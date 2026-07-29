@@ -11,12 +11,12 @@ import CourseDetailPage from "@/pages/learn-german/course-detail";
 import LoginPage from "@/pages/auth/login";
 import RegisterPage from "@/pages/auth/register";
 
-import Account from "@/pages/account";
 import MyLearningPage from "@/pages/learn-german/my-learning";
 import MyCourseDetailPage from "@/pages/learn-german/my-course-detail";
 import LessonPage from "@/pages/learn-german/lesson";
 
 import { ProtectedRoute, GuestRoute } from "@/shared/routing";
+import AccountPage from "@/pages/account";
 
 export const router = createBrowserRouter([
   {
@@ -61,7 +61,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/account",
-        element: <Account />,
+        element: <AccountPage />,
       },
       {
         path: "/my-learning",
