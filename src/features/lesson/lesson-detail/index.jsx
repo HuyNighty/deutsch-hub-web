@@ -49,7 +49,11 @@ function LessonDetail() {
           <LessonHeader lesson={lessonData} />
 
           <section className={cx("content")}>
-            <LessonItemRenderer items={lessonData.items} />
+            <LessonItemRenderer
+              courseId={courseId}
+              lessonId={lessonData.id}
+              items={lessonData.items}
+            />
           </section>
 
           <section className={cx("actions")}>

@@ -11,6 +11,10 @@ async function request(config) {
       return undefined;
     }
 
+    if (config.responseType === "blob") {
+      return response.data;
+    }
+
     return unwrapApiResponse(response.data);
   } catch (error) {
     handleRequestError(error);

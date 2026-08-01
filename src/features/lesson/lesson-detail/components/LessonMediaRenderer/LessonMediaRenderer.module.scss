@@ -1,0 +1,26 @@
+.loading,
+.error,
+.unsupported {
+  padding: 16px;
+  text-align: center;
+}
+
+.image {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.video {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.audio {
+  width: 100%;
+}
+
+.pdf {
+  width: 100%;
+  height: 700px;
+  border: none;
+}
