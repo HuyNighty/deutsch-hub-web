@@ -17,7 +17,7 @@ async function request(config) {
 
     return unwrapApiResponse(response.data);
   } catch (error) {
-    handleRequestError(error);
+    await handleRequestError(error);
   }
 }
 
@@ -39,7 +39,7 @@ const apiClient = {
   },
 };
 
-function handleRequestError(error) {
+async function handleRequestError(error) {
   if (!axios.isAxiosError(error)) {
     throw toApiError(error);
   }
@@ -55,7 +55,13 @@ function handleRequestError(error) {
   }
 
   const payload = error.response.data;
-
+  if (payload instanceof Blob && payload.type.includes("application/json")) {
+    try {
+      payload = JSON.parse(await payload.text());
+    } catch {
+      payload = {};
+    }
+  }
   throw toApiError({
     code: payload?.code,
     status: error.response.status,
