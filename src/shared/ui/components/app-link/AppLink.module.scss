@@ -1,0 +1,70 @@
+.link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: var(--radius-md);
+
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.primary {
+  border: 1px solid var(--color-brand);
+  background: var(--color-brand);
+  color: var(--color-text-inverse);
+
+  &:hover {
+    border-color: var(--color-brand-hover);
+    background: var(--color-brand-hover);
+    transform: translateY(-1px);
+  }
+}
+
+.outline {
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+
+  &:hover {
+    border-color: var(--color-brand);
+    color: var(--color-brand);
+    transform: translateY(-1px);
+  }
+}
+
+.default {
+  color: var(--color-text-primary);
+
+  &:hover {
+    color: var(--color-brand);
+  }
+}
+
+.sm {
+  min-height: 36px;
+  padding-inline: 0.875rem;
+
+  font-size: 0.8125rem;
+}
+
+.md {
+  min-height: 44px;
+  padding-inline: 1.25rem;
+
+  font-size: 0.9375rem;
+}
+
+.lg {
+  min-height: 50px;
+  padding-inline: 1.5rem;
+
+  font-size: 1rem;
+}

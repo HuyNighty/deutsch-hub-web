@@ -1,3 +1,8 @@
-@use "./variables/colors";
-@use "./variables/radius";
-@use "./variables/transition";
+@forward "./variables/colors";
+@forward "./variables/radius";
+@forward "./variables/spacing";
+@forward "./variables/typography";
+@forward "./variables/shadow";
+@forward "./variables/transition";
+
+@forward "./globals";

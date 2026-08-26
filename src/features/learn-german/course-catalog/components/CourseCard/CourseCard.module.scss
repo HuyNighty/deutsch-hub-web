@@ -20,7 +20,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--color-brand);
     outline-offset: 4px;
   }
 }
@@ -34,8 +34,8 @@
 
   border-radius: var(--radius-sm);
 
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
 
   font-size: 0.875rem;
   font-weight: 600;
@@ -74,7 +74,7 @@
 }
 
 .link {
-  color: var(--color-primary);
+  color: var(--color-brand);
 
   font-weight: 600;
 
@@ -87,7 +87,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--color-brand);
     outline-offset: 2px;
   }
 }

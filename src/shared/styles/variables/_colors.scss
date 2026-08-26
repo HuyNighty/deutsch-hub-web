@@ -1,17 +1,37 @@
 :root {
-  --color-text-primary: #2f3a25;
-  --color-text-secondary: #6b7280;
+  --color-brand: #142a4a;
+  --color-brand-hover: #1d3b66;
+  --color-brand-light: #eaf1fb;
+  --color-brand-soft: #f4f7fc;
 
-  --color-background: #f8faf7;
+  --color-text-primary: #172033;
+  --color-text-secondary: #667085;
+  --color-text-muted: #98a2b3;
+  --color-text-inverse: #ffffff;
+
+  --color-background: #f7f9fc;
   --color-surface: #ffffff;
+  --color-surface-secondary: #f9fafb;
 
-  --color-border: #d9d9d9;
+  --color-border: #e4e7ec;
+  --color-border-strong: #d0d5dd;
 
-  --color-primary: #728156;
-  --color-primary-hover: #88976c;
+  --color-success: #159a68;
+  --color-warning: #e9a23b;
+  --color-danger: #d92d20;
 
-  --color-primary-light: #b6c99b;
-  --color-primary-soft: #e7f5dc;
+  --color-hero-start: #0d2345;
+  --color-hero-end: #193d70;
 
-  --color-danger: #ff0000;
+  --color-feature-learning: #2563eb;
+  --color-feature-learning-soft: #eff6ff;
+
+  --color-feature-content: #2f855a;
+  --color-feature-content-soft: #edf7f1;
+
+  --color-feature-study: #d95d59;
+  --color-feature-study-soft: #fdf0ef;
+
+  --color-feature-communication: #7c3aed;
+  --color-feature-communication-soft: #f5f3ff;
 }

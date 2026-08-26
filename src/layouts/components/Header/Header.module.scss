@@ -1,0 +1,251 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  width: 100%;
+
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.container {
+  width: min(1200px, calc(100% - 2rem));
+  min-height: 72px;
+
+  margin-inline: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-6);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  flex-shrink: 0;
+
+  color: var(--color-brand);
+}
+
+.brand-mark {
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-brand);
+  color: var(--color-surface);
+
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+.brand-name {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+
+  span {
+    color: var(--color-brand-hover);
+  }
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  margin-inline: auto;
+}
+
+.nav-link {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+
+  padding: 0.5rem 0.75rem;
+
+  border-radius: var(--radius-md);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast);
+
+  &:hover {
+    color: var(--color-text-primary);
+    background: var(--color-background);
+  }
+
+  &.active {
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+.learning.active {
+  color: var(--color-learning);
+  background: var(--color-learning-light);
+}
+
+.content.active {
+  color: var(--color-content);
+  background: var(--color-content-light);
+}
+
+.study.active {
+  color: var(--color-study);
+  background: var(--color-study-light);
+}
+
+.communication.active {
+  color: var(--color-communication);
+  background: var(--color-communication-light);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  flex-shrink: 0;
+}
+
+.icon-button {
+  width: 40px;
+  height: 40px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: var(--radius-md);
+
+  background: transparent;
+
+  font-size: 1rem;
+
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+
+  &:hover {
+    background: var(--color-background);
+    transform: translateY(-1px);
+  }
+}
+
+.login {
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.register {
+  padding: 0.6rem 1rem;
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-brand);
+  color: var(--color-surface);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+
+  &:hover {
+    background: var(--color-brand-hover);
+    transform: translateY(-1px);
+  }
+}
+
+.user {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: var(--radius-pill);
+
+  background: var(--color-brand-light);
+  color: var(--color-brand);
+
+  font-weight: var(--font-weight-bold);
+}
+
+.user-name {
+  white-space: nowrap;
+}
+
+@media (max-width: 992px) {
+  .navigation {
+    gap: 0;
+  }
+
+  .nav-link {
+    padding-inline: 0.6rem;
+  }
+
+  .user-name {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    min-height: 64px;
+  }
+
+  .navigation {
+    display: none;
+  }
+
+  .login {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    width: min(100% - 1.5rem, 1200px);
+  }
+
+  .brand-name {
+    font-size: var(--font-size-lg);
+  }
+
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+  }
+}
