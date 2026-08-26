@@ -2,7 +2,7 @@ import classNames from "classnames/bind";
 import styles from "./LessonNavigation.module.scss";
 
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/shared/ui/component/button";
+import { Button } from "@/shared/ui/components/button";
 
 const cx = classNames.bind(styles);
 

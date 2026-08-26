@@ -1,6 +1,6 @@
 import classNames from "classnames/bind";
 import styles from "./CourseCatalogHeader.module.scss";
-import { Input } from "@/shared/ui/component/input";
+import { Input } from "@/shared/ui/components/input";
 
 const cx = classNames.bind(styles);
 

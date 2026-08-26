@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-import { Button } from "@/shared/ui/component/button";
+import { Button } from "@/shared/ui/components/button";
 
 import classNames from "classnames/bind";
 import styles from "./MyCourseCard.module.scss";

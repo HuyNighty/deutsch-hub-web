@@ -4,6 +4,7 @@ import classNames from "classnames/bind";
 import styles from "./Home.module.scss";
 
 import { AppLink } from "@/shared/ui/components/app-link";
+import { ContentPreview } from "./components/ContentPreview";
 
 const cx = classNames.bind(styles);
 
@@ -67,6 +68,7 @@ export default function Home() {
         </div>
       </section>
       <FeatureOverview />
+      <ContentPreview />
     </main>
   );
 }

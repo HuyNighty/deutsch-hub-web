@@ -3,7 +3,7 @@ import useLogin from "../../hooks/useLogin";
 
 import classNames from "classnames/bind";
 import styles from "./LoginForm.module.scss";
-import { Button } from "@/shared/ui/component/button";
+import { Button } from "@/shared/ui/components/button";
 
 const cx = classNames.bind(styles);
 

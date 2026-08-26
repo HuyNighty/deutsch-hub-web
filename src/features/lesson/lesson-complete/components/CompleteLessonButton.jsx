@@ -1,4 +1,4 @@
-import { Button } from "@/shared/ui/component/button";
+import { Button } from "@/shared/ui/components/button";
 import useCompleteLesson from "../hooks/useCompleteLesson";
 
 export default function CompleteLessonButton({

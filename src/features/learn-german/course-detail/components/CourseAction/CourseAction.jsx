@@ -3,8 +3,8 @@ import styles from "./CourseAction.module.scss";
 
 import { useNavigate } from "react-router-dom";
 
-import { Button } from "@/shared/ui/component/button";
 import { useEnrollAction } from "../../hooks/useEnrollAction";
+import { Button } from "@/shared/ui/components/button";
 
 const cx = classNames.bind(styles);
 
