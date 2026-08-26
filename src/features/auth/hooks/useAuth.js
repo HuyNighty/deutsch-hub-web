@@ -1,10 +1,11 @@
-import { getAccessToken } from "@/shared/auth/token";
+import { useContext } from "react";
 
 export function useAuth() {
-  const token = getAccessToken();
+  const context = useContext(AuthContext);
 
-  return {
-    isAuthenticated: !!token,
-    accessToken: token,
-  };
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+
+  return context;
 }

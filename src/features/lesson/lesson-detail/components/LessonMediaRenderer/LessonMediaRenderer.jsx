@@ -22,11 +22,13 @@ function LessonMediaRenderer({ courseId, lessonId, itemId, title }) {
 
   const { objectUrl, mimeType } = media;
 
-  if (mimeType.startsWith("image/")) {
-    return <img className={cx("image")} src={objectUrl} alt={title} />;
+  if (isImage(mimeType)) {
+    return (
+      <img className={cx("image")} src={objectUrl} alt={title} loading="lazy" />
+    );
   }
 
-  if (mimeType.startsWith("video/")) {
+  if (isVideo(mimeType)) {
     return (
       <video className={cx("video")} controls preload="metadata">
         <source src={objectUrl} type={mimeType} />
@@ -34,7 +36,7 @@ function LessonMediaRenderer({ courseId, lessonId, itemId, title }) {
     );
   }
 
-  if (mimeType.startsWith("audio/")) {
+  if (isAudio(mimeType)) {
     return (
       <audio className={cx("audio")} controls>
         <source src={objectUrl} type={mimeType} />
@@ -42,11 +44,45 @@ function LessonMediaRenderer({ courseId, lessonId, itemId, title }) {
     );
   }
 
-  if (mimeType === "application/pdf") {
+  if (isPdf(mimeType)) {
     return <iframe className={cx("pdf")} src={objectUrl} title={title} />;
   }
 
+  if (isDocument(mimeType)) {
+    return (
+      <div className={cx("document")}>
+        <p className={cx("documentMessage")}>
+          Preview is not available for this document.
+        </p>
+
+        <a className={cx("downloadButton")} href={objectUrl} download={title}>
+          Download document
+        </a>
+      </div>
+    );
+  }
+
   return <div className={cx("unsupported")}>Unsupported media type.</div>;
+}
+
+function isImage(mimeType) {
+  return mimeType.startsWith("image/");
+}
+
+function isVideo(mimeType) {
+  return mimeType.startsWith("video/");
+}
+
+function isAudio(mimeType) {
+  return mimeType.startsWith("audio/");
+}
+
+function isPdf(mimeType) {
+  return mimeType === "application/pdf";
+}
+
+function isDocument(mimeType) {
+  return mimeType === "text/plain" || mimeType.startsWith("application/");
 }
 
 export default LessonMediaRenderer;

@@ -1,4 +1,4 @@
-import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useAuth } from "@/features/auth/context/AuthProvider";
 import { Navigate, Outlet } from "react-router-dom";
 
 function GuestRoute() {

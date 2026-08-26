@@ -1,18 +1,20 @@
 import { useNavigate } from "react-router-dom";
-
 import { logout } from "../services/auth.service";
 
-import { getRefreshToken, clearTokens } from "@/shared/auth/token";
+import { getRefreshToken } from "@/shared/auth/token";
+import { useAuth } from "@/features/auth/context/AuthProvider";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function useLogout() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { logout: clearAuthSession } = useAuth();
 
   function logoutLocally() {
     queryClient.clear();
 
-    clearTokens();
+    clearAuthSession();
 
     navigate("/login", {
       replace: true,
@@ -21,9 +23,11 @@ export default function useLogout() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: logout,
+
     onError(error) {
       console.log(error);
     },
+
     onSettled() {
       logoutLocally();
     },

@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 export default function useRegister() {
   const navigate = useNavigate();
 
-  const { mutate, isPending, error } = useMutation({
+  const { mutateAsync, isPending, error } = useMutation({
     mutationFn: register,
     onSuccess() {
       alert("Register successfully!");
@@ -19,7 +19,7 @@ export default function useRegister() {
   });
 
   function handleRegister(form) {
-    mutate(form);
+    return mutateAsync(form);
   }
 
   return {

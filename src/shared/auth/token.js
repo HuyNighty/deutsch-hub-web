@@ -6,6 +6,10 @@ export function getAccessToken() {
 }
 
 export function saveAccessToken(token) {
+  if (!token) {
+    return;
+  }
+
   localStorage.setItem(ACCESS_TOKEN_KEY, token);
 }
 
@@ -18,6 +22,10 @@ export function getRefreshToken() {
 }
 
 export function saveRefreshToken(token) {
+  if (!token) {
+    return;
+  }
+
   localStorage.setItem(REFRESH_TOKEN_KEY, token);
 }
 

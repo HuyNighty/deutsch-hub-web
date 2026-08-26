@@ -17,7 +17,7 @@ async function request(config) {
 
     return unwrapApiResponse(response.data);
   } catch (error) {
-    await handleRequestError(error);
+    return handleRequestError(error);
   }
 }
 
@@ -54,7 +54,7 @@ async function handleRequestError(error) {
     });
   }
 
-  const payload = error.response.data;
+  let payload = error.response.data;
   if (payload instanceof Blob && payload.type.includes("application/json")) {
     try {
       payload = JSON.parse(await payload.text());

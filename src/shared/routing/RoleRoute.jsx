@@ -1,7 +1,15 @@
-function RoleRoute({ roles }) {
-  const { user } = useAuth();
+import { Navigate, Outlet } from "react-router-dom";
+import ForbiddenState from "../ui/state/ForbiddenState";
+import { useAuth } from "@/features/auth/context/AuthProvider";
 
-  if (!roles.includes(user.role)) {
+function RoleRoute({ roles }) {
+  const { isAuthenticated, hasAnyRole } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!hasAnyRole(roles)) {
     return <ForbiddenState />;
   }
 

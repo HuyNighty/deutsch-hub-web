@@ -6,14 +6,14 @@ import useRegister from "../hooks/useRegister";
 import { getFieldMessage } from "@/shared/api/api-error";
 
 export default function RegisterForm() {
+  const { handleRegister, error } = useRegister();
+
   const emailError = getFieldMessage(error, "email");
   const passwordError = getFieldMessage(error, "password");
   const usernameError = getFieldMessage(error, "username");
   const firstNameError = getFieldMessage(error, "firstName");
   const lastNameError = getFieldMessage(error, "lastName");
   const phoneNumberError = getFieldMessage(error, "phoneNumber");
-
-  const { handleRegister, error } = useRegister();
 
   const [form, setForm] = useState({
     username: "",

@@ -2,10 +2,10 @@ import axios from "axios";
 import {
   getAccessToken,
   getRefreshToken,
-  saveAccessToken,
-  saveRefreshToken,
   clearTokens,
 } from "@/shared/auth/token";
+
+import { updateAuthSession } from "@/shared/auth/auth-session";
 
 const baseURL = "http://localhost:8080/deutsch-hub/api/v1";
 
@@ -45,11 +45,7 @@ async function refreshAccessToken() {
       .then((response) => {
         const session = response.data.result;
 
-        saveAccessToken(session.accessToken);
-
-        if (session.refreshToken) {
-          saveRefreshToken(session.refreshToken);
-        }
+        updateAuthSession(session);
 
         return session.accessToken;
       })
@@ -96,8 +92,6 @@ api.interceptors.response.use(
       return api(originalRequest);
     } catch (refreshError) {
       clearTokens();
-
-      window.location.assign("/login");
 
       return Promise.reject(refreshError);
     }

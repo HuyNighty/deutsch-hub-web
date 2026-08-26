@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useAuth } from "@/features/auth/context/AuthProvider";
 
 import { enrollCourse } from "../services/enroll.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
