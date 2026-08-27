@@ -5,7 +5,13 @@ import useLessonItemMedia from "@/features/media/hooks/useLessonItemMedia";
 
 const cx = classNames.bind(styles);
 
-function LessonMediaRenderer({ courseId, lessonId, itemId, title }) {
+function LessonMediaRenderer({
+  courseId,
+  lessonId,
+  itemId,
+  title,
+  description,
+}) {
   const { media, isPending, isError } = useLessonItemMedia(
     courseId,
     lessonId,
@@ -13,68 +19,107 @@ function LessonMediaRenderer({ courseId, lessonId, itemId, title }) {
   );
 
   if (isPending) {
-    return <div className={cx("loading")}>Loading media...</div>;
+    return (
+      <article className={cx("media-item")}>
+        <div className={cx("header")}>
+          <h2 className={cx("title")}>{title}</h2>
+
+          {description && <p className={cx("description")}>{description}</p>}
+        </div>
+
+        <div className={cx("loading")}>Loading media...</div>
+      </article>
+    );
   }
 
   if (isError || !media) {
-    return <div className={cx("error")}>Unable to load media.</div>;
+    return (
+      <article className={cx("media-item")}>
+        <div className={cx("header")}>
+          <h2 className={cx("title")}>{title}</h2>
+
+          {description && <p className={cx("description")}>{description}</p>}
+        </div>
+
+        <div className={cx("error")}>Unable to load this lesson material.</div>
+      </article>
+    );
   }
 
   const { objectUrl, mimeType } = media;
 
-  if (isImage(mimeType)) {
-    return (
-      <img className={cx("image")} src={objectUrl} alt={title} loading="lazy" />
-    );
-  }
+  return (
+    <article className={cx("media-item")}>
+      <div className={cx("header")}>
+        {title && <h2 className={cx("title")}>{title}</h2>}
 
-  if (isVideo(mimeType)) {
-    return (
-      <video className={cx("video")} controls preload="metadata">
-        <source src={objectUrl} type={mimeType} />
-      </video>
-    );
-  }
-
-  if (isAudio(mimeType)) {
-    return (
-      <audio className={cx("audio")} controls>
-        <source src={objectUrl} type={mimeType} />
-      </audio>
-    );
-  }
-
-  if (isPdf(mimeType)) {
-    return <iframe className={cx("pdf")} src={objectUrl} title={title} />;
-  }
-
-  if (isDocument(mimeType)) {
-    return (
-      <div className={cx("document")}>
-        <p className={cx("documentMessage")}>
-          Preview is not available for this document.
-        </p>
-
-        <a className={cx("downloadButton")} href={objectUrl} download={title}>
-          Download document
-        </a>
+        {description && <p className={cx("description")}>{description}</p>}
       </div>
-    );
-  }
 
-  return <div className={cx("unsupported")}>Unsupported media type.</div>;
+      <div className={cx("media")}>
+        {isImage(mimeType) && (
+          <img
+            className={cx("image")}
+            src={objectUrl}
+            alt={title || "Lesson material"}
+            loading="lazy"
+          />
+        )}
+
+        {isVideo(mimeType) && (
+          <video className={cx("video")} controls preload="metadata">
+            <source src={objectUrl} type={mimeType} />
+          </video>
+        )}
+
+        {isAudio(mimeType) && (
+          <audio className={cx("audio")} controls>
+            <source src={objectUrl} type={mimeType} />
+          </audio>
+        )}
+
+        {isPdf(mimeType) && (
+          <iframe
+            className={cx("pdf")}
+            src={objectUrl}
+            title={title || "PDF lesson material"}
+          />
+        )}
+
+        {isDocument(mimeType) && (
+          <div className={cx("document")}>
+            <p className={cx("document-message")}>
+              Preview is not available for this document.
+            </p>
+
+            <a
+              className={cx("download-link")}
+              href={objectUrl}
+              download={title}
+            >
+              Download document
+            </a>
+          </div>
+        )}
+
+        {!isSupported(mimeType) && (
+          <div className={cx("unsupported")}>Unsupported media type.</div>
+        )}
+      </div>
+    </article>
+  );
 }
 
 function isImage(mimeType) {
-  return mimeType.startsWith("image/");
+  return mimeType?.startsWith("image/");
 }
 
 function isVideo(mimeType) {
-  return mimeType.startsWith("video/");
+  return mimeType?.startsWith("video/");
 }
 
 function isAudio(mimeType) {
-  return mimeType.startsWith("audio/");
+  return mimeType?.startsWith("audio/");
 }
 
 function isPdf(mimeType) {
@@ -82,7 +127,17 @@ function isPdf(mimeType) {
 }
 
 function isDocument(mimeType) {
-  return mimeType === "text/plain" || mimeType.startsWith("application/");
+  return mimeType === "text/plain" || mimeType?.startsWith("application/");
+}
+
+function isSupported(mimeType) {
+  return (
+    isImage(mimeType) ||
+    isVideo(mimeType) ||
+    isAudio(mimeType) ||
+    isPdf(mimeType) ||
+    isDocument(mimeType)
+  );
 }
 
 export default LessonMediaRenderer;

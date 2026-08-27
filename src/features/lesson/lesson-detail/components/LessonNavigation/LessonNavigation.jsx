@@ -17,25 +17,31 @@ export default function LessonNavigation({
     `/my-learning/courses/${courseId}/lessons/${lessonId}`;
 
   const handlePrevious = () => {
+    if (!previousLessonId) return;
+
     navigate(buildLessonPath(previousLessonId));
   };
 
   const handleNext = () => {
+    if (!nextLessonId) return;
+
     navigate(buildLessonPath(nextLessonId));
   };
 
   return (
-    <nav className={cx("navigation")}>
+    <nav className={cx("navigation")} aria-label="Lesson navigation">
       <Button
         variant="outline"
         disabled={!previousLessonId}
         onClick={handlePrevious}
       >
-        Previous
+        <span aria-hidden="true">←</span>
+        <span>Previous lesson</span>
       </Button>
 
       <Button disabled={!nextLessonId} onClick={handleNext}>
-        Next
+        <span>Next lesson</span>
+        <span aria-hidden="true">→</span>
       </Button>
     </nav>
   );

@@ -1,13 +1,64 @@
 .action {
+  position: sticky;
+  top: 100px;
+
   display: flex;
   flex-direction: column;
 
-  gap: 1rem;
-
-  padding: 1.5rem;
+  padding: var(--space-6);
 
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
 
-  background-color: var(--color-white);
+  background: var(--color-surface);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-3);
+}
+
+.label {
+  color: var(--color-text-muted);
+
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+
+  letter-spacing: 0.08em;
+}
+
+.status {
+  padding: 0.35rem 0.65rem;
+
+  border-radius: var(--radius-pill);
+
+  background: var(--color-feature-learning-soft);
+
+  color: var(--color-feature-learning);
+
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.divider {
+  height: 1px;
+
+  margin-block: var(--space-5);
+
+  background: var(--color-border);
+}
+
+.button {
+  width: 100%;
+}
+
+@include md {
+  .action {
+    position: static;
+  }
 }

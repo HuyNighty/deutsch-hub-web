@@ -1,5 +1,4 @@
 import classNames from "classnames/bind";
-
 import styles from "./LessonHeader.module.scss";
 
 const cx = classNames.bind(styles);
@@ -7,6 +6,14 @@ const cx = classNames.bind(styles);
 export default function LessonHeader({ lesson }) {
   return (
     <header className={cx("header")}>
+      <div className={cx("eyebrow")}>
+        <span>LEARNING</span>
+
+        <span className={cx("separator")}>/</span>
+
+        <span>{lesson.level}</span>
+      </div>
+
       <h1 className={cx("title")}>{lesson.title}</h1>
 
       {lesson.description && (
@@ -14,11 +21,11 @@ export default function LessonHeader({ lesson }) {
       )}
 
       <div className={cx("meta")}>
-        <span className={cx("item")}>Level: {lesson.level}</span>
+        <span>{lesson.estimatedMinutes} min</span>
 
         <span className={cx("separator")}>•</span>
 
-        <span className={cx("item")}>{lesson.estimatedMinutes} minutes</span>
+        <span>Lesson {lesson.orderIndex}</span>
       </div>
     </header>
   );

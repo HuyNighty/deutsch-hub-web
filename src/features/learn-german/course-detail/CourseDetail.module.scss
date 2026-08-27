@@ -1,24 +1,53 @@
 .page {
   @include container;
 
-  display: flex;
-  flex-direction: column;
-
-  gap: 2rem;
-
-  padding-block: 2rem;
+  padding-block: var(--space-10) var(--space-16);
 }
 
-.content {
+.top {
   display: grid;
 
-  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  grid-template-columns:
+    minmax(0, 1fr)
+    320px;
 
-  gap: 2rem;
+  gap: var(--space-10);
 
   align-items: start;
+}
 
-  @include md {
+.top > :first-child {
+  min-width: 0;
+}
+
+@include lg {
+  .top {
+    grid-template-columns:
+      minmax(0, 1fr)
+      280px;
+
+    gap: var(--space-8);
+  }
+}
+
+@include md {
+  .page {
+    padding-block: var(--space-8) var(--space-12);
+  }
+
+  .top {
     grid-template-columns: 1fr;
+
+    gap: var(--space-6);
+  }
+}
+
+@include sm {
+  .page {
+    padding-block: var(--space-6) var(--space-10);
+  }
+
+  .top {
+    gap: var(--space-6);
   }
 }

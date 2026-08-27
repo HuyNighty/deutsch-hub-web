@@ -1,26 +1,168 @@
-.loading,
-.error,
-.unsupported {
-  padding: 16px;
-  text-align: center;
+.media-item {
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-2);
+
+  padding: var(--space-6);
+}
+
+.title {
+  margin: 0;
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.25;
+}
+
+.description {
+  margin: 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+.media {
+  width: 100%;
+
+  background: var(--color-surface-secondary);
 }
 
 .image {
+  display: block;
+
   width: 100%;
-  border-radius: 8px;
+  max-height: 620px;
+
+  object-fit: contain;
 }
 
 .video {
+  display: block;
+
   width: 100%;
-  border-radius: 8px;
+  max-height: 620px;
 }
 
 .audio {
-  width: 100%;
+  display: block;
+
+  width: calc(100% - var(--space-8));
+
+  margin: var(--space-6) auto;
 }
 
 .pdf {
+  display: block;
+
   width: 100%;
-  height: 700px;
-  border: none;
+  height: 650px;
+
+  border: 0;
+}
+
+.document {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--space-4);
+
+  min-height: 220px;
+
+  padding: var(--space-8);
+
+  text-align: center;
+}
+
+.document-message {
+  margin: 0;
+
+  color: var(--color-text-secondary);
+}
+
+.download-link {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 44px;
+
+  padding-inline: var(--space-5);
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-brand);
+
+  color: var(--color-text-inverse);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+
+  text-decoration: none;
+
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+
+  &:hover {
+    background: var(--color-brand-hover);
+
+    transform: translateY(-1px);
+  }
+}
+
+.loading,
+.error,
+.unsupported {
+  display: flex;
+
+  min-height: 180px;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: var(--space-6);
+
+  color: var(--color-text-secondary);
+
+  text-align: center;
+}
+
+.error {
+  color: var(--color-danger);
+}
+
+@include sm {
+  .header {
+    padding: var(--space-5);
+  }
+
+  .pdf {
+    height: 480px;
+  }
+
+  .audio {
+    width: calc(100% - var(--space-6));
+  }
 }

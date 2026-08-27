@@ -1,6 +1,11 @@
 import { Button } from "@/shared/ui/components/button";
 import useCompleteLesson from "../hooks/useCompleteLesson";
 
+import classNames from "classnames/bind";
+import styles from "./CompleteLessonButton.module.scss";
+
+const cx = classNames.bind(styles);
+
 export default function CompleteLessonButton({
   courseId,
   lesson,
@@ -20,19 +25,31 @@ export default function CompleteLessonButton({
 
   if (completed) {
     return (
-      <Button fullWidth disabled>
-        Completed
-      </Button>
+      <div className={cx("completed")}>
+        <span className={cx("icon")} aria-hidden="true">
+          ✓
+        </span>
+
+        <div className={cx("content")}>
+          <strong>Lesson completed</strong>
+
+          <span>You have completed this lesson.</span>
+        </div>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className={cx("wrapper")}>
       <Button fullWidth loading={loading} onClick={handleClick}>
-        Complete Lesson
+        Complete lesson
       </Button>
 
-      {error && <p className="error">Failed to complete lesson.</p>}
-    </>
+      {error && (
+        <p className={cx("error")} role="alert">
+          Failed to complete lesson. Please try again.
+        </p>
+      )}
+    </div>
   );
 }

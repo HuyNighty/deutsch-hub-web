@@ -3,8 +3,8 @@ import classNames from "classnames/bind";
 
 import { useCourseDetail } from "./hooks/useCourseDetail";
 
-import CourseHeader from "./components/CourseHeader/CourseHeader";
-import CourseOverview from "./components/CourseOverview/CourseOverview";
+import { CourseHeader } from "./components/CourseHeader";
+import { CourseOverview } from "./components/CourseOverview";
 import ResourceState from "@/shared/ui/state/ResourceState";
 
 import styles from "./CourseDetail.module.scss";
@@ -28,16 +28,16 @@ export default function CourseDetail() {
     >
       {course && (
         <main className={cx("page")}>
-          <CourseHeader course={course} />
-
-          <div className={cx("content")}>
-            <CourseOverview course={course} />
+          <div className={cx("top")}>
+            <CourseHeader course={course} />
 
             <CourseAction
-              courseId={course.id}
+              courseId={courseId}
               enrollmentStatus={course.enrollmentStatus}
             />
           </div>
+
+          <CourseOverview course={course} />
 
           <CourseSectionList sections={course.sections} />
         </main>
