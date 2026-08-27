@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 
 import useRegister from "../hooks/useRegister";
 
 import { getFieldMessage } from "@/shared/api/api-error";
+import { AppLink } from "@/shared/ui/components/app-link";
 
 export default function RegisterForm() {
   const { handleRegister, error } = useRegister();
@@ -120,7 +120,7 @@ export default function RegisterForm() {
       <br />
       <br />
 
-      <Link to="/login">Already have an account? Login</Link>
+      <AppLink to="/login">Already have an account? Login</AppLink>
     </form>
   );
 }

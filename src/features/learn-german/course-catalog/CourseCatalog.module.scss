@@ -1,7 +1,5 @@
 .catalog {
-  width: 100%;
-  max-width: 1200px;
+  @include container;
 
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  padding-block: var(--space-12) var(--space-16);
 }

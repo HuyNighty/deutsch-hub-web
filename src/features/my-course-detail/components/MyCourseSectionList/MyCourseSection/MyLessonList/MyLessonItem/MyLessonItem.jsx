@@ -1,14 +1,14 @@
 import classNames from "classnames/bind";
 import styles from "./MyLessonItem.module.scss";
 
-import { Link } from "react-router-dom";
+import { AppLink } from "@/shared/ui/components/app-link";
 
 const cx = classNames.bind(styles);
 
 export default function MyLessonItem({ courseId, lesson }) {
   return (
     <li className={cx("item")}>
-      <Link
+      <AppLink
         className={cx("link")}
         to={`/my-learning/courses/${courseId}/lessons/${lesson.id}`}
       >
@@ -21,7 +21,7 @@ export default function MyLessonItem({ courseId, lesson }) {
         <span className={cx("duration")}>
           {lesson.estimatedMinutes} minutes
         </span>
-      </Link>
+      </AppLink>
     </li>
   );
 }

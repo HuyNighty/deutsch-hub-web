@@ -1,9 +1,10 @@
-import { Link, NavLink } from "react-router-dom";
-
 import { useAuth } from "@/features/auth/context/AuthProvider";
 
 import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
+import { Link, NavLink } from "react-router-dom";
+import { AppLink } from "@/shared/ui/components/app-link";
+import { Button } from "@/shared/ui/components/button";
 
 const cx = classNames.bind(styles);
 
@@ -63,31 +64,31 @@ export default function Header() {
         <div className={cx("actions")}>
           {isAuthenticated ? (
             <>
-              <button
+              <Button
                 type="button"
                 className={cx("icon-button")}
                 aria-label="Notifications"
               >
                 🔔
-              </button>
+              </Button>
 
-              <Link to="/account" className={cx("user")}>
+              <AppLink to="/account" className={cx("user")}>
                 <span className={cx("avatar")}>
                   {user?.id?.charAt(0)?.toUpperCase() ?? "U"}
                 </span>
 
                 <span className={cx("user-name")}>Account</span>
-              </Link>
+              </AppLink>
             </>
           ) : (
             <>
-              <Link to="/login" className={cx("login")}>
+              <AppLink to="/login" className={cx("login")}>
                 Login
-              </Link>
+              </AppLink>
 
-              <Link to="/register" className={cx("register")}>
+              <AppLink to="/register" className={cx("register")}>
                 Get started
-              </Link>
+              </AppLink>
             </>
           )}
         </div>

@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
 import classNames from "classnames/bind";
 
 import styles from "./FeatureOverview.module.scss";
+import { AppLink } from "@/shared/ui/components/app-link";
 
 const cx = classNames.bind(styles);
 
@@ -82,10 +82,10 @@ export default function FeatureOverview() {
               <p>{feature.description}</p>
             </div>
 
-            <Link to={feature.to} className={cx("card-action")}>
+            <AppLink to={feature.to} className={cx("card-action")}>
               <span>{feature.action}</span>
               <span aria-hidden="true">→</span>
-            </Link>
+            </AppLink>
           </article>
         ))}
       </div>

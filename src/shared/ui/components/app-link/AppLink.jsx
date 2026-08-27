@@ -1,11 +1,11 @@
 import { Link as RouterLink } from "react-router-dom";
-import classNames from "classnames/bind";
 
+import classNames from "classnames/bind";
 import styles from "./AppLink.module.scss";
 
 const cx = classNames.bind(styles);
 
-const VARIANTS = ["default", "primary", "outline"];
+const VARIANTS = ["default", "primary", "outline", "dark"];
 const SIZES = ["sm", "md", "lg"];
 
 function AppLink({
@@ -16,7 +16,6 @@ function AppLink({
   ...props
 }) {
   const linkVariant = VARIANTS.includes(variant) ? variant : "default";
-
   const linkSize = SIZES.includes(size) ? size : "md";
 
   return (

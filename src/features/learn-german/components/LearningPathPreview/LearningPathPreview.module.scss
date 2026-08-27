@@ -1,0 +1,150 @@
+.card {
+  position: relative;
+
+  min-height: 300px;
+
+  padding: var(--space-8);
+
+  overflow: hidden;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+
+  background: linear-gradient(
+    145deg,
+    var(--color-feature-learning-soft),
+    var(--color-surface)
+  );
+
+  box-shadow: var(--shadow-sm);
+}
+
+.card::after {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+
+  right: -70px;
+  bottom: -70px;
+
+  border-radius: 50%;
+
+  background: var(--color-feature-learning);
+
+  opacity: 0.06;
+
+  content: "";
+}
+
+.eyebrow {
+  color: var(--color-feature-learning);
+
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.16em;
+}
+
+.title {
+  margin: var(--space-4) 0 0;
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.levels {
+  display: flex;
+  align-items: center;
+
+  margin-top: var(--space-8);
+}
+
+.level-wrapper {
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+
+.level {
+  display: grid;
+
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  place-items: center;
+
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+
+  background: var(--color-surface);
+
+  color: var(--color-text-muted);
+
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+.level.first {
+  border-color: var(--color-feature-learning);
+  background: var(--color-feature-learning);
+  color: var(--color-text-inverse);
+}
+
+.line {
+  width: 100%;
+  height: 2px;
+
+  margin-inline: 0.35rem;
+
+  background: var(--color-border);
+}
+
+.description {
+  max-width: 360px;
+
+  margin: var(--space-6) 0 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+.footer {
+  display: inline-block;
+
+  margin-top: var(--space-6);
+
+  color: var(--color-feature-learning);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+@include md {
+  .card {
+    min-height: 260px;
+  }
+}
+
+@include sm {
+  .card {
+    padding: var(--space-6);
+  }
+
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .level {
+    width: 32px;
+    height: 32px;
+
+    font-size: 0.7rem;
+  }
+}

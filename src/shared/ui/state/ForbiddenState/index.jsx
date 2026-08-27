@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { AppLink } from "../../components/app-link";
 
 function ForbiddenState({ action }) {
   return (
@@ -7,7 +7,7 @@ function ForbiddenState({ action }) {
 
       <p>You don't have permission to access this resource.</p>
 
-      {action && <Link to={action.to}>{action.label}</Link>}
+      {action && <AppLink to={action.to}>{action.label}</AppLink>}
     </>
   );
 }

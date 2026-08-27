@@ -10,7 +10,7 @@ const cx = classNames.bind(styles);
 
 export default function Home() {
   return (
-    <main className={cx("page")}>
+    <div className={cx("page")}>
       <section className={cx("hero")}>
         <div className={cx("hero-content")}>
           <span className={cx("eyebrow")}>DEUTSCHHUB</span>
@@ -69,6 +69,6 @@ export default function Home() {
       </section>
       <FeatureOverview />
       <ContentPreview />
-    </main>
+    </div>
   );
 }

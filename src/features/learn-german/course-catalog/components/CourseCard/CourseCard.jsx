@@ -1,8 +1,8 @@
-import classNames from "classnames/bind";
-import { Link } from "react-router-dom";
+import { AppLink } from "@/shared/ui/components/app-link";
 
 import styles from "./CourseCard.module.scss";
 
+import classNames from "classnames/bind";
 const cx = classNames.bind(styles);
 
 function CourseCard({ course }) {
@@ -19,9 +19,13 @@ function CourseCard({ course }) {
       </div>
 
       <footer className={cx("footer")}>
-        <Link className={cx("link")} to={`/learn-german/courses/${course.id}`}>
-          View Course →
-        </Link>
+        <AppLink
+          to={`/learn-german/courses/${course.id}`}
+          className={cx("link")}
+        >
+          View course
+          <span aria-hidden="true">→</span>
+        </AppLink>
       </footer>
     </article>
   );

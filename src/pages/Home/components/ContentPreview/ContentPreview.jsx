@@ -5,6 +5,7 @@ import styles from "./ContentPreview.module.scss";
 
 const cx = classNames.bind(styles);
 
+// Mocks data
 const contents = [
   {
     id: 1,

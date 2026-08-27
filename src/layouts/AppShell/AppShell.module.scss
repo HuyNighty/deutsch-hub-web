@@ -1,8 +1,11 @@
 .app {
+  display: flex;
   min-height: 100vh;
+  flex-direction: column;
+
   background: var(--color-background);
 }
 
 .main {
-  min-height: calc(100vh - 72px);
+  flex: 1;
 }

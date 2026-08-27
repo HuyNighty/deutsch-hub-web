@@ -4,7 +4,7 @@ import { Button } from "@/shared/ui/components/button";
 
 import classNames from "classnames/bind";
 import styles from "./MyCourseCard.module.scss";
-import MyCourseProgressBar from "../MyCourseProgressBar/MyCourseProgressBar";
+import { MyCourseProgressBar } from "../MyCourseProgressBar";
 
 const cx = classNames.bind(styles);
 
