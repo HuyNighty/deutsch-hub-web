@@ -7,16 +7,22 @@ import {
 
 import { updateAuthSession } from "@/shared/auth/auth-session";
 
-const baseURL = "http://localhost:8080/deutsch-hub/api/v1";
+const API_BASE_URL = "http://localhost:8080/deutsch-hub";
 
 export const api = axios.create({
-  baseURL,
+  baseURL: `${API_BASE_URL}/api/v1`,
+  timeout: 10_000,
+  headers: { "Content-Type": "application/json" },
+});
+
+export const apiV2 = axios.create({
+  baseURL: `${API_BASE_URL}/api/v2`,
   timeout: 10_000,
   headers: { "Content-Type": "application/json" },
 });
 
 const refreshClient = axios.create({
-  baseURL,
+  baseURL: `${API_BASE_URL}/api/v1`,
   timeout: 10_000,
   headers: { "Content-Type": "application/json" },
 });
@@ -57,43 +63,48 @@ async function refreshAccessToken() {
   return refreshPromise;
 }
 
-api.interceptors.request.use((config) => {
-  const accessToken = getAccessToken();
+function attachAuthInterceptor(client) {
+  client.interceptors.request.use((config) => {
+    const accessToken = getAccessToken();
 
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
-  }
-
-  return config;
-});
-
-api.interceptors.response.use(
-  (response) => response,
-
-  async (error) => {
-    const originalRequest = error.config;
-
-    const shouldRefresh =
-      error.response?.status === 401 &&
-      !originalRequest?._retry &&
-      !isAuthEndpoint(originalRequest?.url);
-
-    if (!shouldRefresh) {
-      return Promise.reject(error);
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
-    originalRequest._retry = true;
+    return config;
+  });
 
-    try {
-      const newAccessToken = await refreshAccessToken();
+  client.interceptors.response.use(
+    (response) => response,
 
-      originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+    async (error) => {
+      const originalRequest = error.config;
 
-      return api(originalRequest);
-    } catch (refreshError) {
-      clearTokens();
+      const shouldRefresh =
+        error.response?.status === 401 &&
+        !originalRequest?._retry &&
+        !isAuthEndpoint(originalRequest?.url);
 
-      return Promise.reject(refreshError);
-    }
-  },
-);
+      if (!shouldRefresh) {
+        return Promise.reject(error);
+      }
+
+      originalRequest._retry = true;
+
+      try {
+        const newAccessToken = await refreshAccessToken();
+
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        return client(originalRequest);
+      } catch (refreshError) {
+        clearTokens();
+
+        return Promise.reject(refreshError);
+      }
+    },
+  );
+}
+
+attachAuthInterceptor(api);
+attachAuthInterceptor(apiV2);

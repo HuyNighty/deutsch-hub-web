@@ -1,0 +1,17 @@
+.page {
+  @include container;
+
+  padding-block: var(--space-10) var(--space-16);
+}
+
+@include md {
+  .page {
+    padding-block: var(--space-8) var(--space-12);
+  }
+}
+
+@include sm {
+  .page {
+    padding-block: var(--space-6) var(--space-10);
+  }
+}

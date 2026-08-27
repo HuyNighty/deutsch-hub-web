@@ -1,5 +1,11 @@
+import ArticleCatalog from "@/features/content/article";
+
 function ExploreGermany() {
-  return <>Explore Germany</>;
+  return (
+    <>
+      <ArticleCatalog />
+    </>
+  );
 }
 
 export default ExploreGermany;

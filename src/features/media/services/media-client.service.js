@@ -8,3 +8,9 @@ export function getLessonItemMedia(courseId, lessonId, itemId) {
     },
   );
 }
+
+export function getMediaContent(mediaId) {
+  return apiClient.get(`/media/${mediaId}/content`, {
+    responseType: "blob",
+  });
+}

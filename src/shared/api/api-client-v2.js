@@ -1,0 +1,79 @@
+import axios from "axios";
+import { toApiError } from "./api-error";
+import { unwrapApiResponse } from "./api-response";
+import { apiV2 } from "./axios";
+
+async function request(config) {
+  try {
+    const response = await apiV2.request(config);
+
+    if (response.status === 204) {
+      return undefined;
+    }
+
+    if (config.responseType === "blob") {
+      return response.data;
+    }
+
+    return unwrapApiResponse(response.data);
+  } catch (error) {
+    return handleRequestError(error);
+  }
+}
+
+const apiClientV2 = {
+  get(url, config = {}) {
+    return request({ ...config, method: "get", url });
+  },
+
+  post(url, data, config = {}) {
+    return request({ ...config, method: "post", url, data });
+  },
+
+  put(url, data, config = {}) {
+    return request({ ...config, method: "put", url, data });
+  },
+
+  patch(url, data, config = {}) {
+    return request({ ...config, method: "patch", url, data });
+  },
+
+  delete(url, config = {}) {
+    return request({ ...config, method: "delete", url });
+  },
+};
+
+async function handleRequestError(error) {
+  if (!axios.isAxiosError(error)) {
+    throw toApiError(error);
+  }
+
+  if (!error.response) {
+    throw toApiError({
+      code: error.code ?? "NETWORK_ERROR",
+      message:
+        error.code === "ECONNABORTED"
+          ? "The request timed out. Please try again."
+          : "Unable to reach the server. Please check your connection.",
+    });
+  }
+
+  let payload = error.response.data;
+
+  if (payload instanceof Blob && payload.type.includes("application/json")) {
+    try {
+      payload = JSON.parse(await payload.text());
+    } catch {
+      payload = {};
+    }
+  }
+
+  throw toApiError({
+    code: payload?.code,
+    status: error.response.status,
+    message: payload?.message ?? error.message,
+    errors: payload?.errors,
+  });
+}
+
+export default apiClientV2;
