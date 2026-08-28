@@ -1,9 +1,15 @@
 import { useState } from "react";
+import classNames from "classnames/bind";
 
 import useRegister from "../hooks/useRegister";
 
 import { getFieldMessage } from "@/shared/api/api-error";
 import { AppLink } from "@/shared/ui/components/app-link";
+import { Button } from "@/shared/ui/components/button";
+
+import styles from "./RegisterForm.module.scss";
+
+const cx = classNames.bind(styles);
 
 export default function RegisterForm() {
   const { handleRegister, error } = useRegister();
@@ -36,91 +42,168 @@ export default function RegisterForm() {
   async function onSubmit(event) {
     event.preventDefault();
 
-    try {
-      await handleRegister(form);
-    } catch {
-      alert("Register failed.");
-    }
+    await handleRegister(form);
   }
 
   return (
-    <form onSubmit={onSubmit}>
-      <h1>Register</h1>
+    <form className={cx("form")} onSubmit={onSubmit}>
+      <header className={cx("header")}>
+        <span className={cx("eyebrow")}>GET STARTED</span>
 
-      <input
-        name="username"
-        placeholder="Username"
-        value={form.username}
-        onChange={handleChange}
-      />
-      {usernameError && <p>{usernameError}</p>}
+        <h1 className={cx("title")}>Create your account</h1>
 
-      <br />
-      <br />
+        <p className={cx("description")}>
+          Join DeutschHub and start building your German learning journey.
+        </p>
+      </header>
 
-      <input
-        name="email"
-        type="email"
-        placeholder="Email"
-        value={form.email}
-        onChange={handleChange}
-      />
-      {emailError && <p>{emailError}</p>}
+      <div className={cx("fields")}>
+        <div className={cx("field")}>
+          <label htmlFor="username">Username</label>
 
-      <br />
-      <br />
+          <input
+            id="username"
+            name="username"
+            type="text"
+            placeholder="Choose a username"
+            autoComplete="username"
+            value={form.username}
+            onChange={handleChange}
+            aria-invalid={!!usernameError}
+            aria-describedby={usernameError ? "username-error" : undefined}
+          />
 
-      <input
-        name="password"
-        type="password"
-        placeholder="Password"
-        value={form.password}
-        onChange={handleChange}
-      />
-      {passwordError && <p>{passwordError}</p>}
+          {usernameError && (
+            <p id="username-error" className={cx("error")}>
+              {usernameError}
+            </p>
+          )}
+        </div>
 
-      <br />
-      <br />
+        <div className={cx("field")}>
+          <label htmlFor="email">Email</label>
 
-      <input
-        name="firstName"
-        placeholder="First Name"
-        value={form.firstName}
-        onChange={handleChange}
-      />
-      {firstNameError && <p>{firstNameError}</p>}
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Enter your email"
+            autoComplete="email"
+            value={form.email}
+            onChange={handleChange}
+            aria-invalid={!!emailError}
+            aria-describedby={emailError ? "email-error" : undefined}
+          />
 
-      <br />
-      <br />
+          {emailError && (
+            <p id="email-error" className={cx("error")}>
+              {emailError}
+            </p>
+          )}
+        </div>
 
-      <input
-        name="lastName"
-        placeholder="Last Name"
-        value={form.lastName}
-        onChange={handleChange}
-      />
-      {lastNameError && <p>{lastNameError}</p>}
+        <div className={cx("field")}>
+          <label htmlFor="password">Password</label>
 
-      <br />
-      <br />
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Create a password"
+            autoComplete="new-password"
+            value={form.password}
+            onChange={handleChange}
+            aria-invalid={!!passwordError}
+            aria-describedby={passwordError ? "password-error" : undefined}
+          />
 
-      <input
-        name="phoneNumber"
-        placeholder="Phone Number"
-        value={form.phoneNumber}
-        onChange={handleChange}
-      />
-      {phoneNumberError && <p>{phoneNumberError}</p>}
+          {passwordError && (
+            <p id="password-error" className={cx("error")}>
+              {passwordError}
+            </p>
+          )}
+        </div>
 
-      <br />
-      <br />
+        <div className={cx("row")}>
+          <div className={cx("field")}>
+            <label htmlFor="firstName">First Name</label>
 
-      <button type="submit">Register</button>
+            <input
+              id="firstName"
+              name="firstName"
+              type="text"
+              placeholder="First name"
+              autoComplete="given-name"
+              value={form.firstName}
+              onChange={handleChange}
+              aria-invalid={!!firstNameError}
+              aria-describedby={firstNameError ? "firstName-error" : undefined}
+            />
 
-      <br />
-      <br />
+            {firstNameError && (
+              <p id="firstName-error" className={cx("error")}>
+                {firstNameError}
+              </p>
+            )}
+          </div>
 
-      <AppLink to="/login">Already have an account? Login</AppLink>
+          <div className={cx("field")}>
+            <label htmlFor="lastName">Last Name</label>
+
+            <input
+              id="lastName"
+              name="lastName"
+              type="text"
+              placeholder="Last name"
+              autoComplete="family-name"
+              value={form.lastName}
+              onChange={handleChange}
+              aria-invalid={!!lastNameError}
+              aria-describedby={lastNameError ? "lastName-error" : undefined}
+            />
+
+            {lastNameError && (
+              <p id="lastName-error" className={cx("error")}>
+                {lastNameError}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className={cx("field")}>
+          <label htmlFor="phoneNumber">Phone Number</label>
+
+          <input
+            id="phoneNumber"
+            name="phoneNumber"
+            type="tel"
+            placeholder="Enter your phone number"
+            autoComplete="tel"
+            value={form.phoneNumber}
+            onChange={handleChange}
+            aria-invalid={!!phoneNumberError}
+            aria-describedby={
+              phoneNumberError ? "phoneNumber-error" : undefined
+            }
+          />
+
+          {phoneNumberError && (
+            <p id="phoneNumber-error" className={cx("error")}>
+              {phoneNumberError}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <Button type="submit" fullWidth>
+        Create Account
+      </Button>
+
+      <div className={cx("footer")}>
+        <span>Already have an account?</span>
+
+        <AppLink to="/login">Login</AppLink>
+      </div>
     </form>
   );
 }

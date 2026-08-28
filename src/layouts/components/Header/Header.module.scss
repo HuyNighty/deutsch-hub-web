@@ -149,35 +149,6 @@
   }
 }
 
-.login {
-  color: var(--color-text-primary);
-
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-}
-
-.register {
-  padding: 0.6rem 1rem;
-
-  border-radius: var(--radius-md);
-
-  background: var(--color-brand);
-  color: var(--color-surface);
-
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-
-  transition:
-    background-color var(--transition-fast),
-    transform var(--transition-fast);
-
-  &:hover {
-    background: var(--color-brand-hover);
-    transform: translateY(-1px);
-    color: var(--white);
-  }
-}
-
 .user {
   display: inline-flex;
   align-items: center;

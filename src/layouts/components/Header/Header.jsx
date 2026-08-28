@@ -82,11 +82,11 @@ export default function Header() {
             </>
           ) : (
             <>
-              <AppLink to="/login" className={cx("login")}>
+              <AppLink to="/login" variant="outline">
                 Login
               </AppLink>
 
-              <AppLink to="/register" className={cx("register")}>
+              <AppLink to="/register" variant="primary">
                 Get started
               </AppLink>
             </>
