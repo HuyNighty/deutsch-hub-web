@@ -47,6 +47,7 @@ export default function Footer() {
           <div className={cx("brand-section")}>
             <AppLink to="/" variant="dark" className={cx("brand")}>
               <span className={cx("brand-mark")}>D</span>
+
               <span className={cx("brand-name")}>DeutschHub</span>
             </AppLink>
 
@@ -66,7 +67,7 @@ export default function Footer() {
                     <AppLink
                       to={link.to}
                       variant="dark"
-                      className={cx("feature-link", link.color)}
+                      className={cx("footer-link", link.color)}
                     >
                       {link.label}
                     </AppLink>
@@ -83,7 +84,11 @@ export default function Footer() {
               <ul>
                 {platformLinks.map((link) => (
                   <li key={link.to}>
-                    <AppLink variant="dark" to={link.to}>
+                    <AppLink
+                      to={link.to}
+                      variant="dark"
+                      className={cx("footer-link")}
+                    >
                       {link.label}
                     </AppLink>
                   </li>

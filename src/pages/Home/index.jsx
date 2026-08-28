@@ -29,11 +29,6 @@ export default function Home() {
           <div className={cx("hero-content")}>
             <span className={cx("eyebrow")}>DEUTSCHHUB</span>
 
-            <span className={cx("hero-badge")}>
-              <span className={cx("badge-dot")} />
-              Learn · Discover · Connect
-            </span>
-
             <h1 id="home-hero-title" className={cx("hero-title")}>
               Learn German.
               <br />

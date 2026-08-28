@@ -1,13 +1,16 @@
 import { useParams } from "react-router-dom";
 
+import classNames from "classnames/bind";
+
 import ResourceState from "@/shared/ui/state/ResourceState";
+
 import { usePublishedArticle } from "../hooks/usePublishedArticle";
 
-import classNames from "classnames/bind";
-import styles from "./ArticleDetail.module.scss";
 import { ArticleCover } from "./ArticleCover";
 import { ArticleTopics } from "./ArticleTopics";
 import { ArticleSources } from "./ArticleSources";
+
+import styles from "./ArticleDetail.module.scss";
 
 const cx = classNames.bind(styles);
 
@@ -28,7 +31,8 @@ export default function ArticleDetail() {
         <main className={cx("page")}>
           <header className={cx("header")}>
             <div className={cx("category")}>
-              {article.primaryCategory?.name}
+              <span className={cx("category-line")} />
+              <span>{article.primaryCategory?.name}</span>
             </div>
 
             <h1 className={cx("title")}>{article.title}</h1>
@@ -39,20 +43,28 @@ export default function ArticleDetail() {
 
             <div className={cx("meta")}>
               <time dateTime={article.publishedAt}>
-                {new Date(article.publishedAt).toLocaleDateString("en-GB")}
+                {new Date(article.publishedAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                })}
               </time>
 
-              <span className={cx("separator")}>•</span>
+              <span className={cx("separator")} aria-hidden="true">
+                /
+              </span>
 
               <span>German Learning</span>
             </div>
           </header>
 
           {article.coverMediaId && (
-            <ArticleCover
-              mediaId={article.coverMediaId}
-              title={article.title}
-            />
+            <div className={cx("cover-wrapper")}>
+              <ArticleCover
+                mediaId={article.coverMediaId}
+                title={article.title}
+              />
+            </div>
           )}
 
           <article className={cx("article")}>
@@ -65,9 +77,11 @@ export default function ArticleDetail() {
                 ))}
             </div>
 
-            <ArticleTopics topics={article.topics} />
+            <div className={cx("article-footer")}>
+              <ArticleTopics topics={article.topics} />
 
-            <ArticleSources sources={article.sources} />
+              <ArticleSources sources={article.sources} />
+            </div>
           </article>
         </main>
       )}

@@ -1,5 +1,5 @@
 .footer {
-  margin-top: 4rem;
+  margin-top: var(--space-16);
 
   background: var(--color-brand);
   color: var(--color-text-inverse);
@@ -8,7 +8,7 @@
 .container {
   @include container;
 
-  padding-block: 3.5rem 1.5rem;
+  padding-block: 3.5rem var(--space-6);
 }
 
 .main {
@@ -18,7 +18,7 @@
     minmax(0, 1.5fr)
     repeat(2, minmax(140px, 1fr));
 
-  gap: 4rem;
+  gap: var(--space-16);
 }
 
 .brand-section {
@@ -28,11 +28,13 @@
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-3);
+
+  padding: 0;
 
   color: var(--color-text-inverse) !important;
 
-  font-weight: 800;
+  font-weight: var(--font-weight-bold);
   text-decoration: none;
 }
 
@@ -44,29 +46,42 @@
 
   place-items: center;
 
-  border: 1px solid rgb(255 255 255 / 0.2);
+  border: 1px solid rgb(255 255 255 / 0.18);
   border-radius: var(--radius-md);
 
   background: rgb(255 255 255 / 0.08);
 
   color: var(--color-text-inverse);
 
-  font-size: 1.1rem;
-  font-weight: 800;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+
+  transition:
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    transform var(--transition-normal);
+}
+
+.brand:hover .brand-mark {
+  background: rgb(255 255 255 / 0.14);
+  border-color: rgb(255 255 255 / 0.3);
+
+  transform: translateY(-1px);
 }
 
 .brand-name {
   color: var(--color-text-inverse);
 
-  font-size: 1.3rem;
-  font-weight: 800;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+
   letter-spacing: -0.02em;
 }
 
 .description {
   max-width: 390px;
 
-  margin: 1.25rem 0 0;
+  margin: var(--space-5) 0 0;
 
   color: rgb(255 255 255 / 0.68);
 
@@ -80,12 +95,13 @@
 }
 
 .link-group h2 {
-  margin: 0 0 1.25rem;
+  margin: 0 0 var(--space-5);
 
   color: var(--color-text-inverse);
 
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
+
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -93,7 +109,7 @@
 .link-group ul {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-3);
 
   margin: 0;
   padding: 0;
@@ -104,9 +120,10 @@
 .footer-link {
   display: inline-flex;
 
+  width: fit-content;
   padding: 0;
 
-  color: rgb(255 255 255 / 0.65) !important;
+  color: rgb(255 255 255 / 0.62) !important;
 
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
@@ -119,7 +136,7 @@
 
   &:hover {
     color: var(--color-text-inverse) !important;
-    transform: translateX(2px);
+    transform: translateX(3px);
   }
 }
 
@@ -144,41 +161,47 @@
   align-items: center;
   justify-content: space-between;
 
-  margin-top: 3.5rem;
-  padding-top: 1.25rem;
+  margin-top: var(--space-16);
+  padding-top: var(--space-5);
 
   border-top: 1px solid rgb(255 255 255 / 0.12);
 
-  color: rgb(255 255 255 / 0.45);
+  color: rgb(255 255 255 / 0.42);
 
   font-size: var(--font-size-xs);
+  line-height: 1.5;
 }
 
 @include md {
   .main {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
-    gap: 3rem;
+    gap: var(--space-12);
   }
 
   .brand-section {
     grid-column: 1 / -1;
+    max-width: 560px;
+  }
+
+  .bottom {
+    margin-top: var(--space-12);
   }
 }
 
 @include sm {
   .footer {
-    margin-top: 3rem;
+    margin-top: var(--space-12);
   }
 
   .container {
-    padding-block: 3rem 1.25rem;
+    padding-block: var(--space-12) var(--space-5);
   }
 
   .main {
     grid-template-columns: 1fr;
 
-    gap: 2.5rem;
+    gap: var(--space-10);
   }
 
   .brand-section {
@@ -189,8 +212,8 @@
     flex-direction: column;
     align-items: flex-start;
 
-    gap: 0.5rem;
+    gap: var(--space-2);
 
-    margin-top: 2.5rem;
+    margin-top: var(--space-10);
   }
 }

@@ -113,47 +113,6 @@
   letter-spacing: 0.22em;
 
   line-height: 1;
-
-  text-transform: uppercase;
-}
-
-.hero-badge {
-  display: inline-flex;
-
-  align-items: center;
-
-  gap: 0.5rem;
-
-  width: fit-content;
-
-  margin-bottom: 1.4rem;
-
-  padding: 0.45rem 0.75rem;
-
-  border: 1px solid rgba(20, 38, 64, 0.16);
-
-  border-radius: 999px;
-
-  background: rgba(255, 255, 255, 0.5);
-
-  color: #53647a;
-
-  font-size: 0.75rem;
-  font-weight: 600;
-
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.badge-dot {
-  width: 7px;
-  height: 7px;
-
-  border-radius: 50%;
-
-  background: #2f8f68;
-
-  box-shadow: 0 0 0 4px rgba(47, 143, 104, 0.12);
 }
 
 .hero-title {

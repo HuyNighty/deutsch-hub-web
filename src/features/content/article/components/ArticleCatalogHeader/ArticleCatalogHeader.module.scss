@@ -1,42 +1,161 @@
 .header {
-  margin-bottom: var(--space-10);
+  position: relative;
+
+  margin-bottom: var(--space-12);
+
+  padding-bottom: var(--space-10);
+
+  border-bottom: 1px solid var(--color-border);
 }
 
 .content {
-  max-width: 760px;
+  max-width: 900px;
 }
 
 .eyebrow {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
 
-  margin-bottom: var(--space-4);
+  gap: var(--space-3);
+
+  margin-bottom: var(--space-5);
 
   color: var(--color-feature-content);
 
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
-  letter-spacing: 0.12em;
+
+  letter-spacing: 0.16em;
+
   text-transform: uppercase;
 }
 
+.eyebrow-line {
+  width: 32px;
+  height: 2px;
+
+  border-radius: var(--radius-pill);
+
+  background: var(--color-feature-content);
+}
+
 .title {
+  max-width: 880px;
+
   margin: 0;
 
   color: var(--color-text-primary);
 
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-size: clamp(2.75rem, 6vw, 5rem);
+
   font-weight: var(--font-weight-bold);
-  line-height: 1.05;
-  letter-spacing: -0.04em;
+
+  line-height: 0.98;
+
+  letter-spacing: -0.055em;
+}
+
+.title span {
+  color: var(--color-brand-hover);
 }
 
 .description {
   max-width: 680px;
 
-  margin: var(--space-5) 0 0;
+  margin: var(--space-6) 0 0;
 
   color: var(--color-text-secondary);
 
   font-size: var(--font-size-lg);
+
   line-height: 1.7;
+}
+
+.topics {
+  display: flex;
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: var(--space-3);
+
+  margin-top: var(--space-7);
+}
+
+.topics span {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 30px;
+
+  padding-inline: 0.75rem;
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-pill);
+
+  background: var(--color-surface);
+
+  color: var(--color-text-muted);
+
+  font-size: 0.65rem;
+  font-weight: var(--font-weight-bold);
+
+  letter-spacing: 0.08em;
+}
+
+@include md {
+  .header {
+    margin-bottom: var(--space-10);
+
+    padding-bottom: var(--space-8);
+  }
+
+  .title {
+    font-size: clamp(2.5rem, 7vw, 4rem);
+  }
+
+  .description {
+    font-size: var(--font-size-md);
+  }
+}
+
+@include sm {
+  .header {
+    margin-bottom: var(--space-8);
+
+    padding-bottom: var(--space-6);
+  }
+
+  .eyebrow {
+    margin-bottom: var(--space-4);
+  }
+
+  .eyebrow-line {
+    width: 24px;
+  }
+
+  .title {
+    font-size: clamp(2.3rem, 11vw, 3.2rem);
+
+    line-height: 1;
+  }
+
+  .description {
+    margin-top: var(--space-5);
+
+    font-size: var(--font-size-sm);
+
+    line-height: 1.65;
+  }
+
+  .topics {
+    gap: var(--space-2);
+
+    margin-top: var(--space-5);
+  }
+
+  .topics span {
+    font-size: 0.6rem;
+  }
 }
