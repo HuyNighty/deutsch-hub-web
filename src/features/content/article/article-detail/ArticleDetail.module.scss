@@ -1,0 +1,159 @@
+.page {
+  @include container;
+
+  padding-block: var(--space-12) var(--space-16);
+}
+
+.header {
+  max-width: 860px;
+  margin-inline: auto;
+
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-block;
+
+  margin-bottom: var(--space-4);
+
+  color: var(--color-feature-content);
+
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+
+  color: var(--color-text-primary);
+
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  font-weight: var(--font-weight-bold);
+
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.summary {
+  max-width: 720px;
+
+  margin: var(--space-6) auto 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-lg);
+  line-height: 1.7;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--space-3);
+
+  margin-top: var(--space-6);
+
+  color: var(--color-text-muted);
+
+  font-size: var(--font-size-sm);
+}
+
+.separator {
+  color: var(--color-border-strong);
+}
+
+.article {
+  max-width: 760px;
+
+  margin: var(--space-12) auto 0;
+}
+
+.body {
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-lg);
+  line-height: 1.85;
+}
+
+.body p {
+  margin: 0;
+}
+
+.body p + p {
+  margin-top: var(--space-6);
+}
+
+.sources {
+  margin-top: var(--space-12);
+  padding-top: var(--space-8);
+
+  border-top: 1px solid var(--color-border);
+}
+
+.sources h2 {
+  margin: 0 0 var(--space-4);
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-xl);
+}
+
+.sources ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.sources a {
+  color: var(--color-feature-content);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+@include md {
+  .page {
+    padding-block: var(--space-10) var(--space-12);
+  }
+
+  .article {
+    margin-top: var(--space-10);
+  }
+
+  .body {
+    font-size: var(--font-size-md);
+  }
+}
+
+@include sm {
+  .page {
+    padding-block: var(--space-8) var(--space-10);
+  }
+
+  .title {
+    font-size: 2.25rem;
+  }
+
+  .summary {
+    font-size: var(--font-size-md);
+  }
+
+  .meta {
+    flex-wrap: wrap;
+  }
+}

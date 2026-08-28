@@ -19,6 +19,7 @@ import { ProtectedRoute, GuestRoute } from "@/shared/routing";
 import AccountPage from "@/pages/account";
 
 import AppShell from "@/layouts/AppShell/AppShell";
+import ArticleDetailPage from "@/pages/explore-germany/article-detail";
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ export const router = createBrowserRouter([
       {
         path: "/explore-germany",
         element: <ExploreGermany />,
+      },
+      {
+        path: "/explore-germany/:slug",
+        element: <ArticleDetailPage />,
       },
       {
         path: "/study-in-germany",

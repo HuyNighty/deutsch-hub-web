@@ -1,4 +1,5 @@
 import apiClient from "@/shared/api/api-client";
+import apiClientV2 from "@/shared/api/api-client-v2";
 
 export function getLessonItemMedia(courseId, lessonId, itemId) {
   return apiClient.get(
@@ -10,7 +11,7 @@ export function getLessonItemMedia(courseId, lessonId, itemId) {
 }
 
 export function getMediaContent(mediaId) {
-  return apiClient.get(`/media/${mediaId}/content`, {
+  return apiClientV2.get(`/media/${mediaId}/content`, {
     responseType: "blob",
   });
 }
