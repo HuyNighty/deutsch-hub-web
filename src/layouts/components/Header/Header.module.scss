@@ -1,22 +1,119 @@
 .header {
   position: sticky;
+
   top: 0;
+
   z-index: 100;
 
   width: 100%;
 
   background: var(--color-surface);
+
   border-bottom: 1px solid var(--color-border);
+
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    backdrop-filter 0.3s ease;
+}
+
+.header.home {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  background: transparent;
+
+  border-bottom-color: transparent;
+
+  box-shadow: none;
+}
+
+.header.home .brand {
+  color: #142640;
+}
+
+.header.home .brand-mark {
+  background: #142640;
+
+  color: #f4efe6;
+}
+
+.header.home .brand-name {
+  color: #142640;
+}
+
+.header.home .brand-name span {
+  color: #806947;
+}
+
+.header.home .nav-link {
+  color: #34445a;
+}
+
+.header.home .nav-link:hover {
+  color: #142640;
+
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.header.home.scrolled {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  background: rgba(255, 255, 255, 0.92);
+
+  border-bottom-color: rgba(20, 38, 64, 0.1);
+
+  box-shadow: 0 8px 30px rgba(20, 38, 64, 0.08);
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.header.home.scrolled .brand {
+  color: var(--color-brand);
+}
+
+.header.home.scrolled .brand-mark {
+  background: var(--color-brand);
+
+  color: var(--color-surface);
+}
+
+.header.home.scrolled .brand-name {
+  color: var(--color-text-primary);
+}
+
+.header.home.scrolled .brand-name span {
+  color: var(--color-brand-hover);
+}
+
+.header.home.scrolled .nav-link {
+  color: var(--color-text-secondary);
+}
+
+.header.home.scrolled .nav-link:hover {
+  color: var(--color-text-primary);
+
+  background: var(--color-background);
 }
 
 .container {
   width: min(1200px, calc(100% - 2rem));
+
   min-height: 72px;
 
   margin-inline: auto;
 
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
 
   gap: var(--space-6);
@@ -24,12 +121,16 @@
 
 .brand {
   display: inline-flex;
+
   align-items: center;
+
   gap: var(--space-3);
 
   flex-shrink: 0;
 
   color: var(--color-brand);
+
+  text-decoration: none;
 }
 
 .brand-mark {
@@ -37,21 +138,32 @@
   height: 38px;
 
   display: grid;
+
   place-items: center;
 
   border-radius: var(--radius-md);
 
   background: var(--color-brand);
+
   color: var(--color-surface);
 
   font-size: var(--font-size-lg);
+
   font-weight: var(--font-weight-bold);
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 .brand-name {
   font-size: var(--font-size-xl);
+
   font-weight: var(--font-weight-bold);
+
   letter-spacing: -0.02em;
+
+  transition: color 0.25s ease;
 
   span {
     color: var(--color-brand-hover);
@@ -60,7 +172,9 @@
 
 .navigation {
   display: flex;
+
   align-items: center;
+
   gap: var(--space-2);
 
   margin-inline: auto;
@@ -70,6 +184,7 @@
   position: relative;
 
   display: inline-flex;
+
   align-items: center;
 
   padding: 0.5rem 0.75rem;
@@ -79,7 +194,10 @@
   color: var(--color-text-secondary);
 
   font-size: var(--font-size-sm);
+
   font-weight: var(--font-weight-medium);
+
+  text-decoration: none;
 
   transition:
     color var(--transition-fast),
@@ -87,6 +205,7 @@
 
   &:hover {
     color: var(--color-text-primary);
+
     background: var(--color-background);
   }
 
@@ -97,27 +216,33 @@
 
 .learning.active {
   color: var(--color-learning);
+
   background: var(--color-learning-light);
 }
 
 .content.active {
   color: var(--color-content);
+
   background: var(--color-content-light);
 }
 
 .study.active {
   color: var(--color-study);
+
   background: var(--color-study-light);
 }
 
 .communication.active {
   color: var(--color-communication);
+
   background: var(--color-communication-light);
 }
 
 .actions {
   display: flex;
+
   align-items: center;
+
   gap: var(--space-3);
 
   flex-shrink: 0;
@@ -128,16 +253,20 @@
   height: 40px;
 
   display: grid;
+
   place-items: center;
 
   padding: 0;
 
   border: 0;
+
   border-radius: var(--radius-md);
 
   background: transparent;
 
   font-size: 1rem;
+
+  cursor: pointer;
 
   transition:
     background-color var(--transition-fast),
@@ -145,19 +274,25 @@
 
   &:hover {
     background: var(--color-background);
+
     transform: translateY(-1px);
   }
 }
 
 .user {
   display: inline-flex;
+
   align-items: center;
+
   gap: var(--space-2);
 
   color: var(--color-text-primary);
 
   font-size: var(--font-size-sm);
+
   font-weight: var(--font-weight-semibold);
+
+  text-decoration: none;
 }
 
 .avatar {
@@ -165,11 +300,13 @@
   height: 38px;
 
   display: grid;
+
   place-items: center;
 
   border-radius: var(--radius-pill);
 
   background: var(--color-brand-light);
+
   color: var(--color-brand);
 
   font-weight: var(--font-weight-bold);
@@ -205,6 +342,11 @@
   .login {
     display: none;
   }
+
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -219,5 +361,9 @@
   .brand-mark {
     width: 34px;
     height: 34px;
+  }
+
+  .actions {
+    gap: 0.5rem;
   }
 }

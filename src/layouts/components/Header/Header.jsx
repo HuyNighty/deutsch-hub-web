@@ -1,10 +1,14 @@
 import { useAuth } from "@/features/auth/context/AuthProvider";
 
-import classNames from "classnames/bind";
-import styles from "./Header.module.scss";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
+
 import { AppLink } from "@/shared/ui/components/app-link";
 import { Button } from "@/shared/ui/components/button";
+
+import { useEffect, useState } from "react";
+
+import classNames from "classnames/bind";
+import styles from "./Header.module.scss";
 
 const cx = classNames.bind(styles);
 
@@ -34,10 +38,54 @@ const navigationItems = [
 export default function Header() {
   const { isAuthenticated, user } = useAuth();
 
+  const location = useLocation();
+
+  const isHome = location.pathname === "/";
+
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    if (!isHome) {
+      setIsScrolled(false);
+      return;
+    }
+
+    function handleScroll() {
+      const hero = document.querySelector("[data-home-hero]");
+
+      if (!hero) {
+        setIsScrolled(window.scrollY > 20);
+        return;
+      }
+
+      const heroBottom = hero.getBoundingClientRect().bottom;
+
+      setIsScrolled(heroBottom <= 72);
+    }
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    window.addEventListener("resize", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, [isHome]);
+
   return (
-    <header className={cx("header")}>
+    <header
+      className={cx("header", {
+        home: isHome,
+        scrolled: isScrolled,
+      })}
+    >
       <div className={cx("container")}>
-        <Link to="/" className={cx("brand")}>
+        <Link to="/" className={cx("brand")} aria-label="DeutschHub Home">
           <span className={cx("brand-mark")}>D</span>
 
           <span className={cx("brand-name")}>
