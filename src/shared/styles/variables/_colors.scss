@@ -4,7 +4,7 @@
   --color-brand-light: #eaf1fb;
   --color-brand-soft: #f4f7fc;
 
-  --color-text-primary: #172033;
+  --color-text-primary: #2b3c61;
   --color-text-secondary: #667085;
   --color-text-muted: #98a2b3;
   --color-text-inverse: #ffffff;
@@ -23,11 +23,11 @@
   --color-hero-start: #0d2345;
   --color-hero-end: #193d70;
 
-  --color-feature-learning: #2563eb;
+  --color-feature-learning: #00964e;
   --color-feature-learning-soft: #eff6ff;
 
   --color-feature-content: #2f855a;
-  --color-feature-content-soft: #edf7f1;
+  --color-feature-content-soft: #13522c;
 
   --color-feature-study: #d95d59;
   --color-feature-study-soft: #fdf0ef;
@@ -37,6 +37,12 @@
 
   --color-overlay-dark: rgba(13, 35, 69, 0.72);
   --color-overlay-dark-soft: rgba(13, 35, 69, 0.42);
+
   --color-overlay-light: rgba(255, 255, 255, 0.72);
   --color-overlay-light-soft: rgba(255, 255, 255, 0.42);
+
+  --color-learning-overlay: rgba(255, 255, 255, 0.9);
+  --color-learning-fade: #f7f9fc;
+
+  --black: black;
 }

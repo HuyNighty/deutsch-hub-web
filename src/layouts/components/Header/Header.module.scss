@@ -1,106 +1,43 @@
 .header {
-  position: sticky;
-
-  top: 0;
-
-  z-index: 100;
-
-  width: 100%;
-
-  background: var(--color-surface);
-
-  border-bottom: 1px solid var(--color-border);
-
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    box-shadow 0.3s ease,
-    backdrop-filter 0.3s ease;
-}
-
-.header.home {
-  position: absolute;
-
+  position: fixed;
   top: 0;
   left: 0;
 
+  z-index: 1000;
+
+  width: 100%;
+
+  border-bottom: 1px solid transparent;
+
+  background: transparent;
+
+  transition:
+    background-color 280ms ease,
+    border-color 280ms ease,
+    box-shadow 280ms ease,
+    backdrop-filter 280ms ease;
+}
+
+.header.overlay {
   background: transparent;
 
   border-bottom-color: transparent;
 
   box-shadow: none;
+
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
-.header.home .brand {
-  color: #142640;
-}
+.header.solid {
+  background: rgba(255, 255, 255, 0.96);
 
-.header.home .brand-mark {
-  background: #142640;
+  border-bottom-color: var(--color-border);
 
-  color: #f4efe6;
-}
+  box-shadow: 0 4px 20px rgb(20 42 74 / 0.06);
 
-.header.home .brand-name {
-  color: #142640;
-}
-
-.header.home .brand-name span {
-  color: #806947;
-}
-
-.header.home .nav-link {
-  color: #34445a;
-}
-
-.header.home .nav-link:hover {
-  color: #142640;
-
-  background: rgba(255, 255, 255, 0.35);
-}
-
-.header.home.scrolled {
-  position: fixed;
-
-  top: 0;
-  left: 0;
-
-  background: rgba(255, 255, 255, 0.92);
-
-  border-bottom-color: rgba(20, 38, 64, 0.1);
-
-  box-shadow: 0 8px 30px rgba(20, 38, 64, 0.08);
-
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-.header.home.scrolled .brand {
-  color: var(--color-brand);
-}
-
-.header.home.scrolled .brand-mark {
-  background: var(--color-brand);
-
-  color: var(--color-surface);
-}
-
-.header.home.scrolled .brand-name {
-  color: var(--color-text-primary);
-}
-
-.header.home.scrolled .brand-name span {
-  color: var(--color-brand-hover);
-}
-
-.header.home.scrolled .nav-link {
-  color: var(--color-text-secondary);
-}
-
-.header.home.scrolled .nav-link:hover {
-  color: var(--color-text-primary);
-
-  background: var(--color-background);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .container {
@@ -152,22 +89,89 @@
   font-weight: var(--font-weight-bold);
 
   transition:
-    background-color 0.25s ease,
-    color 0.25s ease;
+    background-color 280ms ease,
+    color 280ms ease,
+    border-color 280ms ease;
 }
 
 .brand-name {
+  color: var(--color-text-primary);
+
   font-size: var(--font-size-xl);
 
   font-weight: var(--font-weight-bold);
 
   letter-spacing: -0.02em;
 
-  transition: color 0.25s ease;
+  transition: color 280ms ease;
 
   span {
     color: var(--color-brand-hover);
+
+    transition: color 280ms ease;
   }
+}
+
+.header.overlay .brand {
+  color: #142640;
+}
+
+.header.overlay .brand-mark {
+  background: #142640;
+
+  color: #ffffff;
+}
+
+.header.overlay .brand-name {
+  color: #142640;
+}
+
+.header.overlay .brand-name span {
+  color: #806947;
+}
+
+.header.overlay .nav-link {
+  color: #34445a;
+}
+
+.header.overlay .nav-link:hover {
+  color: #142640;
+
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.header.overlay .nav-link.active {
+  color: var(--color-brand);
+
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.header.solid .brand {
+  color: var(--color-brand);
+}
+
+.header.solid .brand-mark {
+  background: var(--color-brand);
+
+  color: var(--color-surface);
+}
+
+.header.solid .brand-name {
+  color: var(--color-text-primary);
+}
+
+.header.solid .brand-name span {
+  color: var(--color-brand-hover);
+}
+
+.header.solid .nav-link {
+  color: var(--color-text-secondary);
+}
+
+.header.solid .nav-link:hover {
+  color: var(--color-text-primary);
+
+  background: var(--color-background);
 }
 
 .navigation {
@@ -202,16 +206,10 @@
   transition:
     color var(--transition-fast),
     background-color var(--transition-fast);
+}
 
-  &:hover {
-    color: var(--color-text-primary);
-
-    background: var(--color-background);
-  }
-
-  &.active {
-    font-weight: var(--font-weight-semibold);
-  }
+.nav-link.active {
+  font-weight: var(--font-weight-semibold);
 }
 
 .learning.active {
@@ -271,12 +269,12 @@
   transition:
     background-color var(--transition-fast),
     transform var(--transition-fast);
+}
 
-  &:hover {
-    background: var(--color-background);
+.icon-button:hover {
+  background: var(--color-background);
 
-    transform: translateY(-1px);
-  }
+  transform: translateY(-1px);
 }
 
 .user {
@@ -336,10 +334,6 @@
   }
 
   .navigation {
-    display: none;
-  }
-
-  .login {
     display: none;
   }
 

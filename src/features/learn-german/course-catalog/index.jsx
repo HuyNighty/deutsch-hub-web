@@ -1,7 +1,11 @@
 import { CourseGrid } from "./components/CourseGrid";
 import { CourseCatalogHeader } from "./components/CourseCatalogHeader";
+import { LearningPathPreview } from "@/features/learn-german/components/LearningPathPreview";
+
 import { useCourses } from "./hooks/useCourses";
+
 import ResourceState from "@/shared/ui/state/ResourceState";
+
 import classNames from "classnames/bind";
 import styles from "./CourseCatalog.module.scss";
 
@@ -23,11 +27,15 @@ export default function CourseCatalog() {
         onRetry: refetch,
       }}
     >
-      <div className={cx("catalog")}>
+      <main className={cx("catalog")}>
         <CourseCatalogHeader />
 
-        <CourseGrid courses={courses} />
-      </div>
+        <div className={cx("content")}>
+          <LearningPathPreview />
+
+          <CourseGrid courses={courses} />
+        </div>
+      </main>
     </ResourceState>
   );
 }

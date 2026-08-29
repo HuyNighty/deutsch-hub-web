@@ -1,5 +1,42 @@
 .catalog {
-  @include container;
+  position: relative;
 
-  padding-block: var(--space-12) var(--space-16);
+  width: 100%;
+}
+
+.content {
+  position: relative;
+  z-index: 5;
+
+  width: min(100% - 3rem, 1200px);
+
+  margin-inline: auto;
+
+  margin-top: -45px;
+
+  padding-bottom: 5rem;
+}
+
+@include lg {
+  .content {
+    width: min(100% - 2.5rem, 1150px);
+
+    margin-top: -40px;
+  }
+}
+
+@include md {
+  .content {
+    width: min(100% - 2rem, 900px);
+
+    margin-top: -30px;
+  }
+}
+
+@include sm {
+  .content {
+    width: calc(100% - 1.5rem);
+
+    margin-top: -15px;
+  }
 }

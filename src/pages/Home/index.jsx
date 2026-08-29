@@ -13,7 +13,7 @@ export default function Home() {
     <div className={cx("page")}>
       <section
         className={cx("hero")}
-        data-home-hero
+        data-header-hero
         aria-labelledby="home-hero-title"
       >
         <div className={cx("hero-background")} aria-hidden="true">

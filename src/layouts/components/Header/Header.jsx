@@ -35,32 +35,32 @@ const navigationItems = [
   },
 ];
 
+const HEADER_HEIGHT = 72;
+
 export default function Header() {
   const { isAuthenticated, user } = useAuth();
 
   const location = useLocation();
 
-  const isHome = location.pathname === "/";
-
+  const [hasHero, setHasHero] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    if (!isHome) {
+    const hero = document.querySelector("[data-header-hero]");
+
+    if (!hero) {
+      setHasHero(false);
       setIsScrolled(false);
+
       return;
     }
 
+    setHasHero(true);
+
     function handleScroll() {
-      const hero = document.querySelector("[data-home-hero]");
-
-      if (!hero) {
-        setIsScrolled(window.scrollY > 20);
-        return;
-      }
-
       const heroBottom = hero.getBoundingClientRect().bottom;
 
-      setIsScrolled(heroBottom <= 72);
+      setIsScrolled(heroBottom <= HEADER_HEIGHT);
     }
 
     handleScroll();
@@ -75,13 +75,15 @@ export default function Header() {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
     };
-  }, [isHome]);
+  }, [location.pathname]);
+
+  const isOverlay = hasHero && !isScrolled;
 
   return (
     <header
       className={cx("header", {
-        home: isHome,
-        scrolled: isScrolled,
+        overlay: isOverlay,
+        solid: !isOverlay,
       })}
     >
       <div className={cx("container")}>
