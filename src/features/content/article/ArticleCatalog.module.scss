@@ -1,17 +1,31 @@
 .page {
   @include container;
 
-  padding-block: var(--space-10) var(--space-16);
+  padding-block: var(--space-12) var(--space-16);
+}
+
+.result-count {
+  margin-top: var(--space-6);
+
+  color: var(--color-text-muted);
+
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.04em;
+}
+
+.results {
+  min-height: 520px;
 }
 
 @include md {
   .page {
-    padding-block: var(--space-8) var(--space-12);
+    padding-block: var(--space-10) var(--space-12);
   }
 }
 
 @include sm {
   .page {
-    padding-block: var(--space-6) var(--space-10);
+    padding-block: var(--space-8) var(--space-10);
   }
 }

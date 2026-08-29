@@ -21,7 +21,8 @@ export default function ArticleCatalogHeader() {
 
         <p className={cx("description")}>
           Discover articles about German language, culture, society, and
-          everyday life in Germany.
+          everyday life in Germany. Search by topic or category to find what you
+          are looking for.
         </p>
 
         <div className={cx("topics")}>

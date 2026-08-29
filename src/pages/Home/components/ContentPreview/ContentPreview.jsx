@@ -4,6 +4,7 @@ import classNames from "classnames/bind";
 import styles from "./ContentPreview.module.scss";
 
 import { usePublishedArticles } from "@/features/content/article/hooks/usePublishedArticles";
+import ContentPreviewCard from "./ContentPreviewCard/ContentPreviewCard";
 
 const cx = classNames.bind(styles);
 
@@ -53,43 +54,7 @@ export default function ContentPreview() {
       {!loading && !error && articles.length > 0 && (
         <div className={cx("grid")}>
           {articles.slice(0, 3).map((article) => (
-            <article key={article.articleId} className={cx("card")}>
-              <AppLink
-                to={`/explore-germany/${article.slug}`}
-                variant="default"
-                className={cx("image-link")}
-              >
-                <div className={cx("image-placeholder")}>
-                  <span>DeutschHub</span>
-                </div>
-              </AppLink>
-
-              <div className={cx("card-body")}>
-                <span className={cx("category")}>
-                  {article.primaryCategoryId}
-                </span>
-
-                <h3 className={cx("card-title")}>
-                  <AppLink
-                    to={`/explore-germany/${article.slug}`}
-                    variant="default"
-                  >
-                    {article.title}
-                  </AppLink>
-                </h3>
-
-                <p className={cx("card-description")}>{article.summary}</p>
-
-                <AppLink
-                  to={`/explore-germany/${article.slug}`}
-                  variant="default"
-                  className={cx("read-more")}
-                >
-                  Read more
-                  <span aria-hidden="true">→</span>
-                </AppLink>
-              </div>
-            </article>
+            <ContentPreviewCard key={article.articleId} article={article} />
           ))}
         </div>
       )}
