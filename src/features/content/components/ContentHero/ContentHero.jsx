@@ -29,8 +29,14 @@ function ContentHero() {
       </div>
 
       <div className={cx("visual")} aria-hidden="true">
+        <div className={cx("visual-wash")} />
+
         <div className={cx("visual-frame")}>
-          <img src="/images/germany-hero.jpg" alt="" />
+          <img
+            src="/public/images/germany-hero.jpg"
+            alt=""
+            className={cx("image")}
+          />
         </div>
 
         <div className={cx("stamp")}>

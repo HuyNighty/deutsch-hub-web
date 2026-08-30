@@ -1,6 +1,5 @@
 import { usePublishedArticles } from "@/features/content/article/hooks/usePublishedArticles";
 
-import { ContentHeader } from "./components/ContentHeader";
 import { ContentHero } from "./components/ContentHero";
 import { ContentSidebar } from "./components/ContentSidebar";
 import { FeaturedArticle } from "./components/FeaturedArticle";
@@ -21,8 +20,6 @@ function ContentPage() {
       <ContentSidebar />
 
       <div className={styles.content}>
-        <ContentHeader />
-
         <main className={styles.main}>
           <ContentHero />
 

@@ -119,106 +119,140 @@
 .visual {
   position: relative;
   z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   min-width: 0;
-  min-height: 450px;
+  min-height: 400px;
+}
+
+.visual-wash {
+  position: absolute;
+  inset: 5% -5%;
+
+  background: radial-gradient(
+    ellipse at center,
+    rgba(214, 224, 218, 0.42),
+    transparent 68%
+  );
+
+  filter: blur(18px);
+
+  pointer-events: none;
 }
 
 .visual-frame {
-  position: absolute;
-  top: -8%;
-  right: -12%;
-  bottom: -6%;
-  left: -8%;
+  position: relative;
+  z-index: 2;
+
+  width: min(100%, 620px);
+  aspect-ratio: 1.48 / 1;
+
   overflow: hidden;
 
-  mask-image:
-    linear-gradient(
-      to right,
-      transparent 0%,
-      rgba(0, 0, 0, 0.15) 6%,
-      rgba(0, 0, 0, 0.55) 14%,
-      rgba(0, 0, 0, 0.9) 22%,
-      black 32%,
-      black 100%
-    ),
-    linear-gradient(
-      to bottom,
-      black 0%,
-      black 78%,
-      rgba(0, 0, 0, 0.7) 90%,
-      transparent 100%
-    );
+  background: var(--content-surface);
 
-  mask-composite: intersect;
+  transform: rotate(1deg);
 
-  -webkit-mask-image:
-    linear-gradient(
-      to right,
-      transparent 0%,
-      rgba(0, 0, 0, 0.15) 6%,
-      rgba(0, 0, 0, 0.55) 14%,
-      rgba(0, 0, 0, 0.9) 22%,
-      black 32%,
-      black 100%
-    ),
-    linear-gradient(
-      to bottom,
-      black 0%,
-      black 78%,
-      rgba(0, 0, 0, 0.7) 90%,
-      transparent 100%
-    );
+  box-shadow:
+    0 24px 50px rgba(47, 65, 86, 0.1),
+    0 6px 18px rgba(47, 65, 86, 0.06);
 
-  -webkit-mask-composite: source-in;
+  clip-path: polygon(1% 1%, 99% 0%, 100% 98%, 97% 100%, 2% 98%, 0% 3%);
+}
+
+.visual-frame::before {
+  position: absolute;
+  inset: 0;
+
+  z-index: 2;
+
+  background: linear-gradient(
+    90deg,
+    rgba(245, 240, 235, 0.18),
+    transparent 12%,
+    transparent 88%,
+    rgba(245, 240, 235, 0.2)
+  );
+
+  content: "";
+
+  pointer-events: none;
 }
 
 .visual-frame::after {
   position: absolute;
   inset: 0;
-  z-index: 2;
-  background:
-    linear-gradient(to left, transparent 70%, rgba(245, 240, 235, 0.18) 100%),
-    linear-gradient(to bottom, transparent 65%, var(--content-background) 100%);
+
+  z-index: 3;
+
+  background: linear-gradient(
+    180deg,
+    rgba(245, 240, 235, 0.08),
+    transparent 20%,
+    transparent 78%,
+    rgba(245, 240, 235, 0.18)
+  );
+
   content: "";
+
   pointer-events: none;
 }
 
-.visual-frame img {
+.image {
   display: block;
+
   width: 100%;
   height: 100%;
+
   object-fit: cover;
-  object-position: center 40%; /* đẩy lâu đài lên một chút cho đẹp hơn */
-  filter: saturate(0.82) contrast(0.97) sepia(0.05);
-  transform: scale(1.03);
+
+  filter: saturate(0.72) contrast(0.95) sepia(0.08);
+
+  transform: scale(1.015);
+
   transition:
     transform 900ms ease,
     filter 900ms ease;
 }
 
-.visual-frame:hover img {
-  transform: scale(1.06);
-  filter: saturate(0.95) contrast(1.02);
+.visual:hover .image {
+  transform: scale(1.035);
+
+  filter: saturate(0.8) contrast(0.98) sepia(0.05);
+}
+
+.botanical {
+  position: absolute;
+  z-index: 1;
+
+  pointer-events: none;
+
+  opacity: 0.32;
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 .stamp {
   position: absolute;
+  right: 0.5rem;
+  bottom: 1rem;
 
   z-index: 4;
 
-  right: 3%;
-  bottom: 8%;
-
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
 
-  width: 96px;
-  height: 96px;
+  width: 88px;
+  height: 88px;
 
-  border: 1px solid rgba(47, 65, 86, 0.28);
-
+  border: 1px solid rgba(47, 65, 86, 0.35);
   border-radius: 50%;
 
   background: rgba(245, 240, 235, 0.88);
@@ -226,29 +260,23 @@
   color: var(--content-primary);
 
   font-family: var(--font-family-serif);
-
-  font-size: 0.58rem;
+  font-size: 0.56rem;
   font-weight: 600;
-
-  line-height: 1.3;
 
   letter-spacing: 0.12em;
 
   text-align: center;
 
-  backdrop-filter: blur(3px);
-
   transform: rotate(-10deg);
 
+  backdrop-filter: blur(4px);
+
   span {
-    margin: 0.15rem 0;
+    margin: 0.12rem 0;
 
-    color: var(--content-secondary);
-
-    font-size: 0.7rem;
+    font-size: 0.65rem;
   }
 }
-
 .hero::before {
   position: absolute;
 
