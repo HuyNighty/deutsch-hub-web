@@ -1,0 +1,271 @@
+.sidebar {
+  position: sticky;
+  top: 0;
+
+  overflow: hidden;
+
+  background: var(--content-sidebar);
+
+  color: var(--content-sidebar-text);
+}
+
+.inner {
+  display: flex;
+
+  flex-direction: column;
+
+  padding: 1.35rem 0 1rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+
+  gap: 0.65rem;
+
+  padding-inline: 1.15rem;
+
+  color: var(--content-sidebar-text);
+
+  text-decoration: none;
+}
+
+.brand-mark {
+  display: grid;
+
+  width: 32px;
+  height: 32px;
+
+  flex-shrink: 0;
+
+  place-items: center;
+
+  border-radius: 7px;
+
+  background: var(--content-sidebar-text);
+
+  color: var(--content-sidebar);
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.brand-name {
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 0.95rem;
+  font-weight: 700;
+
+  letter-spacing: -0.01em;
+}
+
+.navigation {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.15rem;
+
+  margin-top: 3rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+
+  gap: 0.7rem;
+
+  min-height: 46px;
+
+  padding-inline: 1.15rem;
+
+  border-left: 3px solid transparent;
+
+  color: var(--content-sidebar-muted);
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 0.76rem;
+
+  text-decoration: none;
+
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.055);
+
+    color: var(--content-sidebar-text);
+  }
+}
+
+.nav-item.active {
+  border-left-color: var(--content-secondary);
+
+  background: rgba(255, 255, 255, 0.075);
+
+  color: var(--content-sidebar-text);
+}
+
+.nav-icon {
+  display: grid;
+
+  width: 20px;
+
+  flex-shrink: 0;
+
+  place-items: center;
+
+  font-size: 0.85rem;
+
+  line-height: 1;
+}
+
+.nav-label {
+  white-space: nowrap;
+}
+
+.daily {
+  position: relative;
+
+  margin: auto 0.9rem 0;
+
+  padding: 1.25rem 1rem;
+
+  border: 1px solid rgba(255, 255, 255, 0.16);
+
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.045),
+    rgba(255, 255, 255, 0.015)
+  );
+
+  &::before {
+    position: absolute;
+
+    inset: 0.45rem;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    content: "";
+
+    pointer-events: none;
+  }
+}
+
+.daily-eyebrow {
+  position: relative;
+
+  display: block;
+
+  color: var(--content-sidebar-muted);
+
+  font-size: 0.5rem;
+  font-weight: 700;
+
+  letter-spacing: 0.14em;
+}
+
+.daily-title {
+  position: relative;
+
+  margin: 0.7rem 0 0;
+
+  color: var(--content-sidebar-text);
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 1.05rem;
+  font-weight: 400;
+
+  line-height: 1.3;
+}
+
+.daily-description {
+  position: relative;
+
+  margin: 0.75rem 0 0;
+
+  color: var(--content-sidebar-muted);
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 0.67rem;
+
+  line-height: 1.55;
+}
+
+.daily-link {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 0.35rem;
+
+  margin-top: 1rem;
+
+  color: var(--content-sidebar-text);
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 0.68rem;
+
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+@include md {
+  .brand {
+    justify-content: center;
+
+    padding-inline: 0;
+  }
+
+  .brand-name {
+    display: none;
+  }
+
+  .navigation {
+    margin-top: 2.5rem;
+  }
+
+  .nav-item {
+    justify-content: center;
+
+    padding-inline: 0;
+  }
+
+  .nav-label {
+    display: none;
+  }
+
+  .daily {
+    display: none;
+  }
+}
+
+@include sm {
+  .sidebar {
+    position: relative;
+
+    height: auto;
+  }
+
+  .inner {
+    height: auto;
+
+    padding: 0.8rem 1rem;
+  }
+
+  .navigation {
+    display: none;
+  }
+}

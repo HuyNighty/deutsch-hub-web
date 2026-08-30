@@ -1,9 +1,9 @@
-import ArticleCatalog from "@/features/content/article";
+import ContentPage from "@/features/content";
 
 function ExploreGermany() {
   return (
     <>
-      <ArticleCatalog />
+      <ContentPage />
     </>
   );
 }

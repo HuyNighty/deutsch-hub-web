@@ -1,0 +1,318 @@
+.hero {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(420px, 1.05fr);
+  align-items: center;
+
+  min-height: 520px;
+
+  padding: 4.5rem 3.5rem;
+
+  overflow: hidden;
+
+  background: var(--content-background);
+}
+
+.copy {
+  position: relative;
+  z-index: 2;
+
+  max-width: 620px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+
+  margin-bottom: 1.5rem;
+
+  color: var(--content-secondary);
+
+  font-size: 0.7rem;
+  font-weight: 700;
+
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+
+  &::before {
+    width: 34px;
+    height: 1px;
+
+    background: currentColor;
+
+    content: "";
+  }
+}
+
+.title {
+  margin: 0;
+
+  color: var(--content-primary);
+
+  font-family: var(--font-family-serif);
+
+  font-size: clamp(3.2rem, 5vw, 5.4rem);
+  font-weight: 500;
+
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+
+  span {
+    color: var(--content-secondary);
+  }
+}
+
+.ornament {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  width: 190px;
+
+  margin: 2rem 0 1.5rem;
+
+  color: var(--content-secondary);
+
+  span:first-child,
+  span:last-child {
+    flex: 1;
+
+    height: 1px;
+
+    background: currentColor;
+
+    opacity: 0.5;
+  }
+
+  span:nth-child(2) {
+    font-family: var(--font-family-serif);
+
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+}
+
+.description {
+  max-width: 500px;
+
+  margin: 0;
+
+  color: var(--content-text);
+
+  font-family: var(--font-family-serif);
+
+  font-size: 1.05rem;
+
+  line-height: 1.75;
+}
+
+.visual {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 420px;
+}
+
+.visual-frame {
+  position: relative;
+
+  width: min(100%, 560px);
+  height: 390px;
+
+  overflow: hidden;
+
+  border: 1px solid var(--content-border);
+
+  background: var(--content-white);
+
+  box-shadow:
+    0 24px 50px rgba(47, 65, 86, 0.12),
+    0 4px 12px rgba(47, 65, 86, 0.06);
+
+  transform: rotate(1.2deg);
+
+  &::after {
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+      135deg,
+      rgba(245, 240, 235, 0.08),
+      rgba(47, 65, 86, 0.12)
+    );
+
+    content: "";
+
+    pointer-events: none;
+  }
+
+  img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    filter: saturate(0.72) contrast(0.95) sepia(0.08);
+  }
+}
+
+.stamp {
+  position: absolute;
+
+  right: 0;
+  bottom: 1.25rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 92px;
+  height: 92px;
+
+  border: 1px solid rgba(47, 65, 86, 0.4);
+  border-radius: 50%;
+
+  background: rgba(245, 240, 235, 0.88);
+
+  color: var(--content-primary);
+
+  font-family: var(--font-family-serif);
+  font-size: 0.58rem;
+  font-weight: 600;
+
+  letter-spacing: 0.12em;
+
+  text-align: center;
+
+  transform: rotate(-12deg);
+
+  backdrop-filter: blur(4px);
+
+  span {
+    margin: 0.15rem 0;
+
+    font-size: 0.7rem;
+  }
+}
+
+.hero::before {
+  position: absolute;
+  inset: 0;
+
+  z-index: 0;
+
+  background:
+    radial-gradient(
+      circle at 12% 20%,
+      rgba(200, 217, 230, 0.32),
+      transparent 30%
+    ),
+    radial-gradient(circle at 85% 80%, rgba(86, 124, 141, 0.1), transparent 28%);
+
+  content: "";
+
+  pointer-events: none;
+}
+
+.hero::after {
+  position: absolute;
+
+  right: 7%;
+  bottom: -110px;
+
+  width: 260px;
+  height: 260px;
+
+  border: 1px solid rgba(86, 124, 141, 0.13);
+  border-radius: 50%;
+
+  content: "";
+
+  pointer-events: none;
+}
+
+@include lg {
+  .hero {
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
+
+    padding-inline: 2.5rem;
+  }
+
+  .visual-frame {
+    height: 350px;
+  }
+}
+
+@include md {
+  .hero {
+    grid-template-columns: 1fr;
+
+    gap: 3rem;
+
+    min-height: auto;
+
+    padding: 3.5rem 2rem;
+  }
+
+  .copy {
+    max-width: 700px;
+  }
+
+  .title {
+    font-size: clamp(3rem, 9vw, 4.5rem);
+  }
+
+  .visual {
+    min-height: 320px;
+  }
+
+  .visual-frame {
+    width: min(100%, 620px);
+    height: 340px;
+  }
+}
+
+@include sm {
+  .hero {
+    gap: 2rem;
+
+    padding: 2.75rem 1.25rem;
+  }
+
+  .title {
+    font-size: clamp(2.6rem, 13vw, 3.5rem);
+  }
+
+  .description {
+    font-size: 0.95rem;
+  }
+
+  .visual {
+    min-height: 250px;
+  }
+
+  .visual-frame {
+    height: 280px;
+
+    transform: rotate(0.8deg);
+  }
+
+  .stamp {
+    right: -0.25rem;
+    bottom: 0.5rem;
+
+    width: 72px;
+    height: 72px;
+
+    font-size: 0.48rem;
+  }
+}

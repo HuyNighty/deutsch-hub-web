@@ -1,0 +1,57 @@
+.page {
+  display: grid;
+
+  grid-template-columns: 184px minmax(0, 1fr);
+
+  min-height: 100%;
+
+  background: var(--content-background);
+}
+
+.content {
+  min-width: 0;
+
+  width: 100%;
+}
+
+.main {
+  width: min(100%, 1440px);
+
+  min-width: 0;
+
+  margin-inline: auto;
+
+  padding: 0 3rem 5rem;
+}
+
+@include lg {
+  .page {
+    grid-template-columns: 176px minmax(0, 1fr);
+  }
+
+  .main {
+    padding-inline: 2.5rem;
+  }
+}
+
+@include md {
+  .page {
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+
+  .main {
+    width: 100%;
+    padding-inline: 1.5rem;
+  }
+}
+
+@include sm {
+  .page {
+    display: block;
+  }
+
+  .main {
+    width: 100%;
+    padding-inline: 1rem;
+  }
+}

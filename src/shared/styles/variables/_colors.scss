@@ -44,5 +44,30 @@
   --color-learning-overlay: rgba(255, 255, 255, 0.9);
   --color-learning-fade: #f7f9fc;
 
+  --color-content-navy: #2f4156;
+  --color-content-teal: #567c8d;
+  --color-content-sky: #c8d9e6;
+  --color-content-beige: #f5f0eb;
+  --color-content-white: #ffffff;
+
+  --content-background: var(--color-content-beige);
+  --content-surface: var(--color-content-white);
+
+  --content-primary: var(--color-content-navy);
+  --content-secondary: var(--color-content-teal);
+
+  --content-accent: var(--color-content-teal);
+
+  --content-soft: var(--color-content-sky);
+
+  --content-border: rgba(47, 65, 86, 0.14);
+  --content-border-strong: rgba(47, 65, 86, 0.24);
+
+  --content-sidebar: var(--color-content-navy);
+  --content-sidebar-text: var(--color-content-white);
+  --content-sidebar-muted: rgba(255, 255, 255, 0.68);
+
+  --content-overlay: rgba(47, 65, 86, 0.08);
+
   --black: black;
 }
