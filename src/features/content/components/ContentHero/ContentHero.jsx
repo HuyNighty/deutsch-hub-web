@@ -30,7 +30,7 @@ function ContentHero() {
 
       <div className={cx("visual")} aria-hidden="true">
         <div className={cx("visual-frame")}>
-          <img src="/public/images/germany-hero.jpg" alt="" />
+          <img src="/images/germany-hero.jpg" alt="" />
         </div>
 
         <div className={cx("stamp")}>
