@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-
 import classNames from "classnames/bind";
 
 import ResourceState from "@/shared/ui/state/ResourceState";
@@ -32,6 +31,7 @@ export default function ArticleDetail() {
           <header className={cx("header")}>
             <div className={cx("category")}>
               <span className={cx("category-line")} />
+
               <span>{article.primaryCategory?.name}</span>
             </div>
 
@@ -41,21 +41,23 @@ export default function ArticleDetail() {
               <p className={cx("summary")}>{article.summary}</p>
             )}
 
-            <div className={cx("meta")}>
-              <time dateTime={article.publishedAt}>
-                {new Date(article.publishedAt).toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </time>
+            {article.publishedAt && (
+              <div className={cx("meta")}>
+                <time dateTime={article.publishedAt}>
+                  {new Date(article.publishedAt).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </time>
 
-              <span className={cx("separator")} aria-hidden="true">
-                /
-              </span>
+                <span className={cx("separator")} aria-hidden="true">
+                  /
+                </span>
 
-              <span>German Learning</span>
-            </div>
+                <span>DeutschHub</span>
+              </div>
+            )}
           </header>
 
           {article.coverMediaId && (
@@ -67,22 +69,32 @@ export default function ArticleDetail() {
             </div>
           )}
 
-          <article className={cx("article")}>
-            <div className={cx("body")}>
-              {article.body
-                ?.split(/\n\s*\n/)
-                .filter(Boolean)
-                .map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
-                ))}
-            </div>
+          <div className={cx("content-layout")}>
+            <article className={cx("article")}>
+              {article.body && (
+                <div className={cx("body")}>
+                  {article.body
+                    .split(/\n\s*\n/)
+                    .filter(Boolean)
+                    .map((paragraph, index) => (
+                      <p key={index}>{paragraph}</p>
+                    ))}
+                </div>
+              )}
+            </article>
 
-            <div className={cx("article-footer")}>
-              <ArticleTopics topics={article.topics} />
+            {(article.topics?.length > 0 || article.sources?.length > 0) && (
+              <aside className={cx("sidebar")}>
+                {article.topics?.length > 0 && (
+                  <ArticleTopics topics={article.topics} />
+                )}
 
-              <ArticleSources sources={article.sources} />
-            </div>
-          </article>
+                {article.sources?.length > 0 && (
+                  <ArticleSources sources={article.sources} />
+                )}
+              </aside>
+            )}
+          </div>
         </main>
       )}
     </ResourceState>

@@ -11,6 +11,9 @@ export default defineConfig({
     },
   },
   css: {
+    modules: {
+      generateScopedName: "[name]_[local]_[hash:base64:5]",
+    },
     preprocessorOptions: {
       scss: {
         additionalData: `

@@ -10,7 +10,7 @@ const topics = [
     number: "01",
     title: "Ngôn ngữ",
     description: "Tiếng Đức, từ vựng và cách giao tiếp.",
-    image: "/images/topics/language.jpg",
+    image: "public/images/learning-german.png",
   },
   {
     id: "culture",
