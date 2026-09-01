@@ -65,6 +65,10 @@ async function refreshAccessToken() {
 
 function attachAuthInterceptor(client) {
   client.interceptors.request.use((config) => {
+    if (config.requiresAuth === false) {
+      return config;
+    }
+
     const accessToken = getAccessToken();
 
     if (accessToken) {
@@ -82,6 +86,7 @@ function attachAuthInterceptor(client) {
 
       const shouldRefresh =
         error.response?.status === 401 &&
+        originalRequest?.requiresAuth !== false &&
         !originalRequest?._retry &&
         !isAuthEndpoint(originalRequest?.url);
 

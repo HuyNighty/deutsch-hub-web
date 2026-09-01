@@ -36,7 +36,6 @@ export default function ArticleCatalog() {
   function handleCategoryChange(value) {
     setCategoryId(value);
 
-    // Category thay đổi thì topic cũ không còn hợp lệ.
     setTopicId("");
   }
 

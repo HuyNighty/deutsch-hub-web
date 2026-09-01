@@ -1,12 +1,48 @@
 import { AppLink } from "@/shared/ui/components/app-link";
 import { ArticlePreview } from "../ArticlePreview";
 
+import { usePublishedArticles } from "@/features/content/article/hooks/usePublishedArticles";
+
 import classNames from "classnames/bind";
 import styles from "./ContentSection.module.scss";
 
 const cx = classNames.bind(styles);
 
-function ContentSection({ sections = [] }) {
+function ContentSection() {
+  const { articles, loading, error } = usePublishedArticles({
+    page: 0,
+    size: 20,
+  });
+
+  if (loading || error || !articles.length) {
+    return null;
+  }
+
+  const sectionsMap = new Map();
+
+  articles.forEach((article) => {
+    const category = article.primaryCategory;
+
+    if (!category) {
+      return;
+    }
+
+    if (!sectionsMap.has(category.id)) {
+      sectionsMap.set(category.id, {
+        id: category.id,
+        name: category.name,
+        articles: [],
+      });
+    }
+
+    sectionsMap.get(category.id).articles.push(article);
+  });
+
+  const sections = Array.from(sectionsMap.values()).map((section, index) => ({
+    ...section,
+    number: String(index + 1).padStart(2, "0"),
+  }));
+
   if (!sections.length) {
     return null;
   }
@@ -33,10 +69,6 @@ function ContentSection({ sections = [] }) {
 
               <h3 className={cx("category-title")}>{section.name}</h3>
 
-              <p className={cx("category-description")}>
-                {section.description}
-              </p>
-
               <AppLink
                 to={`/explore-germany/category/${section.id}`}
                 variant="default"
@@ -49,7 +81,7 @@ function ContentSection({ sections = [] }) {
 
             <div className={cx("articles")}>
               {section.articles.map((article) => (
-                <ArticlePreview key={article.id} article={article} />
+                <ArticlePreview key={article.articleId} article={article} />
               ))}
             </div>
           </article>
