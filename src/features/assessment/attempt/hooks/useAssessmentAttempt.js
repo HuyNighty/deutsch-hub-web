@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { ApiError } from "@/shared/api/api-error";
-import { getAssessmentAttempt, getAttemptDefinition } from "../attempt.service";
+import { getAssessmentAttempt } from "../attempt.service";
+import { useAttemptDefinition } from "./useAttemptDefinition";
 
 export function useAssessmentAttempt(assessmentAttemptId) {
   const attempt = useQuery({
@@ -8,11 +9,7 @@ export function useAssessmentAttempt(assessmentAttemptId) {
     queryFn: () => getAssessmentAttempt(assessmentAttemptId),
     enabled: Boolean(assessmentAttemptId),
   });
-  const definition = useQuery({
-    queryKey: ["learner-assessment-attempt-definition", assessmentAttemptId],
-    queryFn: () => getAttemptDefinition(assessmentAttemptId),
-    enabled: Boolean(assessmentAttemptId),
-  });
+  const definition = useAttemptDefinition(assessmentAttemptId);
   const mismatch = attempt.data && definition.data &&
     attempt.data.assessmentId !== definition.data.assessmentId;
   const error = attempt.error || definition.error || (mismatch

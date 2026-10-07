@@ -37,13 +37,14 @@ describe("owned Assessment Attempt runtime", () => {
       .toEqual(["Writing", "Listening", "Reading", "Speaking"]);
     expect(within(region).getAllByText("Execution mode: Independent")).toHaveLength(2);
     expect(within(region).getAllByText("Execution mode: Sequential")).toHaveLength(2);
-    expect(within(region).getAllByRole("listitem").map((el) => el.textContent))
+    expect(within(region).getAllByRole("listitem").map((el) => el.querySelector("span").textContent))
       .toEqual(["Task 4", "Task 2", "Task 1", "Task 3", "Task 5"]);
     const identities = [ATTEMPT_ID, ASSESSMENT_ID, ...attempt.taskAttempts.flatMap((task) => [task.taskId, task.quizAttemptId]),
       ...definition.components.flatMap((component) => [component.componentId,
         ...component.tasks.flatMap((task) => [task.taskId, task.quizRevisionId])])];
     for (const identity of identities) expect(region.textContent).not.toContain(identity);
-    expect(within(region).queryByRole("button")).not.toBeInTheDocument();
+    expect(within(region).getAllByRole("button", { name: "Start task" })).toHaveLength(4);
+    expect(within(region).getByRole("link", { name: "Continue task" })).toBeInTheDocument();
     expect(http.mock.calls.map(([config]) => config.url)).toEqual([attemptUrl, `${attemptUrl}/assessment`]);
     expect(client.getQueryData(["learner-assessment-attempt", ATTEMPT_ID])).toEqual(attempt);
     expect(client.getQueryData(["learner-assessment-attempt-definition", ATTEMPT_ID])).toEqual(definition);

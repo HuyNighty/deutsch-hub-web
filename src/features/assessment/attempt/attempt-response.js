@@ -5,7 +5,7 @@ const STATUSES = ["CREATED", "IN_PROGRESS", "COMPLETED", "EXPIRED", "CANCELLED"]
 const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
 const isNonblank = (value) => typeof value === "string" && value.trim().length > 0;
 // Backend Instants include a time and zone; date-only values are not timestamps.
-function isTimestamp(value) {
+export function isTimestamp(value) {
   if (!isNonblank(value)) return false;
   const parts = /^(\d{4})-(\d{2})-(\d{2})T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.exec(value);
   if (!parts || !Number.isFinite(Date.parse(value))) return false;
@@ -15,7 +15,7 @@ function isTimestamp(value) {
   // Date.parse otherwise normalizes impossible calendar dates such as February 30.
   return day >= 1 && day <= days[month - 1];
 }
-const isNullableTimestamp = (value) => value === null || isTimestamp(value);
+export const isNullableTimestamp = (value) => value === null || isTimestamp(value);
 
 function invalid(kind) {
   throw new ApiError({ message: `The server returned an invalid ${kind} response.` });

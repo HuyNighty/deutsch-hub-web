@@ -3,6 +3,7 @@ import classNames from "classnames/bind";
 import ResourceState from "@/shared/ui/state/ResourceState";
 import { AppLink } from "@/shared/ui/components/app-link";
 import AssessmentStructure from "../shared/AssessmentStructure";
+import TaskEntry from "../task/TaskEntry";
 import { assessmentTitle } from "../shared/assessment-presentation";
 import { useAssessmentAttempt } from "./hooks/useAssessmentAttempt";
 import { attemptStatusLabels, formatAttemptTimestamp } from "./attempt-presentation";
@@ -36,7 +37,13 @@ export default function AssessmentAttempt() {
               <p className={cx("metadata")}>Started: <AttemptTime value={attempt.startedAt} fallback="Not started" /></p>
               <p className={cx("metadata")}>Deadline: <AttemptTime value={attempt.expiresAt} fallback="No time limit" /></p>
             </header>
-            <AssessmentStructure components={definition.components} />
+            <AssessmentStructure components={definition.components} renderTaskAction={attempt.status === "IN_PROGRESS"
+              ? (task) => <TaskEntry
+                key={`${assessmentAttemptId}:${task.taskId}`}
+                assessmentAttemptId={assessmentAttemptId}
+                taskId={task.taskId}
+                bound={attempt.taskAttempts.some((binding) => binding.taskId === task.taskId)}
+              /> : undefined} />
           </>
         )}
       </ResourceState>

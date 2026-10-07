@@ -4,7 +4,7 @@ import styles from "./Assessment.module.scss";
 
 const cx = classNames.bind(styles);
 
-export default function AssessmentStructure({ components }) {
+export default function AssessmentStructure({ components, renderTaskAction }) {
   return (
     <div className={cx("components")}>
       {components.map((component) => (
@@ -12,7 +12,12 @@ export default function AssessmentStructure({ components }) {
           <h2 className={cx("cardTitle")}>{skillLabels[component.skillDimension]}</h2>
           <p className={cx("metadata")}>Execution mode: {executionModeLabels[component.executionMode]}</p>
           <ul className={cx("tasks")}>
-            {component.tasks.map((task) => <li key={task.taskId}>Task {task.order}</li>)}
+            {component.tasks.map((task) => (
+              <li key={task.taskId}>
+                <span>Task {task.order}</span>
+                {renderTaskAction?.(task)}
+              </li>
+            ))}
           </ul>
         </section>
       ))}
