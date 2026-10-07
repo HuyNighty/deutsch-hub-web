@@ -114,6 +114,10 @@ export default function Header() {
         <div className={cx("actions")}>
           {isAuthenticated ? (
             <>
+              <AppLink to="/my-learning" variant="outline">
+                My Learning
+              </AppLink>
+
               <Button
                 type="button"
                 className={cx("icon-button")}
