@@ -1,5 +1,6 @@
 import { completeLesson } from "../services/lesson-complete.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { learningJourneyKey } from "@/features/assessment/attempt/hooks/useLearningJourney";
 
 function useCompleteLesson() {
   const queryClient = useQueryClient();
@@ -11,6 +12,7 @@ function useCompleteLesson() {
         queryKey: ["my-courses"],
       });
       queryClient.invalidateQueries({ queryKey: ["my-courses", courseId] });
+      queryClient.invalidateQueries({ queryKey: learningJourneyKey, exact: true, refetchType: "none" });
     },
     onError(error) {
       console.log(error);

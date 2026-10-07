@@ -4,6 +4,7 @@ import { useAuth } from "@/features/auth/context/AuthProvider";
 
 import { enrollCourse } from "../services/enroll.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { learningJourneyKey } from "@/features/assessment/attempt/hooks/useLearningJourney";
 
 export function useEnrollAction(courseId) {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export function useEnrollAction(courseId) {
     mutationFn: enrollCourse,
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ["my-courses"] });
+      queryClient.invalidateQueries({ queryKey: learningJourneyKey, exact: true, refetchType: "none" });
       navigate(`/my-learning/courses/${courseId}`, { replace: true });
     },
     onError(error) {
