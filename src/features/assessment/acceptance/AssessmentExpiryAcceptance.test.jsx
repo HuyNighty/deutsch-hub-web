@@ -1,0 +1,46 @@
+import { describe, it, expect } from "vitest";
+import { screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { mountAssessmentApp } from "../test/assessment-app";
+import { attemptPath, attemptUrl } from "../test/attempt-fixtures";
+import { FINAL_URL } from "../test/final-submit-fixtures";
+import { RESULT_PATH, RESULT_URL, RESULT_KEY, COMPETENCY_KEY, competency } from "../test/result-fixtures";
+import { journeyServer, PARENT_KEY, DEFINITION_KEY, requestSequence, writes, expectOfficialResult } from "./journey-fixtures";
+
+describe("Expired Assessment integrated settlement", () => {
+  it("keeps Result 404 read-only until explicit finalization and preserves canonical EXPIRED", async () => {
+    const user = userEvent.setup();
+    const server = journeyServer({ active: true, expired: true });
+    const { client, router, auth } = mountAssessmentApp(attemptPath);
+    await screen.findByText("Status: Expired");
+    expect(screen.getByRole("button", { name: "Finalize expired assessment" })).toBeEnabled();
+    await user.click(screen.getByRole("link", { name: "View result" }));
+    await screen.findByText("Assessment result is not available yet.");
+    await within(screen.getByRole("region", { name: "Current German level" })).findByText("A2");
+    expect(router.state.location.pathname).toBe(RESULT_PATH);
+    expect(auth.current.status).toBe("AUTHENTICATED");
+    expect(writes(server.http)).toEqual([]);
+    expect(server.http.mock.calls.filter(([config]) => config.url === RESULT_URL)).toHaveLength(1);
+    expect(server.state.settled).toBe(false);
+    await user.click(screen.getByRole("link", { name: "Back to assessment" }));
+    await screen.findByText("Status: Expired");
+    expect(writes(server.http)).toEqual([]);
+    const before = server.http.mock.calls.length;
+    await server.clickWrite(user, screen.getByRole("button", { name: "Finalize expired assessment" }), "post", FINAL_URL);
+    await screen.findByText("Assessment finalized successfully.");
+    expect(requestSequence(server.http).slice(before)).toEqual([["post", FINAL_URL], ["get", attemptUrl]]);
+    expect(router.state.location.pathname).toBe(attemptPath);
+    expect(screen.getByText("Status: Expired")).toBeInTheDocument();
+    expect(client.getQueryData(PARENT_KEY).status).toBe("EXPIRED");
+    expect(client.getQueryState(RESULT_KEY).isInvalidated).toBe(true);
+    expect(client.getQueryState(COMPETENCY_KEY).isInvalidated).toBe(true);
+    expect(client.getQueryState(DEFINITION_KEY).isInvalidated).toBe(false);
+    expect(client.getQueryData(COMPETENCY_KEY)).toEqual(competency());
+    await user.click(screen.getByRole("link", { name: "View result" }));
+    await expectOfficialResult(server, client);
+    expect(router.state.location.pathname).toBe(RESULT_PATH);
+    expect(server.http.mock.calls.filter(([config]) => config.url === RESULT_URL)).toHaveLength(2);
+    expect(writes(server.http)).toEqual([["post", FINAL_URL]]);
+    expect(client.getQueryData(PARENT_KEY).status).toBe("EXPIRED");
+  });
+});
