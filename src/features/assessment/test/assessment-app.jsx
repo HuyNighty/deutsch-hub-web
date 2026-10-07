@@ -11,10 +11,13 @@ let taskSubmitAllowed = false;
 let finalSubmitAllowed = false;
 let resultReadsAllowed = false;
 let courseDetailReadsAllowed = false;
+let lessonReadsAllowed = false;
+let lessonCompleteAllowed = false;
 
 export function assessmentHttp(handler, {
   allowStart = false, allowTaskExecution = false, allowTaskSubmit = false, allowFinalSubmit = false, allowResultReads = false,
   allowCourseDetailReads = false,
+  allowLessonReads = false, allowLessonComplete = false,
 } = {}) {
   requests = [];
   startAllowed = allowStart;
@@ -23,6 +26,8 @@ export function assessmentHttp(handler, {
   finalSubmitAllowed = allowFinalSubmit;
   resultReadsAllowed = allowResultReads;
   courseDetailReadsAllowed = allowCourseDetailReads;
+  lessonReadsAllowed = allowLessonReads;
+  lessonCompleteAllowed = allowLessonComplete;
   const http = vi.fn((config) => {
     requests.push(config);
     return handler(config);
@@ -51,7 +56,17 @@ afterEach(() => {
     const isSubmit = /^\/me\/assessment-attempts\/[^/]+\/tasks\/[^/]+\/quiz-attempt\/submit$/.test(config.url);
     const isFinalSubmit = /^\/me\/assessment-attempts\/[^/]+\/submit$/.test(config.url);
     const isResultRead = /^\/me\/assessment-attempts\/[^/]+\/result$/.test(config.url) || config.url === "/me/competency";
-    if (/^\/me\/courses\/[^/]+$/.test(config.url)) {
+    const isLesson = /^\/me\/courses\/[^/]+\/lessons\/[^/]+$/.test(config.url);
+    const isLessonComplete = /^\/me\/courses\/[^/]+\/lessons\/[^/]+\/complete$/.test(config.url);
+    if (isLessonComplete) {
+      expect(lessonCompleteAllowed).toBe(true);
+      expect(config.method).toBe("post");
+      expect(Object.keys(JSON.parse(config.data))).toEqual(["studyMinutes"]);
+    } else if (isLesson) {
+      expect(lessonReadsAllowed).toBe(true);
+      expect(config.method).toBe("get");
+      expect(config.data).toBeUndefined();
+    } else if (/^\/me\/courses\/[^/]+$/.test(config.url)) {
       expect(courseDetailReadsAllowed).toBe(true);
       expect(config.method).toBe("get");
       expect(config.data).toBeUndefined();
@@ -87,7 +102,7 @@ afterEach(() => {
     }
     expect(config.baseURL).toBe("http://localhost:8080/deutsch-hub/api/v1");
     expect(config.headers.Authorization).toMatch(/^Bearer /);
-    expect(config.url).toMatch(/^\/me\/(?:courses(?:\/[^/]+)?|competency|assessments(?:\/[^/]+(?:\/attempts)?)?|assessment-attempts\/[^/]+(?:\/assessment|\/submit|\/result|\/tasks\/[^/]+\/quiz-attempt(?:\/answers\/[^/]+|\/submit)?)?|learning-journey|learning-direction|next-activity)$/);
+    expect(config.url).toMatch(/^\/me\/(?:courses(?:\/[^/]+(?:\/lessons\/[^/]+(?:\/complete)?)?)?|competency|assessments(?:\/[^/]+(?:\/attempts)?)?|assessment-attempts\/[^/]+(?:\/assessment|\/submit|\/result|\/tasks\/[^/]+\/quiz-attempt(?:\/answers\/[^/]+|\/submit)?)?|learning-journey|learning-direction|next-activity)$/);
   }
   requests = [];
   startAllowed = false;
@@ -96,4 +111,6 @@ afterEach(() => {
   finalSubmitAllowed = false;
   resultReadsAllowed = false;
   courseDetailReadsAllowed = false;
+  lessonReadsAllowed = false;
+  lessonCompleteAllowed = false;
 });
