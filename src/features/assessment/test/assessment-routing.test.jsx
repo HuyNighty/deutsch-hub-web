@@ -3,7 +3,7 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { loginResult } from "@/test/session-fixtures";
 import { ok } from "@/test/http";
-import { assessmentHttp, mountAssessmentApp } from "./assessment-app";
+import { emptyJourneyHttp as assessmentHttp, mountAssessmentApp } from "./assessment-app";
 import { assessmentPage, assessmentDetail, ASSESSMENT_ID } from "./fixtures";
 
 describe("Assessment discovery protected routing", () => {
@@ -30,6 +30,7 @@ describe("Assessment discovery protected routing", () => {
     expect(router.state.location.pathname).toBe(path);
     expect(http.mock.calls.map(([config]) => config.url)).toEqual([
       "/auth/login", path.replace("/my-learning", "/me"),
+      ...(path === "/my-learning/assessments" ? [] : ["/me/learning-journey"]),
     ]);
   });
 });

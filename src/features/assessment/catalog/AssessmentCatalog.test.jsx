@@ -3,7 +3,7 @@ import { act, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ok, fail, deferred } from "@/test/http";
 import { assessmentPage, summary, ASSESSMENT_ID, assessmentDetail } from "../test/fixtures";
-import { assessmentHttp, mountAssessmentApp } from "../test/assessment-app";
+import { emptyJourneyHttp as assessmentHttp, mountAssessmentApp } from "../test/assessment-app";
 
 describe("learner Assessment catalog", () => {
   it("uses the protected production route, exact v1 read and canonical key with complete metadata", async () => {
@@ -118,6 +118,6 @@ describe("learner Assessment catalog", () => {
     expect(client.getQueryData(["learner-assessments", { page: 0, size: 20 }])).toEqual(page);
     expect(client.getQueryData(["learner-assessment", ASSESSMENT_ID])).toEqual(assessmentDetail());
     const detail = screen.getByRole("region", { name: "Assessment detail" });
-    expect(within(detail).queryByRole("button", { name: /start|resume|continue/i })).not.toBeInTheDocument();
+    expect(await within(detail).findByRole("button", { name: "Start Assessment" })).toBeInTheDocument();
   });
 });

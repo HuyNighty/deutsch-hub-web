@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import userEvent from "@testing-library/user-event";
 import { deferred, fail, ok } from "@/test/http";
 import { assessmentPage, assessmentDetail, ASSESSMENT_ID } from "../test/fixtures";
-import { assessmentHttp, mountAssessmentApp } from "../test/assessment-app";
+import { emptyJourneyHttp as assessmentHttp, mountAssessmentApp } from "../test/assessment-app";
 import { useLearnerAssessment } from "./hooks/useLearnerAssessment";
 
 describe("learner Assessment detail", () => {
@@ -13,7 +13,8 @@ describe("learner Assessment detail", () => {
     const http = assessmentHttp((config) => ok(config, detail));
     const { client } = mountAssessmentApp(`/my-learning/assessments/${ASSESSMENT_ID}`);
     await screen.findByRole("heading", { name: detail.title });
-    expect(http).toHaveBeenCalledTimes(1);
+    await screen.findByRole("button", { name: "Start Assessment" });
+    expect(http).toHaveBeenCalledTimes(2);
     expect(http.mock.calls[0][0]).toMatchObject({ method: "get", url: `/me/assessments/${ASSESSMENT_ID}` });
     expect(client.getQueryData(["learner-assessment", ASSESSMENT_ID])).toEqual(detail);
     expect(client.getQueryData(["learner-assessments", { page: 0, size: 20 }])).toBeUndefined();
@@ -30,7 +31,7 @@ describe("learner Assessment detail", () => {
       component.componentId, ...component.tasks.flatMap((task) => [task.taskId, task.quizRevisionId]),
     ])];
     for (const identity of identities) expect(region.textContent).not.toContain(identity);
-    expect(within(region).queryByRole("button")).not.toBeInTheDocument();
+    expect(within(region).getByRole("button", { name: "Start Assessment" })).toBeInTheDocument();
     expect(region.textContent).not.toMatch(/recommended|too difficult|unlocked|locked|ready|coming soon/i);
   });
 

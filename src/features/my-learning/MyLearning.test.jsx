@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { act, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { deferred, fail, ok } from "@/test/http";
-import { assessmentHttp, mountAssessmentApp } from "@/features/assessment/test/assessment-app";
+import { emptyJourneyHttp as assessmentHttp, mountAssessmentApp } from "@/features/assessment/test/assessment-app";
 import { assessmentPage } from "@/features/assessment/test/fixtures";
 
 describe("My Learning Assessment entry", () => {
@@ -28,7 +28,9 @@ describe("My Learning Assessment entry", () => {
     await user.click(entry);
     await screen.findByRole("link", { name: "View assessment" });
     expect(router.state.location.pathname).toBe("/my-learning/assessments");
-    expect(http.mock.calls.map(([config]) => config.url)).toEqual(["/me/courses", "/me/assessments"]);
+    expect(http.mock.calls.map(([config]) => config.url).sort()).toEqual(
+      ["/me/courses", "/me/learning-journey", "/me/assessments"].sort(),
+    );
   });
 
   it("retains the entry while the Course list is loading and when that read fails", async () => {

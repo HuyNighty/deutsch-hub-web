@@ -1,18 +1,27 @@
 import { afterEach, expect, vi } from "vitest";
 import { router } from "@/app/router/routes";
 import { mountSession, seedSession } from "@/test/session-fixtures";
-import { setHttpHandler } from "@/test/http";
+import { ok, setHttpHandler } from "@/test/http";
+import { journey } from "./attempt-fixtures";
 
 let requests = [];
+let startAllowed = false;
 
-export function assessmentHttp(handler) {
+export function assessmentHttp(handler, { allowStart = false } = {}) {
   requests = [];
+  startAllowed = allowStart;
   const http = vi.fn((config) => {
     requests.push(config);
     return handler(config);
   });
   setHttpHandler(http);
   return http;
+}
+
+// M1.1 scenarios now resolve the new action boundary with an explicitly empty index.
+export function emptyJourneyHttp(handler) {
+  return assessmentHttp((config) => config.url === "/me/learning-journey"
+    ? ok(config, journey()) : handler(config));
 }
 
 export function mountAssessmentApp(path, { anonymous = false, ...options } = {}) {
@@ -22,12 +31,20 @@ export function mountAssessmentApp(path, { anonymous = false, ...options } = {})
 }
 
 afterEach(() => {
-  const assessmentRequests = requests.filter((config) => config.url.includes("/assessments"));
+  const assessmentRequests = requests.filter((config) => config.url.startsWith("/me/"));
   for (const config of assessmentRequests) {
-    expect(config.method).toBe("get");
+    const isStart = /^\/me\/assessments\/[^/]+\/attempts$/.test(config.url);
+    if (isStart) {
+      expect(startAllowed).toBe(true);
+      expect(config.method).toBe("post");
+      expect(config.data).toBeUndefined();
+    } else {
+      expect(config.method).toBe("get");
+    }
     expect(config.baseURL).toBe("http://localhost:8080/deutsch-hub/api/v1");
     expect(config.headers.Authorization).toMatch(/^Bearer /);
-    expect(config.url).toMatch(/^\/me\/assessments(?:\/[^/]+)?$/);
+    expect(config.url).toMatch(/^\/me\/(?:courses|assessments(?:\/[^/]+(?:\/attempts)?)?|assessment-attempts\/[^/]+(?:\/assessment)?|learning-journey)$/);
   }
   requests = [];
+  startAllowed = false;
 });

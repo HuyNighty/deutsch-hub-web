@@ -5,6 +5,7 @@ import ResourceState from "@/shared/ui/state/ResourceState";
 import { AppLink } from "@/shared/ui/components/app-link";
 import MyCourseCard from "./components/MyCourseCard/MyCourseCard";
 import useMyLearning from "./hooks/useMyLearning";
+import ActiveAssessments from "@/features/assessment/attempt/ActiveAssessments";
 
 const cx = classNames.bind(styles);
 
@@ -25,6 +26,8 @@ function MyLearning() {
           Explore available assessments
         </AppLink>
       </section>
+
+      <ActiveAssessments />
 
       <ResourceState
         loading={loading}

@@ -3,11 +3,11 @@ import classNames from "classnames/bind";
 import ResourceState from "@/shared/ui/state/ResourceState";
 import { AppLink } from "@/shared/ui/components/app-link";
 import { useLearnerAssessment } from "./hooks/useLearnerAssessment";
+import AssessmentEntry from "./AssessmentEntry";
+import AssessmentStructure from "../shared/AssessmentStructure";
 import {
   assessmentTitle,
   assessmentTimeLimit,
-  skillLabels,
-  executionModeLabels,
 } from "../shared/assessment-presentation";
 import styles from "../shared/Assessment.module.scss";
 
@@ -37,19 +37,8 @@ export default function AssessmentDetail() {
               <p className={cx("metadata")}>Target level: {assessment.targetLevel}</p>
               <p className={cx("metadata")}>Time limit: {assessmentTimeLimit(assessment.timeLimitMinutes)}</p>
             </header>
-            <div className={cx("components")}>
-              {assessment.components.map((component) => (
-                <section className={cx("card")} key={component.componentId}>
-                  <h2 className={cx("cardTitle")}>{skillLabels[component.skillDimension]}</h2>
-                  <p className={cx("metadata")}>Execution mode: {executionModeLabels[component.executionMode]}</p>
-                  <ul className={cx("tasks")}>
-                    {component.tasks.map((task) => (
-                      <li key={task.taskId}>Task {task.order}</li>
-                    ))}
-                  </ul>
-                </section>
-              ))}
-            </div>
+            <AssessmentEntry assessmentId={assessmentId} />
+            <AssessmentStructure components={assessment.components} />
           </>
         )}
       </ResourceState>
