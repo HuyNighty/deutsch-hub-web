@@ -1,5 +1,8 @@
 import apiClient from "@/shared/api/api-client";
+import { validateLoginResult } from "@/shared/auth/auth-result";
 
-export function login(request) {
-  return apiClient.post("/auth/login", request);
+export async function login(request) {
+  const session = await apiClient.post("/auth/login", request, { requiresAuth: false });
+  validateLoginResult(session);
+  return session;
 }

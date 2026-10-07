@@ -1,14 +1,14 @@
 import axios from "axios";
+import { getAccessToken, getRefreshToken } from "@/shared/auth/token";
 import {
-  getAccessToken,
-  getRefreshToken,
-  clearTokens,
-} from "@/shared/auth/token";
-
-import { updateAuthSession } from "@/shared/auth/auth-session";
+  getSessionGeneration,
+  isCurrentSession,
+  rotateAuthSession,
+  terminateAuthSession,
+} from "@/shared/auth/auth-session";
+import { unwrapApiResponse } from "./api-response";
 
 const API_BASE_URL = "http://localhost:8080/deutsch-hub";
-
 export const api = axios.create({
   baseURL: `${API_BASE_URL}/api/v1`,
   timeout: 10_000,
@@ -27,86 +27,85 @@ const refreshClient = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-let refreshPromise = null;
+let inFlightRefresh = null;
 
 function isAuthEndpoint(url = "") {
-  return [
-    "/auth/login",
-    "/auth/register",
-    "/auth/refresh",
-    "/auth/logout",
-  ].some((path) => url.includes(path));
+  return ["/auth/login", "/auth/register", "/auth/refresh", "/auth/logout"]
+    .some((path) => url.includes(path));
 }
 
-async function refreshAccessToken() {
-  if (!refreshPromise) {
-    const refreshToken = getRefreshToken();
+export function refreshAccessToken(generation = getSessionGeneration()) {
+  if (!isCurrentSession(generation)) return Promise.reject(new Error("Session changed"));
+  if (inFlightRefresh?.generation === generation) return inFlightRefresh.promise;
 
-    if (!refreshToken) {
-      throw new Error("No refresh token");
+  const flight = { generation, promise: null };
+  flight.promise = (async () => {
+    try {
+      const refreshToken = getRefreshToken();
+      if (!refreshToken) throw new Error("No refresh token");
+
+      const response = await refreshClient.post("/auth/refresh", { refreshToken });
+      return rotateAuthSession(unwrapApiResponse(response.data), generation);
+    } catch (error) {
+      terminateAuthSession(generation);
+      throw error;
     }
-
-    refreshPromise = refreshClient
-      .post("/auth/refresh", { refreshToken })
-      .then((response) => {
-        const session = response.data.result;
-
-        updateAuthSession(session);
-
-        return session.accessToken;
-      })
-      .finally(() => {
-        refreshPromise = null;
-      });
-  }
-
-  return refreshPromise;
+  })().finally(() => {
+    // An older refresh must not remove a newer generation's flight.
+    if (inFlightRefresh === flight) inFlightRefresh = null;
+  });
+  inFlightRefresh = flight;
+  return flight.promise;
 }
 
 function attachAuthInterceptor(client) {
-  client.interceptors.request.use((config) => {
-    if (config.requiresAuth === false) {
+  client.interceptors.request.use(
+    (config) => {
+      if (config.requiresAuth === false || isAuthEndpoint(config.url)) return config;
+
+      if (config._sessionGeneration === undefined) {
+        config._sessionGeneration = getSessionGeneration();
+      }
+      if (!isCurrentSession(config._sessionGeneration)) {
+        throw new axios.CanceledError("Session changed", config);
+      }
+
+      const accessToken = getAccessToken();
+      if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
+      config._sessionAccessToken = accessToken;
       return config;
-    }
-
-    const accessToken = getAccessToken();
-
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-    }
-
-    return config;
-  });
+    },
+    (error) => { throw error; },
+    { synchronous: true },
+  );
 
   client.interceptors.response.use(
-    (response) => response,
-
+    (response) => {
+      if (response.config._sessionGeneration !== undefined &&
+          !isCurrentSession(response.config._sessionGeneration)) {
+        throw new axios.CanceledError("Session changed", response.config);
+      }
+      return response;
+    },
     async (error) => {
-      const originalRequest = error.config;
+      const request = error.config;
+      if (error.response?.status !== 401 || !request ||
+          request.requiresAuth === false || isAuthEndpoint(request.url) ||
+          !isCurrentSession(request._sessionGeneration)) throw error;
 
-      const shouldRefresh =
-        error.response?.status === 401 &&
-        originalRequest?.requiresAuth !== false &&
-        !originalRequest?._retry &&
-        !isAuthEndpoint(originalRequest?.url);
-
-      if (!shouldRefresh) {
-        return Promise.reject(error);
+      if (request._retry) {
+        terminateAuthSession(request._sessionGeneration);
+        throw error;
       }
+      request._retry = true;
 
-      originalRequest._retry = true;
-
-      try {
-        const newAccessToken = await refreshAccessToken();
-
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-
-        return client(originalRequest);
-      } catch (refreshError) {
-        clearTokens();
-
-        return Promise.reject(refreshError);
+      // A delayed 401 may arrive after this generation already rotated its token.
+      // Retry with that token instead of issuing another refresh.
+      if (!getAccessToken() || getAccessToken() === request._sessionAccessToken) {
+        await refreshAccessToken(request._sessionGeneration);
       }
+      if (!isCurrentSession(request._sessionGeneration)) throw error;
+      return client(request);
     },
   );
 }

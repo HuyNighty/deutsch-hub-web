@@ -1,51 +1,26 @@
 import { useNavigate } from "react-router-dom";
 import { logout } from "../services/auth.service";
-
 import { getRefreshToken } from "@/shared/auth/token";
 import { useAuth } from "@/features/auth/context/AuthProvider";
-
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 export default function useLogout() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { logout: clearAuthSession } = useAuth();
-
-  function logoutLocally() {
-    queryClient.clear();
-
-    clearAuthSession();
-
-    navigate("/login", {
-      replace: true,
-    });
-  }
-
   const { mutate, isPending } = useMutation({
     mutationFn: logout,
-
     onError(error) {
       console.log(error);
-    },
-
-    onSettled() {
-      logoutLocally();
     },
   });
 
   function handleLogout() {
     const refreshToken = getRefreshToken();
-
-    if (!refreshToken) {
-      logoutLocally();
-      return;
-    }
-
-    mutate(refreshToken);
+    // Fence immediately. Server completion never changes local session state.
+    clearAuthSession();
+    navigate("/login", { replace: true });
+    if (refreshToken) mutate(refreshToken);
   }
 
-  return {
-    handleLogout,
-    loading: isPending,
-  };
+  return { handleLogout, loading: isPending };
 }

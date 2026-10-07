@@ -5,11 +5,11 @@ import { AuthProvider } from "./features/auth/context/AuthProvider";
 function App() {
   return (
     <>
-      <AuthProvider>
-        <QueryProvider>
+      <QueryProvider>
+        <AuthProvider>
           <AppRouter />
-        </QueryProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </QueryProvider>
     </>
   );
 }

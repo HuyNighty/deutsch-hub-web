@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 import {
   faArrowLeft,
@@ -24,7 +25,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const cx = classNames.bind(styles);
 
 export default function LoginForm() {
-  const { handleLogin } = useLogin();
+  const { handleLogin, loading } = useLogin();
+  const location = useLocation();
 
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,6 +36,8 @@ export default function LoginForm() {
 
   async function onSubmit(event) {
     event.preventDefault();
+
+    if (loading) return;
 
     setError("");
 
@@ -241,7 +245,7 @@ export default function LoginForm() {
                     </AppLink>
                   </div>
 
-                  <Button type="submit" variant="primary" fullWidth>
+                  <Button type="submit" variant="primary" fullWidth loading={loading}>
                     Login to DeutschHub
                     <span className={cx("button-arrow")}>→</span>
                   </Button>
@@ -250,7 +254,7 @@ export default function LoginForm() {
                 <div className={cx("register")}>
                   <span>Don't have an account?</span>
 
-                  <AppLink to="/register" variant="default">
+                  <AppLink to="/register" variant="default" state={{ returnTo: location.state?.returnTo }}>
                     Create one
                   </AppLink>
                 </div>

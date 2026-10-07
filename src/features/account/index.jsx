@@ -1,4 +1,5 @@
 import ResourceState from "@/shared/ui/state/ResourceState";
+import LogoutButton from "@/features/auth/login/components/LogoutButton";
 
 import useAccount from "./hooks/useAccount";
 
@@ -19,6 +20,7 @@ function Account() {
           <h1 className={cx("title")}>My Account</h1>
 
           <p className={cx("description")}>Manage your account information.</p>
+          <LogoutButton />
         </header>
 
         <section className={cx("content")}>

@@ -1,22 +1,22 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import Home from "@/pages/home";
+import Home from "@/pages/Home";
 import ExploreGermany from "@/pages/explore-germany";
 import StudyInGermany from "@/pages/study-in-germany";
-import Experiences from "@/pages/experiences";
+import Experiences from "@/pages/Experiences";
 
 import LearnGerman from "@/pages/learn-german";
 import CourseDetailPage from "@/pages/learn-german/course-detail";
 
-import LoginPage from "@/pages/auth/login";
-import RegisterPage from "@/pages/auth/register";
+import LoginPage from "@/pages/Auth/Login";
+import RegisterPage from "@/pages/Auth/Register";
 
 import MyLearningPage from "@/pages/learn-german/my-learning";
 import MyCourseDetailPage from "@/pages/learn-german/my-course-detail";
 import LessonPage from "@/pages/learn-german/lesson";
 
 import { ProtectedRoute, GuestRoute } from "@/shared/routing";
-import AccountPage from "@/pages/account";
+import AccountPage from "@/pages/Account";
 
 import AppShell from "@/layouts/AppShell/AppShell";
 import ArticleDetailPage from "@/pages/explore-germany/article-detail";

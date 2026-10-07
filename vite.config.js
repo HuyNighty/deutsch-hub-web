@@ -5,6 +5,12 @@ import path from "path";
 export default defineConfig({
   plugins: [react()],
 
+  test: {
+    environment: "jsdom",
+    setupFiles: ["./src/test/setup.js"],
+    restoreMocks: true,
+  },
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

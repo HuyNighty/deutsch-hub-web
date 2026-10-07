@@ -28,7 +28,7 @@ export function useEnrollAction(courseId) {
     if (!isAuthenticated) {
       navigate("/login", {
         state: {
-          redirectTo: `/learn-german/courses/${courseId}`,
+          returnTo: `/learn-german/courses/${courseId}`,
         },
       });
 

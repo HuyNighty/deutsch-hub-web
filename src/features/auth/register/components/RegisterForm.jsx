@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import classNames from "classnames/bind";
 
 import {
@@ -28,6 +29,7 @@ const cx = classNames.bind(styles);
 
 export default function RegisterForm() {
   const { handleRegister, error } = useRegister();
+  const location = useLocation();
 
   const emailError = getFieldMessage(error, "email");
   const passwordError = getFieldMessage(error, "password");
@@ -415,7 +417,7 @@ export default function RegisterForm() {
                 <div className={cx("login")}>
                   <span>Already part of DeutschHub?</span>
 
-                  <AppLink to="/login">Login</AppLink>
+                  <AppLink to="/login" state={{ returnTo: location.state?.returnTo }}>Login</AppLink>
                 </div>
               </div>
             </div>
