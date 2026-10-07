@@ -1,6 +1,8 @@
 import apiClient from "@/shared/api/api-client";
 import { ApiError } from "@/shared/api/api-error";
-import { parseStartedTask, parseTaskRuntime, parseSavedAnswer, parseClearedAnswer } from "./task-response";
+import {
+  parseStartedTask, parseTaskRuntime, parseSavedAnswer, parseClearedAnswer, parseSubmittedTask,
+} from "./task-response";
 
 function taskUrl(assessmentAttemptId, taskId) {
   return `/me/assessment-attempts/${encodeURIComponent(assessmentAttemptId)}/tasks/${encodeURIComponent(taskId)}/quiz-attempt`;
@@ -12,6 +14,11 @@ export async function startTask(assessmentAttemptId, taskId) {
 
 export async function getTaskRuntime(assessmentAttemptId, taskId) {
   return parseTaskRuntime(await apiClient.get(taskUrl(assessmentAttemptId, taskId)), assessmentAttemptId, taskId);
+}
+
+export async function submitTask(runtime) {
+  const result = await apiClient.post(`${taskUrl(runtime.assessmentAttemptId, runtime.taskId)}/submit`);
+  return parseSubmittedTask(result, runtime);
 }
 
 export async function saveTaskAnswer(runtime, question, selectedAnswerIds) {

@@ -5,6 +5,13 @@ export const TASK_PATH = `${attemptPath}/tasks/${TASK_ID}`;
 export const TASK_URL = `${attemptUrl}/tasks/${TASK_ID}/quiz-attempt`;
 export const TASK_KEY = ["learner-assessment-task-quiz", ATTEMPT_ID, TASK_ID];
 export const TASK_DEADLINE = "2025-06-01T08:30:00Z";
+export const SUBMITTED_AT = "2025-06-01T08:20:00Z";
+export const TASK_SUBMIT_URL = `${TASK_URL}/submit`;
+
+export function submittedTask(overrides = {}) {
+  return { assessmentAttemptId: ATTEMPT_ID, taskId: TASK_ID, quizAttemptId: "quiz-owned-42",
+    status: "SUBMITTED", submittedAt: SUBMITTED_AT, ...overrides };
+}
 
 export function startedTask(overrides = {}) {
   return {
@@ -16,7 +23,7 @@ export function startedTask(overrides = {}) {
 
 export function taskRuntime(overrides = {}) {
   return {
-    ...startedTask(), submittedAt: null,
+    ...startedTask(), submittedAt: overrides.status === "SUBMITTED" ? SUBMITTED_AT : null,
     // Deliberately unusual collection order; the UI must not sort.
     questions: [
       { questionId: "question-single", content: "Choose a greeting.", type: "SINGLE_CHOICE", order: 3,

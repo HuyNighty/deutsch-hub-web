@@ -38,8 +38,25 @@ export function parseStartedTask(value, assessmentAttemptId, taskId) {
 
 export function parseTaskRuntime(value, assessmentAttemptId, taskId) {
   if (!isTaskAttempt(value, assessmentAttemptId, taskId) ||
-      !isNullableTimestamp(value.submittedAt) || !Array.isArray(value.questions) ||
+      !isNullableTimestamp(value.submittedAt) ||
+      (value.status === "SUBMITTED" && !isTimestamp(value.submittedAt)) ||
+      !Array.isArray(value.questions) ||
       !value.questions.every(isQuestion)) invalid("runtime");
+  return value;
+}
+
+export class TaskSubmitResponseError extends ApiError {
+  constructor() {
+    super({ message: "The server returned an invalid assessment task submit response." });
+  }
+}
+
+export function parseSubmittedTask(value, runtime) {
+  if (!isObject(value) || value.status !== "SUBMITTED" || !isTimestamp(value.submittedAt) ||
+      !["assessmentAttemptId", "taskId", "quizAttemptId"].every((field) =>
+        isNonblank(value[field]) && value[field] === runtime[field])) {
+    throw new TaskSubmitResponseError();
+  }
   return value;
 }
 

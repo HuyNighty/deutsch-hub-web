@@ -45,7 +45,8 @@ describe("Assessment Task runtime", () => {
       ...runtime.questions.flatMap((question) => [question.questionId, ...question.options.map((option) => option.answerId)])];
     for (const id of ids) expect(region.textContent).not.toContain(id);
     expect(region.textContent).not.toMatch(/correct|incorrect|score|passed|failed|pass\/fail|percentage/i);
-    expect(within(region).queryByRole("button", { name: /submit|finish|next task/i })).not.toBeInTheDocument();
+    expect(within(region).getByRole("button", { name: "Submit task" })).toBeEnabled();
+    expect(within(region).queryByRole("button", { name: /finish|next task/i })).not.toBeInTheDocument();
     expect(http.mock.calls.map(([config]) => config.url)).toEqual([TASK_URL, `${attemptUrl}/assessment`]);
     expect(client.getQueryData(TASK_KEY)).toEqual(runtime);
     expect(client.getQueryData(["learner-assessment-attempt-definition", ATTEMPT_ID])).toEqual(assessmentDetail());

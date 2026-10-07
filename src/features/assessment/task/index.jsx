@@ -7,6 +7,7 @@ import { formatAttemptTimestamp } from "../attempt/attempt-presentation";
 import { useAssessmentTask } from "./hooks/useAssessmentTask";
 import { taskStatusLabels } from "./task-presentation";
 import TaskQuestion from "./TaskQuestion";
+import TaskSubmission from "./TaskSubmission";
 import styles from "../shared/Assessment.module.scss";
 
 const cx = classNames.bind(styles);
@@ -41,6 +42,7 @@ export default function AssessmentTask() {
                 key={`${runtime.quizAttemptId}:${question.questionId}`} runtime={runtime} question={question}
               />)}
             </div>
+            <TaskSubmission key={runtime.quizAttemptId} runtime={runtime} parentRoute={parentRoute} />
           </>
         )}
       </ResourceState>

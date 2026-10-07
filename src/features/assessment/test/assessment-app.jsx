@@ -7,11 +7,13 @@ import { journey } from "./attempt-fixtures";
 let requests = [];
 let startAllowed = false;
 let taskExecutionAllowed = false;
+let taskSubmitAllowed = false;
 
-export function assessmentHttp(handler, { allowStart = false, allowTaskExecution = false } = {}) {
+export function assessmentHttp(handler, { allowStart = false, allowTaskExecution = false, allowTaskSubmit = false } = {}) {
   requests = [];
   startAllowed = allowStart;
   taskExecutionAllowed = allowTaskExecution;
+  taskSubmitAllowed = allowTaskSubmit;
   const http = vi.fn((config) => {
     requests.push(config);
     return handler(config);
@@ -37,7 +39,12 @@ afterEach(() => {
   for (const config of assessmentRequests) {
     const isStart = /^\/me\/assessments\/[^/]+\/attempts$/.test(config.url);
     const isTask = /^\/me\/assessment-attempts\/[^/]+\/tasks\/[^/]+\/quiz-attempt(?:\/answers\/[^/]+)?$/.test(config.url);
-    if (isTask) {
+    const isSubmit = /^\/me\/assessment-attempts\/[^/]+\/tasks\/[^/]+\/quiz-attempt\/submit$/.test(config.url);
+    if (isSubmit) {
+      expect(taskSubmitAllowed).toBe(true);
+      expect(config.method).toBe("post");
+      expect(config.data).toBeUndefined();
+    } else if (isTask) {
       expect(taskExecutionAllowed).toBe(true);
       const isAnswer = config.url.includes("/answers/");
       expect(isAnswer ? ["put", "delete"] : ["get", "post"]).toContain(config.method);
@@ -57,9 +64,10 @@ afterEach(() => {
     }
     expect(config.baseURL).toBe("http://localhost:8080/deutsch-hub/api/v1");
     expect(config.headers.Authorization).toMatch(/^Bearer /);
-    expect(config.url).toMatch(/^\/me\/(?:courses|assessments(?:\/[^/]+(?:\/attempts)?)?|assessment-attempts\/[^/]+(?:\/assessment|\/tasks\/[^/]+\/quiz-attempt(?:\/answers\/[^/]+)?)?|learning-journey)$/);
+    expect(config.url).toMatch(/^\/me\/(?:courses|assessments(?:\/[^/]+(?:\/attempts)?)?|assessment-attempts\/[^/]+(?:\/assessment|\/tasks\/[^/]+\/quiz-attempt(?:\/answers\/[^/]+|\/submit)?)?|learning-journey)$/);
   }
   requests = [];
   startAllowed = false;
   taskExecutionAllowed = false;
+  taskSubmitAllowed = false;
 });

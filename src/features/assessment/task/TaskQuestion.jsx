@@ -20,7 +20,9 @@ export default function TaskQuestion({ runtime, question }) {
   }
 
   return (
-    <fieldset className={cx("question")} disabled={!editable || mutation.isPending} aria-busy={mutation.isPending}>
+    <fieldset className={cx("question")}
+      disabled={!editable || mutation.isPending || mutation.isSubmitting}
+      aria-busy={mutation.isPending || mutation.isSubmitting}>
       <legend className={cx("legend")}>Question {question.order}</legend>
       <p className={cx("content")}>{question.content}</p>
       <div className={cx("options")}>
@@ -37,7 +39,7 @@ export default function TaskQuestion({ runtime, question }) {
         ))}
       </div>
       {editable && question.selectedAnswerIds.length > 0 && (
-        <Button onClick={() => mutation.save([])} disabled={mutation.isPending}>Clear answer</Button>
+        <Button onClick={() => mutation.save([])} disabled={mutation.isPending || mutation.isSubmitting}>Clear answer</Button>
       )}
       {mutation.error && <p role="alert">{mutation.error.message}</p>}
     </fieldset>
