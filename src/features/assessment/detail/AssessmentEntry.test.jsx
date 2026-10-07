@@ -1,3 +1,4 @@
+import { seedDirection } from "@/test/direction-fixtures";
 import { describe, it, expect } from "vitest";
 import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -73,9 +74,10 @@ describe("Assessment entry and Start", () => {
     expect(posts(http)).toHaveLength(0);
   });
 
-  it("starts once with no body, invalidates only Journey, navigates using id and fetches canonical resume data", async () => {
+  it("starts once with no body, invalidates Journey and Direction, navigates using id and fetches canonical resume data", async () => {
     const response = deferred();
     const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+    const direction = seedDirection(client);
     const courses = [{ courseId: "unrelated-course" }];
     client.setQueryData(["my-courses"], courses);
     client.setQueryData(["sentinel"], { intact: true });
@@ -96,6 +98,7 @@ describe("Assessment entry and Start", () => {
     await screen.findByText("Status: In progress");
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(posts(http)).toHaveLength(1);
+    direction(true);
     expect(client.getQueryState(["learner-learning-journey"]).isInvalidated).toBe(true);
     expect(client.getQueryData(["my-courses"])).toEqual(courses);
     expect(client.getQueryState(["my-courses"]).isInvalidated).toBe(false);
@@ -161,6 +164,7 @@ describe("Start conflict recovery", () => {
         throw new Error(`Unexpected request: ${config.url}`);
       });
       const { router, client } = mountAssessmentApp(detailPath);
+      const direction = seedDirection(client);
       await user.click(await screen.findByRole("button", { name: "Start Assessment" }));
       if (outcome === "match") {
         await screen.findByText("Status: In progress");
@@ -171,6 +175,7 @@ describe("Start conflict recovery", () => {
         await screen.findByText("HTTP failure");
         expect(router.state.location.pathname).toBe(detailPath);
       }
+      direction(outcome === "match");
       expect(reads).toBe(2);
       expect(posts(http)).toHaveLength(1);
     },
@@ -179,9 +184,11 @@ describe("Start conflict recovery", () => {
   it("does not recover or retry POST on a non-409 error", async () => {
     const user = userEvent.setup();
     const http = entryHttp((config) => config.url === journeyUrl ? ok(config, journey()) : fail(config, 500));
-    mountAssessmentApp(detailPath);
+    const { client } = mountAssessmentApp(detailPath);
+    const direction = seedDirection(client);
     await user.click(await screen.findByRole("button", { name: "Start Assessment" }));
     await screen.findByText("HTTP failure");
+    direction(false);
     expect(http.mock.calls.filter(([config]) => config.url === journeyUrl)).toHaveLength(1);
     expect(posts(http)).toHaveLength(1);
   });

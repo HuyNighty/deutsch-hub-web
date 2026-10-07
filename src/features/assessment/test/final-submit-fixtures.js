@@ -1,3 +1,5 @@
+import { seedDirection } from "@/test/direction-fixtures";
+import { learningDirectionKey } from "@/features/my-learning/guidance/hooks/useLearningDirection";
 import { assessmentDetail } from "./fixtures";
 import { ATTEMPT_ID, attemptUrl, resumedAttempt } from "./attempt-fixtures";
 import { assessmentHttp } from "./assessment-app";
@@ -30,7 +32,7 @@ export const parentReads = (http) => http.mock.calls.filter(([config]) => config
 export function seedFinalCaches(client) {
   const execution = [
     ["learner-assessment-result", ATTEMPT_ID], ["learner-competency"],
-    ["learner-learning-journey"],
+    ["learner-learning-journey"], learningDirectionKey,
     ["learner-assessment-task-quiz", ATTEMPT_ID, "task-writing-4"],
     ["learner-assessment-task-quiz", ATTEMPT_ID, "task-writing-2"],
   ];
@@ -39,9 +41,10 @@ export function seedFinalCaches(client) {
     ["learner-assessment-result", ATTEMPT_ID, "unrelated-suffix"], ["learner-competency", "unrelated-suffix"],
     ["learner-assessment-task-quiz", "other-attempt", "task-writing-4"],
     ["learner-assessment-attempt", "other-attempt"],
-    ["learner-learning-journey", "unrelated-suffix"],
+    ["learner-learning-journey", "unrelated-suffix"], [...learningDirectionKey, "unrelated-suffix"],
     ["my-courses"], ["content"], ["learner-assessments"], ["account"], ["sentinel"],
   ];
   for (const key of [...execution, ...unrelated]) client.setQueryData(key, { saved: true });
+  seedDirection(client, { saved: true });
   return { execution, unrelated };
 }

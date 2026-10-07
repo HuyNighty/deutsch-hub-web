@@ -6,6 +6,7 @@ import { AppLink } from "@/shared/ui/components/app-link";
 import MyCourseCard from "./components/MyCourseCard/MyCourseCard";
 import { useLearningJourney } from "@/features/assessment/attempt/hooks/useLearningJourney";
 import ActiveAssessments from "@/features/assessment/attempt/ActiveAssessments";
+import LearningGuidance from "./guidance/LearningGuidance";
 
 const cx = classNames.bind(styles);
 
@@ -19,6 +20,8 @@ function MyLearning() {
 
         <p className={cx("description")}>Continue your German learning journey.</p>
       </header>
+
+      <LearningGuidance />
 
       <section aria-labelledby="assessment-entry-title">
         <h2 id="assessment-entry-title">Assessments</h2>

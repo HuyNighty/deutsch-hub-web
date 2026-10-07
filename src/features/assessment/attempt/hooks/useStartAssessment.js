@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { startAssessment } from "../attempt.service";
 import { learningJourneyKey, learningJourneyOptions } from "./useLearningJourney";
+import { learningDirectionKey } from "@/features/my-learning/guidance/hooks/useLearningDirection";
 
 export function useStartAssessment(assessmentId) {
   const queryClient = useQueryClient();
@@ -37,6 +38,7 @@ export function useStartAssessment(assessmentId) {
           queryKey: learningJourneyKey, exact: true, refetchType: "none",
         });
       }
+      void queryClient.invalidateQueries({ queryKey: learningDirectionKey, exact: true, refetchType: "none" });
       navigate(`/my-learning/assessment-attempts/${encodeURIComponent(attemptId)}`);
     },
     onSettled: () => { pending.current = false; },

@@ -3,6 +3,9 @@ import { QueryClient, QueryObserver } from "@tanstack/react-query";
 import { learningJourneyKey, learningJourneyOptions } from "@/features/assessment/attempt/hooks/useLearningJourney";
 import { journey, courseSnapshot } from "@/features/assessment/test/attempt-fixtures";
 
+import { seedDirection } from "./direction-fixtures";
+import { learningDirectionKey } from "@/features/my-learning/guidance/hooks/useLearningDirection";
+
 export const COURSE_ID = "course-one";
 const observers = [];
 afterEach(() => { observers.splice(0).forEach((observer) => observer.destroy()); });
@@ -23,6 +26,7 @@ export function seedCourseState() {
     ["learner-assessment-task-quiz", "unrelated", "task"],
   ];
   unrelated.forEach((key) => client.setQueryData(key, { sentinel: "unchanged" }));
+  seedDirection(client);
   const originals = client.getQueryCache().getAll().map((query) => ({
     key: query.queryKey, data: query.state.data, value: structuredClone(query.state.data),
   }));
@@ -39,7 +43,7 @@ export function expectCourseState({ client, originals }, invalidated = false) {
   for (const { key, data, value } of originals) {
     expect(client.getQueryData(key)).toBe(data);
     expect(client.getQueryData(key)).toEqual(value);
-    const affected = key[0] === "my-courses" || JSON.stringify(key) === JSON.stringify(learningJourneyKey);
+    const affected = key[0] === "my-courses" || JSON.stringify(key) === JSON.stringify(learningJourneyKey) || JSON.stringify(key) === JSON.stringify(learningDirectionKey);
     expect(client.getQueryState(key).isInvalidated).toBe(invalidated && affected);
   }
 }

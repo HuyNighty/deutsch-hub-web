@@ -4,6 +4,7 @@ import { finalSubmitAssessment, getAssessmentAttempt } from "../attempt.service"
 import { FinalSubmitResponseError } from "../final-submit-response";
 import { childMutationFilter, finalSubmitKey } from "../final-submit-query";
 import { resultKey, competencyKey } from "../../result/result-query";
+import { learningDirectionKey } from "@/features/my-learning/guidance/hooks/useLearningDirection";
 
 export function useFinalSubmit(attempt, definition) {
   const client = useQueryClient();
@@ -15,6 +16,7 @@ export function useFinalSubmit(attempt, definition) {
   const childrenPending = useIsMutating(childFilter) > 0;
 
   function invalidateExecution(assessmentAttemptId) {
+    void client.invalidateQueries({ queryKey: learningDirectionKey, exact: true, refetchType: "none" });
     void client.invalidateQueries({ queryKey: resultKey(assessmentAttemptId), exact: true, refetchType: "none" });
     void client.invalidateQueries({ queryKey: competencyKey(), exact: true, refetchType: "none" });
     void client.invalidateQueries({ queryKey: ["learner-learning-journey"], exact: true, refetchType: "none" });

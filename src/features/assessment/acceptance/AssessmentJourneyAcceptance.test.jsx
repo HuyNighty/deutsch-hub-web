@@ -1,3 +1,5 @@
+import { seedDirection } from "@/test/direction-fixtures";
+import { learningDirectionKey } from "@/features/my-learning/guidance/hooks/useLearningDirection";
 import { describe, it, expect } from "vitest";
 import { act, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -34,6 +36,7 @@ describe("Learner Assessment integrated journey", () => {
     expect(server.parent().taskAttempts).toEqual([]);
     expect(writes(server.http)).toEqual([["post", startUrl]]);
 
+    const coarseDirection = seedDirection(client);
     const first = server.tasks[0];
     await openTask(user, server, first);
     expect(router.state.location.pathname).toBe(taskPath(first));
@@ -63,6 +66,7 @@ describe("Learner Assessment integrated journey", () => {
       expect(client.getQueryData(taskKey(task)).status).toBe("SUBMITTED");
       expect(client.getQueryData(PARENT_KEY)).toEqual(server.parent());
     }
+    coarseDirection(false);
     expect(server.runtimes.size).toBe(5);
     expect(server.state.status).toBe("IN_PROGRESS");
     const expectedWrites = [
@@ -82,6 +86,7 @@ describe("Learner Assessment integrated journey", () => {
       ["learner-learning-journey", "suffix"], ["my-courses"], ["content"],
     ];
     for (const key of unrelated) client.setQueryData(key, { untouched: true });
+    const direction = seedDirection(client);
     const definitionBefore = client.getQueryState(DEFINITION_KEY);
     const beforeFinal = server.http.mock.calls.length;
     await server.clickWrite(user, screen.getByRole("button", { name: "Submit assessment" }), "post", FINAL_URL);
@@ -94,7 +99,8 @@ describe("Learner Assessment integrated journey", () => {
     expect(screen.queryByRole("region", { name: "Current German level" })).not.toBeInTheDocument();
     expect(client.getQueryData(RESULT_KEY)).toBeUndefined();
     expect(client.getQueryData(COMPETENCY_KEY)).toEqual(competency());
-    for (const key of [RESULT_KEY, COMPETENCY_KEY, ["learner-learning-journey"], ...server.tasks.map(taskKey)]) {
+    direction(true);
+    for (const key of [RESULT_KEY, COMPETENCY_KEY, learningDirectionKey, ["learner-learning-journey"], ...server.tasks.map(taskKey)]) {
       expect(client.getQueryState(key).isInvalidated).toBe(true);
     }
     expect(client.getQueryState(DEFINITION_KEY).isInvalidated).toBe(false);

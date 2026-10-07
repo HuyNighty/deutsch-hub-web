@@ -1,3 +1,4 @@
+import { directionUrl, discoverDirection } from "@/test/direction-fixtures";
 import { afterEach, expect } from "vitest";
 import { screen, within, waitFor } from "@testing-library/react";
 import { getAccessToken } from "@/shared/auth/token";
@@ -74,6 +75,7 @@ export function journeyServer({
     }
     const read = (value) => ok(config, structuredClone(value));
     if (config.method === "get") {
+      if (config.url === directionUrl) return read(discoverDirection);
       if (config.url === "/me/assessments") {
         expect(config.params).toEqual({ page: 0, size: 20 });
         return read(assessmentPage());
