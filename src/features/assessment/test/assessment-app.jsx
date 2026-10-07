@@ -9,15 +9,17 @@ let startAllowed = false;
 let taskExecutionAllowed = false;
 let taskSubmitAllowed = false;
 let finalSubmitAllowed = false;
+let resultReadsAllowed = false;
 
 export function assessmentHttp(handler, {
-  allowStart = false, allowTaskExecution = false, allowTaskSubmit = false, allowFinalSubmit = false,
+  allowStart = false, allowTaskExecution = false, allowTaskSubmit = false, allowFinalSubmit = false, allowResultReads = false,
 } = {}) {
   requests = [];
   startAllowed = allowStart;
   taskExecutionAllowed = allowTaskExecution;
   taskSubmitAllowed = allowTaskSubmit;
   finalSubmitAllowed = allowFinalSubmit;
+  resultReadsAllowed = allowResultReads;
   const http = vi.fn((config) => {
     requests.push(config);
     return handler(config);
@@ -45,7 +47,12 @@ afterEach(() => {
     const isTask = /^\/me\/assessment-attempts\/[^/]+\/tasks\/[^/]+\/quiz-attempt(?:\/answers\/[^/]+)?$/.test(config.url);
     const isSubmit = /^\/me\/assessment-attempts\/[^/]+\/tasks\/[^/]+\/quiz-attempt\/submit$/.test(config.url);
     const isFinalSubmit = /^\/me\/assessment-attempts\/[^/]+\/submit$/.test(config.url);
-    if (isFinalSubmit) {
+    const isResultRead = /^\/me\/assessment-attempts\/[^/]+\/result$/.test(config.url) || config.url === "/me/competency";
+    if (isResultRead) {
+      expect(resultReadsAllowed).toBe(true);
+      expect(config.method).toBe("get");
+      expect(config.data).toBeUndefined();
+    } else if (isFinalSubmit) {
       expect(finalSubmitAllowed).toBe(true);
       expect(config.method).toBe("post");
       expect(config.data).toBeUndefined();
@@ -73,11 +80,12 @@ afterEach(() => {
     }
     expect(config.baseURL).toBe("http://localhost:8080/deutsch-hub/api/v1");
     expect(config.headers.Authorization).toMatch(/^Bearer /);
-    expect(config.url).toMatch(/^\/me\/(?:courses|assessments(?:\/[^/]+(?:\/attempts)?)?|assessment-attempts\/[^/]+(?:\/assessment|\/submit|\/tasks\/[^/]+\/quiz-attempt(?:\/answers\/[^/]+|\/submit)?)?|learning-journey)$/);
+    expect(config.url).toMatch(/^\/me\/(?:courses|competency|assessments(?:\/[^/]+(?:\/attempts)?)?|assessment-attempts\/[^/]+(?:\/assessment|\/submit|\/result|\/tasks\/[^/]+\/quiz-attempt(?:\/answers\/[^/]+|\/submit)?)?|learning-journey)$/);
   }
   requests = [];
   startAllowed = false;
   taskExecutionAllowed = false;
   taskSubmitAllowed = false;
   finalSubmitAllowed = false;
+  resultReadsAllowed = false;
 });

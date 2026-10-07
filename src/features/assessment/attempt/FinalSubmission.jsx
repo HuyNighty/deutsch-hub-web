@@ -1,4 +1,6 @@
 import { Button } from "@/shared/ui/components/button";
+import { AppLink } from "@/shared/ui/components/app-link";
+import { resultRoute } from "../result/result-query";
 import { useFinalSubmit } from "./hooks/useFinalSubmit";
 
 export default function FinalSubmission({ attempt, definition }) {
@@ -13,6 +15,9 @@ export default function FinalSubmission({ attempt, definition }) {
           </Button>
         )}
       {mutation.error && <p role="alert">{mutation.error.message}</p>}
+      {(mutation.isSuccess || ["COMPLETED", "EXPIRED"].includes(attempt.status)) && (
+        <AppLink to={resultRoute(attempt.assessmentAttemptId)} variant="primary">View result</AppLink>
+      )}
     </section>
   );
 }

@@ -16,6 +16,7 @@ import AssessmentCatalogPage from "@/pages/learn-german/assessment-catalog";
 import AssessmentDetailPage from "@/pages/learn-german/assessment-detail";
 import AssessmentAttemptPage from "@/pages/learn-german/assessment-attempt";
 import AssessmentTaskPage from "@/pages/learn-german/assessment-task";
+import AssessmentResultPage from "@/pages/learn-german/assessment-result";
 import MyCourseDetailPage from "@/pages/learn-german/my-course-detail";
 import LessonPage from "@/pages/learn-german/lesson";
 
@@ -83,6 +84,10 @@ export const router = createBrowserRouter([
           {
             path: "/my-learning/assessment-attempts/:assessmentAttemptId/tasks/:taskId",
             element: <AssessmentTaskPage />,
+          },
+          {
+            path: "/my-learning/assessment-attempts/:assessmentAttemptId/result",
+            element: <AssessmentResultPage />,
           },
           {
             path: "/my-learning/courses/:courseId",

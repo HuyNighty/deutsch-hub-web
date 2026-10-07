@@ -29,11 +29,14 @@ export const parentReads = (http) => http.mock.calls.filter(([config]) => config
 
 export function seedFinalCaches(client) {
   const execution = [
+    ["learner-assessment-result", ATTEMPT_ID], ["learner-competency"],
     ["learner-learning-journey"],
     ["learner-assessment-task-quiz", ATTEMPT_ID, "task-writing-4"],
     ["learner-assessment-task-quiz", ATTEMPT_ID, "task-writing-2"],
   ];
   const unrelated = [
+    ["learner-assessment-result", "other-attempt"],
+    ["learner-assessment-result", ATTEMPT_ID, "unrelated-suffix"], ["learner-competency", "unrelated-suffix"],
     ["learner-assessment-task-quiz", "other-attempt", "task-writing-4"],
     ["learner-assessment-attempt", "other-attempt"],
     ["learner-learning-journey", "unrelated-suffix"],
