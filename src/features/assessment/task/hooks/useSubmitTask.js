@@ -1,3 +1,4 @@
+import { nextActivityKey } from "@/features/my-learning/guidance/hooks/useNextActivity";
 import { useRef } from "react";
 import { useIsMutating, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getTaskRuntime, submitTask } from "../task.service";
@@ -44,6 +45,9 @@ export function useSubmitTask(runtime) {
             staleTime: 0, retry: false,
           });
           if (fresh.status === "SUBMITTED") invalidateParent(target.assessmentAttemptId);
+          if (["SUBMITTED", "EXPIRED", "CANCELLED"].includes(fresh.status)) {
+            void client.invalidateQueries({ queryKey: nextActivityKey, exact: true, refetchType: "none" });
+          }
         } catch {
           // Keep the last canonical evidence visible and the original Submit error authoritative.
           if (previous?.data) {
@@ -59,6 +63,7 @@ export function useSubmitTask(runtime) {
         return { ...current, status: result.status, submittedAt: result.submittedAt };
       });
       invalidateParent(result.assessmentAttemptId);
+      void client.invalidateQueries({ queryKey: nextActivityKey, exact: true, refetchType: "none" });
     },
     onSettled: () => { pending.current = false; },
   });

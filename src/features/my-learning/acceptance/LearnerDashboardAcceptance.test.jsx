@@ -1,3 +1,4 @@
+import { nextActivityUrl, noActivity } from "@/test/next-activity-fixtures";
 import { describe, it, expect } from "vitest";
 import { act, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -21,6 +22,7 @@ function dashboardHttp(snapshot, destinations = {}, options = {}) {
   const http = assessmentHttp((config) => {
     expect(config.method).toBe("get");
     expect(config.data).toBeUndefined();
+    if (config.url === nextActivityUrl) return ok(config, noActivity);
     if (config.url === directionUrl) return ok(config, discoverDirection);
     if (config.url === journeyUrl) return ok(config, snapshot);
     if (destinationReadsAllowed && Object.hasOwn(destinations, config.url)) {
@@ -55,7 +57,7 @@ async function expectDashboard(http) {
 
   const page = screen.getByRole("heading", { name: "My Learning", level: 1 }).closest("main");
   expect(page.textContent).not.toMatch(/new level|achieved|promot|earned|mismatch|downgrade|recommend|next activity/i);
-  expect(requests(http).sort()).toEqual([["get", journeyUrl, undefined], ["get", directionUrl, undefined]].sort());
+  expect(requests(http).sort()).toEqual([["get", journeyUrl, undefined], ["get", directionUrl, undefined], ["get", nextActivityUrl, undefined]].sort());
 }
 
 describe("Learner dashboard integrated acceptance", () => {
@@ -96,7 +98,7 @@ describe("Learner dashboard integrated acceptance", () => {
     await screen.findByRole("heading", { name: course.title, level: 1 });
     expect(screen.getByText(detail.description)).toBeVisible();
     expect(router.state.location.pathname).toBe(`/my-learning/courses/${course.courseId}`);
-    expect(requests(http).sort()).toEqual([["get", journeyUrl, undefined], ["get", directionUrl, undefined], ["get", courseUrl, undefined]].sort());
+    expect(requests(http).sort()).toEqual([["get", journeyUrl, undefined], ["get", directionUrl, undefined], ["get", nextActivityUrl, undefined], ["get", courseUrl, undefined]].sort());
   });
 
   it("C: resumes the existing active Attempt only after Continue assessment without starting another Attempt", async () => {
@@ -119,10 +121,10 @@ describe("Learner dashboard integrated acceptance", () => {
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(client.getQueryData(["learner-assessment-attempt", attempt.assessmentAttemptId])).toEqual(attempt);
     // The destination's two independent reads have no required scheduling order.
-    expect(requests(http).slice(2).sort()).toEqual([
+    expect(requests(http).slice(3).sort()).toEqual([
       ["get", attemptUrl, undefined], ["get", `${attemptUrl}/assessment`, undefined],
     ].sort());
-    expect(requests(http).slice(0, 2).sort()).toEqual([["get", journeyUrl, undefined], ["get", directionUrl, undefined]].sort());
+    expect(requests(http).slice(0, 3).sort()).toEqual([["get", journeyUrl, undefined], ["get", directionUrl, undefined], ["get", nextActivityUrl, undefined]].sort());
   });
 
   it("D: discovers the existing Assessment catalog only after Explore available assessments", async () => {
@@ -140,6 +142,6 @@ describe("Learner dashboard integrated acceptance", () => {
     expect(view).toHaveAttribute("href", `/my-learning/assessments/${page.items[0].assessmentId}`);
     expect(screen.getByRole("heading", { name: page.items[0].title })).toBeVisible();
     expect(router.state.location.pathname).toBe("/my-learning/assessments");
-    expect(requests(http).sort()).toEqual([["get", journeyUrl, undefined], ["get", directionUrl, undefined], ["get", "/me/assessments", undefined]].sort());
+    expect(requests(http).sort()).toEqual([["get", journeyUrl, undefined], ["get", directionUrl, undefined], ["get", nextActivityUrl, undefined], ["get", "/me/assessments", undefined]].sort());
   });
 });

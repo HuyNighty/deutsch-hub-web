@@ -1,3 +1,5 @@
+import { seedNextActivity } from "@/test/next-activity-fixtures";
+import { seedDirection } from "@/test/direction-fixtures";
 import { describe, it, expect } from "vitest";
 import { act, fireEvent, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -55,10 +57,12 @@ describe("Attempt Task Start / Continue", () => {
     expect(mutations(http)).toHaveLength(0);
   });
 
-  it("guards same-batch double Start, invalidates only the parent and GETs runtime instead of seeding the Start DTO", async () => {
+  it("guards same-batch double Start, invalidates parent and Next Activity and GETs runtime instead of seeding the Start DTO", async () => {
     const post = deferred();
     const read = deferred();
     const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+    const activity = seedNextActivity(client);
+    const direction = seedDirection(client);
     client.setQueryData(["learner-learning-journey"], { assessmentAttempts: [] });
     client.setQueryData(["my-courses"], ["unchanged"]);
     const http = entryHttp((config) => config.method === "post"
@@ -78,6 +82,8 @@ describe("Attempt Task Start / Continue", () => {
     expect(client.getQueryData(TASK_KEY)).toBeUndefined();
     expect(screen.queryByRole("radio")).not.toBeInTheDocument();
     expect(client.getQueryState(["learner-assessment-attempt", ATTEMPT_ID]).isInvalidated).toBe(true);
+    activity(true);
+    direction(false);
     expect(client.getQueryState(["learner-learning-journey"]).isInvalidated).toBe(false);
     expect(client.getQueryState(["my-courses"]).isInvalidated).toBe(false);
     expect(client.getQueryState(["learner-assessment-attempt-definition", ATTEMPT_ID]).isInvalidated).toBe(false);
@@ -90,11 +96,15 @@ describe("Attempt Task Start / Continue", () => {
   it.each(["SUBMITTED", "EXPIRED", "CANCELLED"])("accepts Backend Start retry recovery with child %s", async (status) => {
     const user = userEvent.setup();
     const http = entryHttp((config) => ok(config, config.method === "post" ? startedTask({ status }) : taskRuntime({ status })));
-    const { router } = mountAssessmentApp(attemptPath);
+    const { router, client } = mountAssessmentApp(attemptPath);
+    const activity = seedNextActivity(client);
+    const direction = seedDirection(client);
     await screen.findByText("Status: In progress");
     await user.click(within(taskRow("Task 4")).getByRole("button", { name: "Start task" }));
     const option = await screen.findByRole("radio", { name: "Hallo" });
     expect(option).toBeDisabled();
+    activity(true);
+    direction(false);
     expect(router.state.location.pathname).toBe(TASK_PATH);
     expect(mutations(http)).toHaveLength(1);
   });
@@ -109,12 +119,16 @@ describe("Attempt Task Start / Continue", () => {
     const user = userEvent.setup();
     const http = entryHttp((config) => ok(config, startedTask(overrides)));
     const { router, client } = mountAssessmentApp(attemptPath);
+    const activity = seedNextActivity(client);
+    const direction = seedDirection(client);
     await screen.findByText("Status: In progress");
     await user.click(within(taskRow("Task 4")).getByRole("button", { name: "Start task" }));
     await screen.findByText("The server returned an invalid assessment task start response.");
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(client.getQueryData(["learner-assessment-attempt", ATTEMPT_ID]).taskAttempts).toEqual([]);
     expect(client.getQueryData(TASK_KEY)).toBeUndefined();
+    activity(false);
+    direction(false);
     expect(mutations(http)).toHaveLength(1);
   });
 
@@ -126,10 +140,14 @@ describe("Attempt Task Start / Continue", () => {
     });
     const http = entryHttp((config) => fail(config, 409), resumedAttempt({ taskAttempts: [] }), definition);
     const { router, client } = mountAssessmentApp(attemptPath);
+    const activity = seedNextActivity(client);
+    const direction = seedDirection(client);
     await screen.findByText("Status: In progress");
     await user.click(within(taskRow("Task 3")).getByRole("button", { name: "Start task" }));
     const row = taskRow("Task 3");
     expect(await within(row).findByRole("alert")).toHaveTextContent("HTTP failure");
+    activity(false);
+    direction(false);
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(client.getQueryData(["learner-assessment-attempt", ATTEMPT_ID]).taskAttempts).toEqual([]);
     expect(http.mock.calls.map(([config]) => config.url)).toEqual([

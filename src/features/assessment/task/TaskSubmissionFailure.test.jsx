@@ -1,8 +1,11 @@
+import { seedNextActivity } from "@/test/next-activity-fixtures";
+import { seedDirection } from "@/test/direction-fixtures";
 import { describe, it, expect } from "vitest";
 import { AxiosError } from "axios";
 import { act, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { deferred, ok } from "@/test/http";
+import { ATTEMPT_ID, resumedAttempt } from "../test/attempt-fixtures";
 import { mountAssessmentApp } from "../test/assessment-app";
 import { submissionHttp, submitRequests, runtimeReads, answerRequests } from "../test/submission-app";
 import {
@@ -32,6 +35,10 @@ describe("Submit failure canonical reconciliation", () => {
       ? ok(config, structuredClone(stored))
       : refresh.promise.then(() => ok(config, structuredClone(stored))) });
     const { client, router } = mountAssessmentApp(TASK_PATH);
+    const activity = seedNextActivity(client);
+    const direction = seedDirection(client);
+    client.setQueryData(["learner-learning-journey"], { unchanged: true });
+    client.setQueryData(["learner-assessment-attempt", ATTEMPT_ID], resumedAttempt());
     await user.click(await screen.findByRole("button", { name: "Submit task" }));
     await waitFor(() => expect(reads).toBe(2));
     // Reconciliation is still part of the Task-local submit fence.
@@ -40,6 +47,8 @@ describe("Submit failure canonical reconciliation", () => {
     await act(async () => { refresh.resolve(); });
     await screen.findByText("Submission rejected");
     expect(client.getQueryData(TASK_KEY)).toEqual(stored);
+    activity(false);
+    direction(false);
     expect(router.state.location.pathname).toBe(TASK_PATH);
     expect(submitRequests(http)).toHaveLength(1);
     expect(runtimeReads(http)).toHaveLength(2);
@@ -53,12 +62,14 @@ describe("Submit failure canonical reconciliation", () => {
     await screen.findByText("Status: Submitted");
     expect(screen.queryByText("Submission rejected")).not.toBeInTheDocument();
     expect(screen.getByRole("radio", { name: "Das stimmt" })).toBeChecked();
+    activity(true);
+    direction(false);
     expect(submitRequests(http)).toHaveLength(2);
     expect(runtimeReads(http)).toHaveLength(2);
   });
 
   it.each([
-    [404, "IN_PROGRESS"], [409, "EXPIRED"], [500, "SUBMITTED"], ["network", "SUBMITTED"],
+    [404, "IN_PROGRESS"], [409, "EXPIRED"], [409, "CANCELLED"], [500, "SUBMITTED"], ["network", "SUBMITTED"],
   ])("reconciles %s failure through one GET reporting %s without another POST", async (failure, status) => {
     const user = userEvent.setup();
     let reads = 0;
@@ -68,13 +79,17 @@ describe("Submit failure canonical reconciliation", () => {
       return reject(config, failure, "Original submit failure");
     }, { runtimeRead: (config) => ok(config, ++reads === 1 ? taskRuntime() : fresh) });
     const { client, router } = mountAssessmentApp(TASK_PATH);
+    const activity = seedNextActivity(client);
+    const direction = seedDirection(client);
+    client.setQueryData(["learner-learning-journey"], { unchanged: true });
+    client.setQueryData(["learner-assessment-attempt", ATTEMPT_ID], resumedAttempt());
     await user.click(await screen.findByRole("button", { name: "Submit task" }));
     if (status === "IN_PROGRESS") {
       await screen.findByText("Original submit failure");
       expect(screen.getByRole("button", { name: "Submit task" })).toBeEnabled();
       expect(screen.getByRole("radio", { name: "Hallo" })).toBeEnabled();
     } else {
-      await screen.findByText(`Status: ${status === "EXPIRED" ? "Expired" : "Submitted"}`);
+      await screen.findByText(`Status: ${status === "EXPIRED" ? "Expired" : status === "CANCELLED" ? "Cancelled" : "Submitted"}`);
       expect(screen.queryByRole("button", { name: /submit|clear/i })).not.toBeInTheDocument();
       expect(screen.getByRole("radio", { name: "Hallo" })).toBeDisabled();
       expect(screen.queryByRole("alert")).not.toBeInTheDocument();
@@ -83,6 +98,10 @@ describe("Submit failure canonical reconciliation", () => {
     }
     await waitFor(() => expect(client.isMutating()).toBe(0));
     expect(client.getQueryData(TASK_KEY)).toEqual(fresh);
+    activity(status !== "IN_PROGRESS");
+    direction(false);
+    expect(client.getQueryState(["learner-learning-journey"]).isInvalidated).toBe(false);
+    expect(client.getQueryState(["learner-assessment-attempt", ATTEMPT_ID]).isInvalidated).toBe(status === "SUBMITTED");
     expect(router.state.location.pathname).toBe(TASK_PATH);
     expect(submitRequests(http)).toHaveLength(1);
     expect(runtimeReads(http)).toHaveLength(2);
@@ -101,10 +120,14 @@ describe("Submit failure canonical reconciliation", () => {
       },
     });
     const { client } = mountAssessmentApp(TASK_PATH);
+    const activity = seedNextActivity(client);
+    const direction = seedDirection(client);
     await user.click(await screen.findByRole("button", { name: "Submit task" }));
     const boundary = screen.getByRole("region", { name: "Task submission" });
     expect(await within(boundary).findByRole("alert")).toHaveTextContent("Original submit failure");
     expect(client.getQueryData(TASK_KEY)).toEqual(taskRuntime());
+    activity(false);
+    direction(false);
     expect(screen.getByRole("radio", { name: "Guten Tag" })).toBeChecked();
     expect(screen.getByRole("radio", { name: "Hallo" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Submit task" })).toBeEnabled();

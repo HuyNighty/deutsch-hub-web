@@ -1,3 +1,4 @@
+import { withNoActivity, nextActivityUrl } from "@/test/next-activity-fixtures";
 import { describe, it, expect } from "vitest";
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -52,13 +53,13 @@ describe("authenticated learning Header IA", () => {
     expect(http).not.toHaveBeenCalled();
   });
 
-  it("uses the production router to read exactly one Journey and Direction only after an explicit My Learning click", async () => {
+  it("uses the production router to read exactly one Journey, Direction and Next Activity only after an explicit My Learning click", async () => {
     const user = userEvent.setup();
     const snapshot = journey([], { currentLevel: "B1" });
-    const http = assessmentHttp(withDiscoverDirection((config) => {
+    const http = assessmentHttp(withNoActivity(withDiscoverDirection((config) => {
       if (config.url === journeyUrl) return ok(config, snapshot);
       return rejectUnexpectedRequest(config);
-    }));
+    })));
     const { router, client } = mountAssessmentApp("/experiences");
     const myLearning = header().getByRole("link", { name: "My Learning", exact: true });
 
@@ -73,7 +74,7 @@ describe("authenticated learning Header IA", () => {
     expect(screen.getByRole("heading", { name: "My Learning", level: 1 })).toBeInTheDocument();
     expect(router.state.location.pathname).toBe("/my-learning");
     expect(http.mock.calls.map(([config]) => [config.method, config.url, config.data]).sort())
-      .toEqual([["get", journeyUrl, undefined], ["get", directionUrl, undefined]].sort());
+      .toEqual([["get", journeyUrl, undefined], ["get", directionUrl, undefined], ["get", nextActivityUrl, undefined]].sort());
     expect(client.getQueryData(["learner-learning-journey"])).toEqual(snapshot);
     expect(client.getQueryData(["my-courses"])).toBeUndefined();
     expect(client.getQueryData(["learner-competency"])).toBeUndefined();

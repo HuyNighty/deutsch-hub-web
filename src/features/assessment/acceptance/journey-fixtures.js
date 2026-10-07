@@ -1,3 +1,4 @@
+import { nextActivityUrl, noActivity } from "@/test/next-activity-fixtures";
 import { directionUrl, discoverDirection } from "@/test/direction-fixtures";
 import { afterEach, expect } from "vitest";
 import { screen, within, waitFor } from "@testing-library/react";
@@ -75,6 +76,7 @@ export function journeyServer({
     }
     const read = (value) => ok(config, structuredClone(value));
     if (config.method === "get") {
+      if (config.url === nextActivityUrl) return read(noActivity);
       if (config.url === directionUrl) return read(discoverDirection);
       if (config.url === "/me/assessments") {
         expect(config.params).toEqual({ page: 0, size: 20 });

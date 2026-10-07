@@ -1,3 +1,5 @@
+import { seedNextActivity } from "@/test/next-activity-fixtures";
+import { seedDirection } from "@/test/direction-fixtures";
 import { describe, it, expect } from "vitest";
 import { act, fireEvent, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -20,6 +22,8 @@ describe("Task-local answer / submit fences", () => {
     const http = submissionHttp((config) => response.promise.then(() => ok(config, method === "put"
       ? savedAnswer("question-single", ["answer-hallo"]) : clearedAnswer("question-single"))));
     const { client } = mountAssessmentApp(TASK_PATH);
+    const activity = seedNextActivity(client);
+    const direction = seedDirection(client);
     const submit = await screen.findByRole("button", { name: "Submit task" });
     act(() => {
       fireEvent.click(method === "put" ? screen.getByRole("radio", { name: "Hallo" }) : clearButton());
@@ -33,6 +37,8 @@ describe("Task-local answer / submit fences", () => {
     expect(screen.getByRole("checkbox", { name: "Baum" })).toBeEnabled();
     await act(async () => { response.resolve(); });
     await waitFor(() => expect(submit).toBeEnabled());
+    activity(false);
+    direction(false);
     expect(submitRequests(http)).toHaveLength(0);
   });
 
@@ -40,6 +46,8 @@ describe("Task-local answer / submit fences", () => {
     const response = deferred();
     const http = submissionHttp((config) => response.promise.then(() => ok(config, submittedTask())));
     const { client } = mountAssessmentApp(TASK_PATH);
+    const activity = seedNextActivity(client);
+    const direction = seedDirection(client);
     const submit = await screen.findByRole("button", { name: "Submit task" });
     const clear = clearButton();
     act(() => {
@@ -57,6 +65,8 @@ describe("Task-local answer / submit fences", () => {
     expect(client.getQueryData(TASK_KEY)).toEqual(taskRuntime());
     await act(async () => { response.resolve(); });
     await screen.findByText("Status: Submitted");
+    activity(true);
+    direction(false);
     expect(answerRequests(http)).toHaveLength(0);
     expect(submitRequests(http)).toHaveLength(1);
   });

@@ -1,3 +1,4 @@
+import { nextActivityKey } from "@/features/my-learning/guidance/hooks/useNextActivity";
 import { useRef } from "react";
 import { useIsMutating, useMutation, useQueryClient } from "@tanstack/react-query";
 import { finalSubmitAssessment, getAssessmentAttempt } from "../attempt.service";
@@ -17,6 +18,7 @@ export function useFinalSubmit(attempt, definition) {
 
   function invalidateExecution(assessmentAttemptId) {
     void client.invalidateQueries({ queryKey: learningDirectionKey, exact: true, refetchType: "none" });
+    void client.invalidateQueries({ queryKey: nextActivityKey, exact: true, refetchType: "none" });
     void client.invalidateQueries({ queryKey: resultKey(assessmentAttemptId), exact: true, refetchType: "none" });
     void client.invalidateQueries({ queryKey: competencyKey(), exact: true, refetchType: "none" });
     void client.invalidateQueries({ queryKey: ["learner-learning-journey"], exact: true, refetchType: "none" });

@@ -1,3 +1,5 @@
+import { seedNextActivity } from "@/test/next-activity-fixtures";
+import { nextActivityKey } from "@/features/my-learning/guidance/hooks/useNextActivity";
 import { afterEach, expect } from "vitest";
 import { QueryClient, QueryObserver } from "@tanstack/react-query";
 import { learningJourneyKey, learningJourneyOptions } from "@/features/assessment/attempt/hooks/useLearningJourney";
@@ -27,6 +29,7 @@ export function seedCourseState() {
   ];
   unrelated.forEach((key) => client.setQueryData(key, { sentinel: "unchanged" }));
   seedDirection(client);
+  seedNextActivity(client);
   const originals = client.getQueryCache().getAll().map((query) => ({
     key: query.queryKey, data: query.state.data, value: structuredClone(query.state.data),
   }));
@@ -43,7 +46,7 @@ export function expectCourseState({ client, originals }, invalidated = false) {
   for (const { key, data, value } of originals) {
     expect(client.getQueryData(key)).toBe(data);
     expect(client.getQueryData(key)).toEqual(value);
-    const affected = key[0] === "my-courses" || JSON.stringify(key) === JSON.stringify(learningJourneyKey) || JSON.stringify(key) === JSON.stringify(learningDirectionKey);
+    const affected = key[0] === "my-courses" || JSON.stringify(key) === JSON.stringify(learningJourneyKey) || JSON.stringify(key) === JSON.stringify(learningDirectionKey) || JSON.stringify(key) === JSON.stringify(nextActivityKey);
     expect(client.getQueryState(key).isInvalidated).toBe(invalidated && affected);
   }
 }

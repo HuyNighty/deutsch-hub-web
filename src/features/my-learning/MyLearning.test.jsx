@@ -1,3 +1,4 @@
+import { withNoActivity, nextActivityUrl } from "@/test/next-activity-fixtures";
 import { describe, it, expect } from "vitest";
 import { act, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -7,11 +8,11 @@ import { assessmentPage } from "@/features/assessment/test/fixtures";
 import { journey, journeyUrl, courseSnapshot, liveAttempt } from "@/features/assessment/test/attempt-fixtures";
 
 import { withDiscoverDirection, directionUrl } from "@/test/direction-fixtures";
-const assessmentHttp = (handler, options) => baseAssessmentHttp(withDiscoverDirection(handler), options);
+const assessmentHttp = (handler, options) => baseAssessmentHttp(withNoActivity(withDiscoverDirection(handler)), options);
 
 function expectSnapshotReads(http, count = 1) {
   expect(http.mock.calls.map(([config]) => [config.method, config.url, config.data]).sort())
-    .toEqual([...Array.from({ length: count }, () => ["get", journeyUrl, undefined]), ["get", directionUrl, undefined]].sort());
+    .toEqual([...Array.from({ length: count }, () => ["get", journeyUrl, undefined]), ["get", directionUrl, undefined], ["get", nextActivityUrl, undefined]].sort());
 }
 
 function expectNoPartialSnapshot() {
@@ -79,7 +80,7 @@ describe("My Learning canonical Journey snapshot", () => {
     expect(router.state.location.pathname).toBe("/my-learning/courses/course-canonical");
     expect(screen.getByText("Existing Course detail")).toBeInTheDocument();
     expect(http.mock.calls.map(([config]) => [config.method, config.url]).sort())
-      .toEqual([["get", journeyUrl], ["get", directionUrl], ["get", "/me/courses/course-canonical"]].sort());
+      .toEqual([["get", journeyUrl], ["get", directionUrl], ["get", nextActivityUrl], ["get", "/me/courses/course-canonical"]].sort());
   });
 
   it.each([false, true])("keeps discovery reachable with empty Courses: %s and fetches catalog only after click", async (empty) => {
@@ -99,7 +100,7 @@ describe("My Learning canonical Journey snapshot", () => {
     await user.click(entry);
     await screen.findByRole("link", { name: "View assessment" });
     expect(router.state.location.pathname).toBe("/my-learning/assessments");
-    expect(http.mock.calls.map(([config]) => [config.method, config.url]).sort()).toEqual([["get", journeyUrl], ["get", directionUrl], ["get", "/me/assessments"]].sort());
+    expect(http.mock.calls.map(([config]) => [config.method, config.url]).sort()).toEqual([["get", journeyUrl], ["get", directionUrl], ["get", nextActivityUrl], ["get", "/me/assessments"]].sort());
   });
 
   it("permits explicit catalog navigation while the Journey snapshot is still loading", async () => {
@@ -115,7 +116,7 @@ describe("My Learning canonical Journey snapshot", () => {
     await user.click(screen.getByRole("link", { name: "Explore available assessments" }));
     await screen.findByRole("link", { name: "View assessment" });
     expect(router.state.location.pathname).toBe("/my-learning/assessments");
-    expect(http.mock.calls.map(([config]) => config.url).sort()).toEqual([journeyUrl, directionUrl, "/me/assessments"].sort());
+    expect(http.mock.calls.map(([config]) => config.url).sort()).toEqual([journeyUrl, directionUrl, nextActivityUrl, "/me/assessments"].sort());
     await act(async () => { response.resolve(); });
   });
 

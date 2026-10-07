@@ -87,7 +87,7 @@ afterEach(() => {
     }
     expect(config.baseURL).toBe("http://localhost:8080/deutsch-hub/api/v1");
     expect(config.headers.Authorization).toMatch(/^Bearer /);
-    expect(config.url).toMatch(/^\/me\/(?:courses(?:\/[^/]+)?|competency|assessments(?:\/[^/]+(?:\/attempts)?)?|assessment-attempts\/[^/]+(?:\/assessment|\/submit|\/result|\/tasks\/[^/]+\/quiz-attempt(?:\/answers\/[^/]+|\/submit)?)?|learning-journey|learning-direction)$/);
+    expect(config.url).toMatch(/^\/me\/(?:courses(?:\/[^/]+)?|competency|assessments(?:\/[^/]+(?:\/attempts)?)?|assessment-attempts\/[^/]+(?:\/assessment|\/submit|\/result|\/tasks\/[^/]+\/quiz-attempt(?:\/answers\/[^/]+|\/submit)?)?|learning-journey|learning-direction|next-activity)$/);
   }
   requests = [];
   startAllowed = false;

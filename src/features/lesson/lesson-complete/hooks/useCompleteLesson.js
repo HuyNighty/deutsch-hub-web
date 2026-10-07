@@ -1,3 +1,4 @@
+import { nextActivityKey } from "@/features/my-learning/guidance/hooks/useNextActivity";
 import { completeLesson } from "../services/lesson-complete.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { learningJourneyKey } from "@/features/assessment/attempt/hooks/useLearningJourney";
@@ -15,6 +16,7 @@ function useCompleteLesson() {
       queryClient.invalidateQueries({ queryKey: ["my-courses", courseId] });
       queryClient.invalidateQueries({ queryKey: learningJourneyKey, exact: true, refetchType: "none" });
       queryClient.invalidateQueries({ queryKey: learningDirectionKey, exact: true, refetchType: "none" });
+      queryClient.invalidateQueries({ queryKey: nextActivityKey, exact: true, refetchType: "none" });
     },
     onError(error) {
       console.log(error);

@@ -1,3 +1,4 @@
+import { nextActivityKey } from "@/features/my-learning/guidance/hooks/useNextActivity";
 import { useRef } from "react";
 import { useIsMutating, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +17,7 @@ export function useStartTask(assessmentAttemptId, taskId) {
     mutationFn: (target) => startTask(target.assessmentAttemptId, target.taskId),
     retry: false,
     onSuccess: (result) => {
+      void client.invalidateQueries({ queryKey: nextActivityKey, exact: true, refetchType: "none" });
       void client.invalidateQueries({
         queryKey: ["learner-assessment-attempt", result.assessmentAttemptId],
         exact: true, refetchType: "none",

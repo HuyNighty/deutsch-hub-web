@@ -1,3 +1,5 @@
+import { seedNextActivity } from "@/test/next-activity-fixtures";
+import { nextActivityKey } from "@/features/my-learning/guidance/hooks/useNextActivity";
 import { seedDirection } from "@/test/direction-fixtures";
 import { learningDirectionKey } from "@/features/my-learning/guidance/hooks/useLearningDirection";
 import { describe, it, expect } from "vitest";
@@ -87,6 +89,7 @@ describe("Learner Assessment integrated journey", () => {
     ];
     for (const key of unrelated) client.setQueryData(key, { untouched: true });
     const direction = seedDirection(client);
+    const activity = seedNextActivity(client);
     const definitionBefore = client.getQueryState(DEFINITION_KEY);
     const beforeFinal = server.http.mock.calls.length;
     await server.clickWrite(user, screen.getByRole("button", { name: "Submit assessment" }), "post", FINAL_URL);
@@ -100,7 +103,8 @@ describe("Learner Assessment integrated journey", () => {
     expect(client.getQueryData(RESULT_KEY)).toBeUndefined();
     expect(client.getQueryData(COMPETENCY_KEY)).toEqual(competency());
     direction(true);
-    for (const key of [RESULT_KEY, COMPETENCY_KEY, learningDirectionKey, ["learner-learning-journey"], ...server.tasks.map(taskKey)]) {
+    activity(true);
+    for (const key of [RESULT_KEY, COMPETENCY_KEY, learningDirectionKey, nextActivityKey, ["learner-learning-journey"], ...server.tasks.map(taskKey)]) {
       expect(client.getQueryState(key).isInvalidated).toBe(true);
     }
     expect(client.getQueryState(DEFINITION_KEY).isInvalidated).toBe(false);

@@ -1,3 +1,4 @@
+import { nextActivityKey } from "@/features/my-learning/guidance/hooks/useNextActivity";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "@/features/auth/context/AuthProvider";
@@ -19,6 +20,7 @@ export function useEnrollAction(courseId) {
       queryClient.invalidateQueries({ queryKey: ["my-courses"] });
       queryClient.invalidateQueries({ queryKey: learningJourneyKey, exact: true, refetchType: "none" });
       queryClient.invalidateQueries({ queryKey: learningDirectionKey, exact: true, refetchType: "none" });
+      queryClient.invalidateQueries({ queryKey: nextActivityKey, exact: true, refetchType: "none" });
       navigate(`/my-learning/courses/${courseId}`, { replace: true });
     },
     onError(error) {

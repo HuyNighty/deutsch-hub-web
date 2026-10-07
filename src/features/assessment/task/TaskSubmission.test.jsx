@@ -1,3 +1,5 @@
+import { seedNextActivity } from "@/test/next-activity-fixtures";
+import { seedDirection } from "@/test/direction-fixtures";
 import { describe, it, expect } from "vitest";
 import { act, fireEvent, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -22,10 +24,12 @@ describe("Task submission and parent progression", () => {
     expect(submitRequests(http)).toHaveLength(0);
   });
 
-  it("submits once without a body, keeps Questions/selections, invalidates only parent and stays on Task", async () => {
+  it("submits once without a body, keeps Questions/selections, invalidates parent and Next Activity and stays on Task", async () => {
     const response = deferred();
     const runtime = taskRuntime();
     const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+    const activity = seedNextActivity(client);
+    const direction = seedDirection(client);
     const preservedKeys = [
       ["learner-learning-journey"], ["learner-assessments", { page: 0, size: 20 }],
       ["my-courses"], ["sentinel"], [TASK_KEY[0], ATTEMPT_ID, "other-task"],
@@ -51,6 +55,8 @@ describe("Task submission and parent progression", () => {
     expect(cached.questions).toEqual(runtime.questions);
     expect(cached.questions).toBe(runtime.questions);
     expect(client.getQueryState(["learner-assessment-attempt", ATTEMPT_ID]).isInvalidated).toBe(true);
+    activity(true);
+    direction(false);
     expect(client.getQueryState(["learner-assessment-attempt-definition", ATTEMPT_ID]).isInvalidated).toBe(false);
     for (const key of preservedKeys) {
       expect(client.getQueryData(key)).toEqual({ unchanged: true });
@@ -153,10 +159,14 @@ describe("Task submission and parent progression", () => {
     const user = userEvent.setup();
     const http = submissionHttp((config) => ok(config, result));
     const { client, router } = mountAssessmentApp(TASK_PATH);
+    const activity = seedNextActivity(client);
+    const direction = seedDirection(client);
     await user.click(await screen.findByRole("button", { name: "Submit task" }));
     expect(await within(screen.getByRole("region", { name: "Task submission" })).findByRole("alert"))
       .toHaveTextContent("invalid assessment task submit");
     expect(client.getQueryData(TASK_KEY)).toEqual(taskRuntime());
+    activity(false);
+    direction(false);
     expect(router.state.location.pathname).toBe(TASK_PATH);
     expect(screen.queryByRole("link", { name: "Continue assessment" })).not.toBeInTheDocument();
     expect(screen.getByRole("radio", { name: "Guten Tag" })).toBeChecked();
@@ -168,8 +178,12 @@ describe("Task submission and parent progression", () => {
     const user = userEvent.setup();
     const http = submissionHttp((config) => ({ ...ok(config, submittedTask()), data: { result: submittedTask() } }));
     const { client } = mountAssessmentApp(TASK_PATH);
+    const activity = seedNextActivity(client);
+    const direction = seedDirection(client);
     await user.click(await screen.findByRole("button", { name: "Submit task" }));
     await screen.findByText("The server returned an unexpected response.");
+    activity(false);
+    direction(false);
     expect(client.getQueryData(TASK_KEY)).toEqual(taskRuntime());
     expect(runtimeReads(http)).toHaveLength(1);
   });

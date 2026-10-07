@@ -1,3 +1,4 @@
+import { seedNextActivity } from "@/test/next-activity-fixtures";
 import { seedDirection } from "@/test/direction-fixtures";
 import { describe, it, expect } from "vitest";
 import { act, fireEvent, screen, waitFor } from "@testing-library/react";
@@ -78,6 +79,7 @@ describe("Assessment entry and Start", () => {
     const response = deferred();
     const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
     const direction = seedDirection(client);
+    const activity = seedNextActivity(client);
     const courses = [{ courseId: "unrelated-course" }];
     client.setQueryData(["my-courses"], courses);
     client.setQueryData(["sentinel"], { intact: true });
@@ -99,6 +101,7 @@ describe("Assessment entry and Start", () => {
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(posts(http)).toHaveLength(1);
     direction(true);
+    activity(true);
     expect(client.getQueryState(["learner-learning-journey"]).isInvalidated).toBe(true);
     expect(client.getQueryData(["my-courses"])).toEqual(courses);
     expect(client.getQueryState(["my-courses"]).isInvalidated).toBe(false);
@@ -165,6 +168,7 @@ describe("Start conflict recovery", () => {
       });
       const { router, client } = mountAssessmentApp(detailPath);
       const direction = seedDirection(client);
+      const activity = seedNextActivity(client);
       await user.click(await screen.findByRole("button", { name: "Start Assessment" }));
       if (outcome === "match") {
         await screen.findByText("Status: In progress");
@@ -176,6 +180,7 @@ describe("Start conflict recovery", () => {
         expect(router.state.location.pathname).toBe(detailPath);
       }
       direction(outcome === "match");
+      activity(outcome === "match");
       expect(reads).toBe(2);
       expect(posts(http)).toHaveLength(1);
     },
@@ -186,9 +191,11 @@ describe("Start conflict recovery", () => {
     const http = entryHttp((config) => config.url === journeyUrl ? ok(config, journey()) : fail(config, 500));
     const { client } = mountAssessmentApp(detailPath);
     const direction = seedDirection(client);
+    const activity = seedNextActivity(client);
     await user.click(await screen.findByRole("button", { name: "Start Assessment" }));
     await screen.findByText("HTTP failure");
     direction(false);
+    activity(false);
     expect(http.mock.calls.filter(([config]) => config.url === journeyUrl)).toHaveLength(1);
     expect(posts(http)).toHaveLength(1);
   });

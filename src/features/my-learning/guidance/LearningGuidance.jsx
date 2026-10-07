@@ -1,6 +1,8 @@
 import ResourceState from "@/shared/ui/state/ResourceState";
 import { AppLink } from "@/shared/ui/components/app-link";
 import { useLearningDirection } from "./hooks/useLearningDirection";
+import { useNextActivity } from "./hooks/useNextActivity";
+import { taskRoute } from "@/features/assessment/task/task-query";
 
 function Direction({ direction }) {
   switch (direction.type) {
@@ -32,19 +34,62 @@ function Direction({ direction }) {
   }
 }
 
+function Activity({ activity }) {
+  switch (activity.type) {
+    case "OPEN_LESSON":
+      return (
+        <>
+          <p>Continue with your next lesson.</p>
+          <AppLink to={`/my-learning/courses/${encodeURIComponent(activity.target.courseId)}/lessons/${encodeURIComponent(activity.target.lessonId)}`} variant="outline">
+            Open next lesson
+          </AppLink>
+        </>
+      );
+    case "RESUME_ASSESSMENT_TASK":
+      return (
+        <>
+          <p>Resume the assessment task already in progress.</p>
+          <AppLink to={taskRoute(activity.target.assessmentAttemptId, activity.target.taskId)} variant="outline">
+            Resume task
+          </AppLink>
+        </>
+      );
+    case "OPEN_ASSESSMENT":
+      return (
+        <>
+          <p>Return to your assessment to continue.</p>
+          <AppLink to={`/my-learning/assessment-attempts/${encodeURIComponent(activity.target.assessmentAttemptId)}`} variant="outline">
+            Open assessment
+          </AppLink>
+        </>
+      );
+  }
+}
+
 export default function LearningGuidance() {
-  const { data, isPending, error, refetch } = useLearningDirection();
+  const direction = useLearningDirection();
+  const activity = useNextActivity();
+  const concrete = !activity.error && activity.data?.type !== "NONE" && activity.data;
+  const fallback = !direction.error && direction.data;
   return (
-    <section aria-label="Learning direction">
-      <h2>Learning direction</h2>
+    <section aria-label="Learning guidance">
+      <h2>Learning guidance</h2>
       <ResourceState
-        loading={isPending}
-        loadingProps={{ children: <p>Loading learning direction...</p> }}
-        error={error}
-        errorProps={{ onRetry: refetch }}
+        loading={!concrete && !fallback && (direction.isPending || activity.isPending)}
+        loadingProps={{ children: <p>Loading learning guidance...</p> }}
       >
-        {data && <Direction direction={data} />}
+        {concrete ? <Activity activity={concrete} /> : fallback && <Direction direction={fallback} />}
       </ResourceState>
+      {!concrete && direction.error && (
+        <div role="region" aria-label="Learning direction">
+          <ResourceState error={direction.error} errorProps={{ onRetry: direction.refetch }} />
+        </div>
+      )}
+      {activity.error && (
+        <div role="region" aria-label="Next activity">
+          <ResourceState error={activity.error} errorProps={{ onRetry: activity.refetch }} />
+        </div>
+      )}
     </section>
   );
 }

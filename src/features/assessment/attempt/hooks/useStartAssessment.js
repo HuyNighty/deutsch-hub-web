@@ -1,3 +1,4 @@
+import { nextActivityKey } from "@/features/my-learning/guidance/hooks/useNextActivity";
 import { useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -39,6 +40,7 @@ export function useStartAssessment(assessmentId) {
         });
       }
       void queryClient.invalidateQueries({ queryKey: learningDirectionKey, exact: true, refetchType: "none" });
+      void queryClient.invalidateQueries({ queryKey: nextActivityKey, exact: true, refetchType: "none" });
       navigate(`/my-learning/assessment-attempts/${encodeURIComponent(attemptId)}`);
     },
     onSettled: () => { pending.current = false; },
