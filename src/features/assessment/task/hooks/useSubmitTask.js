@@ -3,12 +3,15 @@ import { useIsMutating, useMutation, useQueryClient } from "@tanstack/react-quer
 import { getTaskRuntime, submitTask } from "../task.service";
 import { TaskSubmitResponseError } from "../task-response";
 import { taskQuizKey, taskAnswerKey, taskSubmitKey } from "../task-query";
+import { finalSubmitKey } from "../../attempt/final-submit-query";
 
 export function useSubmitTask(runtime) {
   const client = useQueryClient();
   const pending = useRef(false);
   const submitKey = taskSubmitKey(runtime.assessmentAttemptId, runtime.taskId);
   const answerKey = taskAnswerKey(runtime.assessmentAttemptId, runtime.taskId);
+  const finalKey = finalSubmitKey(runtime.assessmentAttemptId);
+  const finalizing = useIsMutating({ mutationKey: finalKey, exact: true }) > 0;
   const submitting = useIsMutating({ mutationKey: submitKey, exact: true }) > 0;
   const answering = useIsMutating({ mutationKey: answerKey }) > 0;
 
@@ -64,10 +67,11 @@ export function useSubmitTask(runtime) {
     const current = client.getQueryData(taskQuizKey(runtime.assessmentAttemptId, runtime.taskId));
     if (pending.current || current?.status !== "IN_PROGRESS" ||
         client.isMutating({ mutationKey: answerKey }) > 0 ||
-        client.isMutating({ mutationKey: submitKey, exact: true }) > 0) return;
+        client.isMutating({ mutationKey: submitKey, exact: true }) > 0 ||
+        client.isMutating({ mutationKey: finalKey, exact: true }) > 0) return;
     pending.current = true;
     mutation.mutate(runtime);
   }
 
-  return { submit, isPending: submitting, answering, error: mutation.error };
+  return { submit, isPending: submitting, answering, finalizing, error: mutation.error };
 }

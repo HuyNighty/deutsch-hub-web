@@ -8,12 +8,16 @@ let requests = [];
 let startAllowed = false;
 let taskExecutionAllowed = false;
 let taskSubmitAllowed = false;
+let finalSubmitAllowed = false;
 
-export function assessmentHttp(handler, { allowStart = false, allowTaskExecution = false, allowTaskSubmit = false } = {}) {
+export function assessmentHttp(handler, {
+  allowStart = false, allowTaskExecution = false, allowTaskSubmit = false, allowFinalSubmit = false,
+} = {}) {
   requests = [];
   startAllowed = allowStart;
   taskExecutionAllowed = allowTaskExecution;
   taskSubmitAllowed = allowTaskSubmit;
+  finalSubmitAllowed = allowFinalSubmit;
   const http = vi.fn((config) => {
     requests.push(config);
     return handler(config);
@@ -40,7 +44,12 @@ afterEach(() => {
     const isStart = /^\/me\/assessments\/[^/]+\/attempts$/.test(config.url);
     const isTask = /^\/me\/assessment-attempts\/[^/]+\/tasks\/[^/]+\/quiz-attempt(?:\/answers\/[^/]+)?$/.test(config.url);
     const isSubmit = /^\/me\/assessment-attempts\/[^/]+\/tasks\/[^/]+\/quiz-attempt\/submit$/.test(config.url);
-    if (isSubmit) {
+    const isFinalSubmit = /^\/me\/assessment-attempts\/[^/]+\/submit$/.test(config.url);
+    if (isFinalSubmit) {
+      expect(finalSubmitAllowed).toBe(true);
+      expect(config.method).toBe("post");
+      expect(config.data).toBeUndefined();
+    } else if (isSubmit) {
       expect(taskSubmitAllowed).toBe(true);
       expect(config.method).toBe("post");
       expect(config.data).toBeUndefined();
@@ -64,10 +73,11 @@ afterEach(() => {
     }
     expect(config.baseURL).toBe("http://localhost:8080/deutsch-hub/api/v1");
     expect(config.headers.Authorization).toMatch(/^Bearer /);
-    expect(config.url).toMatch(/^\/me\/(?:courses|assessments(?:\/[^/]+(?:\/attempts)?)?|assessment-attempts\/[^/]+(?:\/assessment|\/tasks\/[^/]+\/quiz-attempt(?:\/answers\/[^/]+|\/submit)?)?|learning-journey)$/);
+    expect(config.url).toMatch(/^\/me\/(?:courses|assessments(?:\/[^/]+(?:\/attempts)?)?|assessment-attempts\/[^/]+(?:\/assessment|\/submit|\/tasks\/[^/]+\/quiz-attempt(?:\/answers\/[^/]+|\/submit)?)?|learning-journey)$/);
   }
   requests = [];
   startAllowed = false;
   taskExecutionAllowed = false;
   taskSubmitAllowed = false;
+  finalSubmitAllowed = false;
 });

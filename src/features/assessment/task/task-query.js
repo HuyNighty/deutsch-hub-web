@@ -6,6 +6,10 @@ export function taskAnswerKey(assessmentAttemptId, taskId) {
   return ["learner-assessment-task-answer", assessmentAttemptId, taskId];
 }
 
+export function taskStartKey(assessmentAttemptId, taskId) {
+  return ["learner-assessment-task-start", assessmentAttemptId, taskId];
+}
+
 export function taskSubmitKey(assessmentAttemptId, taskId) {
   return ["learner-assessment-task-submit", assessmentAttemptId, taskId];
 }

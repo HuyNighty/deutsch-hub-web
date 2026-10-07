@@ -12,7 +12,7 @@ export default function TaskEntry({ assessmentAttemptId, taskId, bound }) {
   if (bound) return <AppLink className={cx("taskAction")} to={taskRoute(assessmentAttemptId, taskId)}>Continue task</AppLink>;
   return (
     <span className={cx("taskAction")}>
-      <Button onClick={mutation.start} loading={mutation.isPending}>Start task</Button>
+      <Button onClick={mutation.start} loading={mutation.isPending} disabled={mutation.isFinalSubmitting}>Start task</Button>
       {mutation.error && <span role="alert">{mutation.error.message}</span>}
     </span>
   );

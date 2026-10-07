@@ -4,6 +4,7 @@ import ResourceState from "@/shared/ui/state/ResourceState";
 import { AppLink } from "@/shared/ui/components/app-link";
 import AssessmentStructure from "../shared/AssessmentStructure";
 import TaskEntry from "../task/TaskEntry";
+import FinalSubmission from "./FinalSubmission";
 import { assessmentTitle } from "../shared/assessment-presentation";
 import { useAssessmentAttempt } from "./hooks/useAssessmentAttempt";
 import { attemptStatusLabels, formatAttemptTimestamp } from "./attempt-presentation";
@@ -44,6 +45,7 @@ export default function AssessmentAttempt() {
                 taskId={task.taskId}
                 bound={attempt.taskAttempts.some((binding) => binding.taskId === task.taskId)}
               /> : undefined} />
+            <FinalSubmission key={assessmentAttemptId} attempt={attempt} definition={definition} />
           </>
         )}
       </ResourceState>

@@ -1,14 +1,18 @@
 import { useRef } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useIsMutating, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { startTask } from "../task.service";
-import { taskRoute } from "../task-query";
+import { taskRoute, taskStartKey } from "../task-query";
+import { finalSubmitKey } from "../../attempt/final-submit-query";
 
 export function useStartTask(assessmentAttemptId, taskId) {
   const pending = useRef(false);
   const client = useQueryClient();
   const navigate = useNavigate();
+  const finalKey = finalSubmitKey(assessmentAttemptId);
+  const finalizing = useIsMutating({ mutationKey: finalKey, exact: true }) > 0;
   const mutation = useMutation({
+    mutationKey: taskStartKey(assessmentAttemptId, taskId),
     mutationFn: (target) => startTask(target.assessmentAttemptId, target.taskId),
     retry: false,
     onSuccess: (result) => {
@@ -21,9 +25,9 @@ export function useStartTask(assessmentAttemptId, taskId) {
     onSettled: () => { pending.current = false; },
   });
   function start() {
-    if (pending.current) return;
+    if (pending.current || client.isMutating({ mutationKey: finalKey, exact: true }) > 0) return;
     pending.current = true;
     mutation.mutate({ assessmentAttemptId, taskId });
   }
-  return { start, isPending: mutation.isPending, error: mutation.error };
+  return { start, isPending: mutation.isPending, isFinalSubmitting: finalizing, error: mutation.error };
 }

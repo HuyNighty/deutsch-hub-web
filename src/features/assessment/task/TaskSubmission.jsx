@@ -20,7 +20,7 @@ export default function TaskSubmission({ runtime, parentRoute }) {
   if (runtime.status !== "IN_PROGRESS") return null;
   return (
     <section aria-label="Task submission" className={cx("submission")}>
-      <Button onClick={mutation.submit} loading={mutation.isPending} disabled={mutation.answering}>Submit task</Button>
+      <Button onClick={mutation.submit} loading={mutation.isPending} disabled={mutation.answering || mutation.finalizing}>Submit task</Button>
       {mutation.error && <p role="alert">{mutation.error.message}</p>}
     </section>
   );

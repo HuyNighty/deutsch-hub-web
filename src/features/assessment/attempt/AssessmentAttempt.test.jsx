@@ -63,7 +63,12 @@ describe("owned Assessment Attempt runtime", () => {
     expect(screen.getByText("Started: Not started")).toBeInTheDocument();
     expect(screen.getByText("Deadline: No time limit")).toBeInTheDocument();
     expect(router.state.location.pathname).toBe(attemptPath);
-    expect(within(screen.getByRole("region", { name: "Assessment attempt" })).queryByRole("button")).not.toBeInTheDocument();
+    const region = screen.getByRole("region", { name: "Assessment attempt" });
+    if (status === "EXPIRED") {
+      expect(within(region).getByRole("button", { name: "Finalize expired assessment" })).toBeEnabled();
+    } else {
+      expect(within(region).queryByRole("button")).not.toBeInTheDocument();
+    }
     expect(http).toHaveBeenCalledTimes(2);
   });
 
