@@ -72,6 +72,44 @@
   word-break: break-word;
 }
 
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-weight: 600;
+    color: var(--color-text-secondary);
+  }
+
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    font: inherit;
+  }
+}
+
+.field-error {
+  color: var(--color-danger);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
 @media (max-width: 768px) {
   .page {
     padding-block: 2rem;
@@ -81,7 +119,8 @@
     border-radius: 10px;
   }
 
-  .item {
+  .item,
+  .profile-form {
     padding: 1.25rem 1.5rem;
   }
 

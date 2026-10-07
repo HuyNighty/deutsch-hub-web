@@ -9,7 +9,7 @@ import { getAccessToken, getRefreshToken } from "@/shared/auth/token";
 import { mountSession, seedSession, loginResult, refreshResult } from "@/test/session-fixtures";
 import { deferred, fail, ok, setHttpHandler } from "@/test/http";
 
-const account = { username: "learner", fullName: "Learner Name", email: "learner@example.com", phoneNumber: null };
+const account = { id: "learner-a", username: "learner", firstName: "Learner", lastName: "Name", fullName: "Learner Name", email: "learner@example.com", phoneNumber: null };
 const routes = [
   { element: <ProtectedRoute />, children: [{ path: "/account", element: <AccountPage /> }] },
   { element: <GuestRoute />, children: [{ path: "/login", element: <div>Login surface</div> }] },

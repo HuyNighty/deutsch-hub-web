@@ -1,5 +1,8 @@
+import { useState } from "react";
 import ResourceState from "@/shared/ui/state/ResourceState";
 import LogoutButton from "@/features/auth/login/components/LogoutButton";
+import { Button } from "@/shared/ui/components/button";
+import ProfileForm from "./components/ProfileForm";
 
 import useAccount from "./hooks/useAccount";
 
@@ -10,8 +13,10 @@ const cx = classNames.bind(styles);
 
 function Account() {
   const { account, loading, error, refetch } = useAccount();
+  const [editing, setEditing] = useState(false);
+  const [saved, setSaved] = useState(false);
 
-  const { username, fullName, email, phoneNumber } = account ?? {};
+  const { username, firstName, lastName, fullName, email, phoneNumber } = account ?? {};
 
   return (
     <ResourceState loading={loading} error={error} onRetry={refetch}>
@@ -26,7 +31,7 @@ function Account() {
         <section className={cx("content")}>
           <div className={cx("card")}>
             <div className={cx("item")}>
-              <span className={cx("label")}>Username</span>
+              <span className={cx("label")}>Username (read-only)</span>
 
               <span className={cx("value")}>{username}</span>
             </div>
@@ -38,16 +43,36 @@ function Account() {
             </div>
 
             <div className={cx("item")}>
-              <span className={cx("label")}>Email</span>
+              <span className={cx("label")}>Email (read-only)</span>
 
               <span className={cx("value")}>{email}</span>
             </div>
 
-            <div className={cx("item")}>
-              <span className={cx("label")}>Phone Number</span>
-
-              <span className={cx("value")}>{phoneNumber || "-"}</span>
-            </div>
+            {editing ? (
+              <ProfileForm account={account} onCancel={() => setEditing(false)} onSaved={() => {
+                setEditing(false);
+                setSaved(true);
+              }} />
+            ) : (
+              <>
+                <div className={cx("item")}>
+                  <span className={cx("label")}>First name</span>
+                  <span className={cx("value")}>{firstName}</span>
+                </div>
+                <div className={cx("item")}>
+                  <span className={cx("label")}>Last name</span>
+                  <span className={cx("value")}>{lastName}</span>
+                </div>
+                <div className={cx("item")}>
+                  <span className={cx("label")}>Phone number</span>
+                  <span className={cx("value")}>{phoneNumber || "-"}</span>
+                </div>
+                <div className={cx("item")}>
+                  {saved && <p role="status">Profile saved.</p>}
+                  <Button onClick={() => { setSaved(false); setEditing(true); }}>Edit Profile</Button>
+                </div>
+              </>
+            )}
           </div>
         </section>
       </main>
