@@ -4,88 +4,93 @@ import userEvent from "@testing-library/user-event";
 import { deferred, fail, ok } from "@/test/http";
 import { assessmentHttp, mountAssessmentApp } from "../test/assessment-app";
 import { ASSESSMENT_ID, assessmentDetail, assessmentPage } from "../test/fixtures";
-import { liveAttempt, journey, resumedAttempt, journeyUrl, attemptPath, attemptUrl } from "../test/attempt-fixtures";
-
-const courses = [{ id: "course", courseId: "course", title: "German Basics",
-  completedLessons: 0, totalLessons: 10, completionPercentage: 0 }];
+import { liveAttempt, journey, courseSnapshot, resumedAttempt, journeyUrl, attemptPath, attemptUrl } from "../test/attempt-fixtures";
 
 describe("My Learning active assessment boundary", () => {
-  it("renders neutral cards and resume links using one Journey query, with no title enrichment", async () => {
+  it("renders neutral cards and resume links from one whole Journey query, with no title enrichment or Start", async () => {
     const user = userEvent.setup();
-    const snapshot = journey([liveAttempt(), liveAttempt({ assessmentAttemptId: "second-attempt", targetLevel: "C1" })]);
+    const snapshot = journey([liveAttempt(), liveAttempt({ assessmentAttemptId: "second-attempt", targetLevel: "C1" })], { courses: [courseSnapshot()] });
     const http = assessmentHttp((config) => {
-      if (config.url === "/me/courses") return ok(config, courses);
       if (config.url === journeyUrl) return ok(config, snapshot);
       if (config.url === attemptUrl) return ok(config, resumedAttempt());
-      if (config.url === `${attemptUrl}/assessment`) return ok(config, assessmentDetail());
-      throw new Error(`Unexpected request: ${config.url}`);
+      if (config.url === attemptUrl + "/assessment") return ok(config, assessmentDetail());
+      throw new Error("Unexpected request: " + config.url);
     });
     const { client, router } = mountAssessmentApp("/my-learning");
     const region = await screen.findByRole("region", { name: "Active assessments" });
-    const links = await within(region).findAllByRole("link", { name: "Continue assessment" });
+    const links = within(region).getAllByRole("link", { name: "Continue assessment" });
     expect(within(region).getAllByRole("heading", { name: "Assessment in progress" })).toHaveLength(2);
     expect(within(region).getByText("Target level: B1")).toBeInTheDocument();
     expect(within(region).getByText("Target level: C1")).toBeInTheDocument();
     expect(region.textContent).not.toContain(ASSESSMENT_ID);
     expect(links.map((link) => link.getAttribute("href"))).toEqual([attemptPath, "/my-learning/assessment-attempts/second-attempt"]);
     expect(client.getQueryData(["learner-learning-journey"])).toEqual(snapshot);
-    expect(http.mock.calls.map(([config]) => config.url).sort()).toEqual(["/me/courses", journeyUrl].sort());
+    expect(http.mock.calls.map(([config]) => config.url)).toEqual([journeyUrl]);
     await user.click(links[0]);
     await screen.findByText("Status: In progress");
     expect(router.state.location.pathname).toBe(attemptPath);
+    expect(http.mock.calls.map(([config]) => config.url)).toEqual([journeyUrl, attemptUrl, attemptUrl + "/assessment"]);
+    expect(http.mock.calls.every(([config]) => config.method === "get")).toBe(true);
   });
 
-  it("renders no fake active card for an empty index and preserves discovery", async () => {
-    assessmentHttp((config) => ok(config, config.url === journeyUrl ? journey() : []));
+  it("renders no fake active card for an empty snapshot and preserves level and discovery", async () => {
+    const http = assessmentHttp((config) => ok(config, journey()));
     const { client } = mountAssessmentApp("/my-learning");
     await screen.findByText("No courses yet");
     expect(client.getQueryData(["learner-learning-journey"])).toEqual(journey());
     expect(screen.queryByRole("heading", { name: "Assessment in progress" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Continue assessment" })).not.toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Current German level" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
+    expect(http).toHaveBeenCalledTimes(1);
   });
 
-  it("keeps Courses and discovery usable through Journey loading, failure, retry and catalog navigation", async () => {
+  it("keeps discovery usable through one Journey loading/error/retry boundary and explicit catalog navigation", async () => {
     const user = userEvent.setup();
     const read = deferred();
     let failed = true;
     const http = assessmentHttp((config) => {
-      if (config.url === "/me/courses") return ok(config, courses);
       if (config.url === journeyUrl) return failed
-        ? read.promise.then(() => fail(config, 500)) : ok(config, journey([liveAttempt()]));
+        ? read.promise.then(() => fail(config, 500)) : ok(config, journey([liveAttempt()], { courses: [courseSnapshot()] }));
       if (config.url === "/me/assessments") return ok(config, assessmentPage());
-      throw new Error(`Unexpected request: ${config.url}`);
+      throw new Error("Unexpected request: " + config.url);
     });
     mountAssessmentApp("/my-learning");
-    await screen.findByText("German Basics");
-    expect(screen.getByText("Checking assessment attempts...")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Continue Learning" })).toBeEnabled();
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
     await act(async () => { read.resolve(); });
-    await screen.findByText("Unable to load active assessments.");
-    expect(screen.getByRole("button", { name: "Continue Learning" })).toBeEnabled();
+    await screen.findByText("Something went wrong");
+    expect(screen.getAllByRole("heading", { name: "Something went wrong" })).toHaveLength(1);
+    expect(screen.queryByText("German Basics")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Continue assessment" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
     failed = false;
-    await user.click(screen.getByRole("button", { name: "Retry active assessments" }));
+    await user.click(screen.getByRole("button", { name: "Try Again" }));
     await screen.findByRole("link", { name: "Continue assessment" });
-    expect(http.mock.calls.filter(([config]) => config.url === "/me/courses")).toHaveLength(1);
+    expect(screen.getByRole("button", { name: "Continue Learning" })).toBeEnabled();
+    expect(http.mock.calls.map(([config]) => config.url)).toEqual([journeyUrl, journeyUrl]);
     await user.click(screen.getByRole("link", { name: "Explore available assessments" }));
     await screen.findByRole("link", { name: "View assessment" });
+    expect(http.mock.calls.map(([config]) => config.url)).toEqual([journeyUrl, journeyUrl, "/me/assessments"]);
   });
 
-  it("keeps active resumes useful independently of a failed Course read", async () => {
-    assessmentHttp((config) => config.url === journeyUrl ? ok(config, journey([liveAttempt()])) : fail(config, 500));
+  it("keeps active resumes, current level and discovery visible with zero Courses", async () => {
+    const http = assessmentHttp((config) => ok(config, journey([liveAttempt()], { currentLevel: "B1" })));
+    mountAssessmentApp("/my-learning");
+    await screen.findByText("No courses yet");
+    expect(screen.getByRole("link", { name: "Continue assessment" })).toHaveAttribute("href", attemptPath);
+    expect(within(screen.getByRole("region", { name: "Current German level" })).getByText("B1")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
+    expect(http).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects malformed Attempts without partially rendering valid Courses or current level", async () => {
+    assessmentHttp((config) => ok(config, journey([liveAttempt(), liveAttempt({ assessmentId: " " })], { courses: [courseSnapshot()], currentLevel: "B1" })));
     mountAssessmentApp("/my-learning");
     await screen.findByText("Something went wrong");
-    expect(await screen.findByRole("link", { name: "Continue assessment" })).toHaveAttribute("href", attemptPath);
-    expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
-  });
-
-  it("rejects malformed Journey snapshots without partial active cards", async () => {
-    assessmentHttp((config) => ok(config, config.url === journeyUrl
-      ? journey([liveAttempt(), liveAttempt({ assessmentId: " " })]) : courses));
-    mountAssessmentApp("/my-learning");
-    await screen.findByText("Unable to load active assessments.");
-    expect(screen.getByText("German Basics")).toBeInTheDocument();
+    expect(screen.queryByText("German Basics")).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Current German level" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Continue assessment" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
   });
 });

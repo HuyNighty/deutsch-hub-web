@@ -12,7 +12,7 @@ function response(result) {
   return assessmentHttp((config) => ok(config, result), { allowStart: true });
 }
 
-describe("narrow Journey response boundary", () => {
+describe("Journey response boundary", () => {
   it.each([
     ["null", null],
     ["array", []],
@@ -39,8 +39,8 @@ describe("narrow Journey response boundary", () => {
   });
 
   it.each(["A0", "A1", "A2", "B1", "B2", "C1", "C2"])(
-    "accepts %s and validates only consumed snapshots, without deadline derivation or Course validation", async (targetLevel) => {
-      const snapshot = journey([liveAttempt({ targetLevel, expiresAt: null })], { courses: "unconsumed", currentLevel: "UNKNOWN" });
+    "accepts active target %s with a canonical whole snapshot and no deadline derivation", async (targetLevel) => {
+      const snapshot = journey([liveAttempt({ targetLevel, expiresAt: null })], { currentLevel: "UNKNOWN" });
       const http = response(snapshot);
       await expect(getLearningJourney()).resolves.toEqual(snapshot);
       expect(http.mock.calls[0][0].url).toBe("/me/learning-journey");

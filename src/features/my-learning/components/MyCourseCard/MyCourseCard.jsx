@@ -12,7 +12,7 @@ export default function MyCourseCard({ course }) {
   const navigate = useNavigate();
 
   const handleContinue = () => {
-    navigate(`/my-learning/courses/${course.courseId}`);
+    navigate(`/my-learning/courses/${encodeURIComponent(course.courseId)}`);
   };
 
   return (
@@ -20,15 +20,13 @@ export default function MyCourseCard({ course }) {
       <header className={cx("header")}>
         <h2 className={cx("title")}>{course.title}</h2>
 
-        {course.description && (
-          <p className={cx("description")}>{course.description}</p>
-        )}
+        <p className={cx("description")}>Course level: {course.level}</p>
       </header>
 
       <MyCourseProgressBar
-        completedLessons={course.completedLessons}
-        totalLessons={course.totalLessons}
-        completionPercentage={course.completionPercentage}
+        completedLessons={course.progress.completedLessons}
+        totalLessons={course.progress.totalLessons}
+        completionPercentage={course.progress.completionPercentage}
       />
 
       <footer className={cx("footer")}>

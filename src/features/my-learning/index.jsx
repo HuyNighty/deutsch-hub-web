@@ -4,20 +4,20 @@ import styles from "./MyLearning.module.scss";
 import ResourceState from "@/shared/ui/state/ResourceState";
 import { AppLink } from "@/shared/ui/components/app-link";
 import MyCourseCard from "./components/MyCourseCard/MyCourseCard";
-import useMyLearning from "./hooks/useMyLearning";
+import { useLearningJourney } from "@/features/assessment/attempt/hooks/useLearningJourney";
 import ActiveAssessments from "@/features/assessment/attempt/ActiveAssessments";
 
 const cx = classNames.bind(styles);
 
 function MyLearning() {
-  const { courses, loading, error, refetch } = useMyLearning();
+  const { data: journey, isPending, error, refetch } = useLearningJourney();
 
   return (
     <main className={cx("page")}>
       <header className={cx("header")}>
         <h1 className={cx("title")}>My Learning</h1>
 
-        <p className={cx("description")}>Continue your enrolled courses.</p>
+        <p className={cx("description")}>Continue your German learning journey.</p>
       </header>
 
       <section aria-labelledby="assessment-entry-title">
@@ -27,25 +27,32 @@ function MyLearning() {
         </AppLink>
       </section>
 
-      <ActiveAssessments />
-
       <ResourceState
-        loading={loading}
+        loading={isPending}
         error={error}
-        empty={courses.length === 0}
-        emptyProps={{
-          title: "No courses yet",
-          description: "Start learning your first course.",
-        }}
         errorProps={{
           onRetry: refetch,
         }}
       >
-        <section className={cx("courses")}>
-          {courses.map((course) => (
-            <MyCourseCard key={course.id} course={course} />
-          ))}
-        </section>
+        {journey && (
+          <>
+            <section aria-label="Current German level">
+              <h2>Current German level</h2>
+              <p>{journey.currentLevel === "UNKNOWN" ? "Not established yet" : journey.currentLevel}</p>
+            </section>
+            <ActiveAssessments assessmentAttempts={journey.assessmentAttempts} />
+            <ResourceState
+              empty={journey.courses.length === 0}
+              emptyProps={{ title: "No courses yet", description: "Start learning your first course." }}
+            >
+              <section className={cx("courses")} aria-label="Your courses">
+                {journey.courses.map((course) => (
+                  <MyCourseCard key={course.courseId} course={course} />
+                ))}
+              </section>
+            </ResourceState>
+          </>
+        )}
       </ResourceState>
     </main>
   );

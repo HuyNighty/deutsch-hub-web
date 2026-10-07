@@ -12,7 +12,15 @@ export function liveAttempt(overrides = {}) {
 }
 
 export function journey(assessmentAttempts = [], overrides = {}) {
-  return { learningDomain: "GERMAN", currentLevel: "A1", courses: [], assessmentAttempts, ...overrides };
+  return { learningDomain: "DEUTSCH", currentLevel: "A1", courses: [], assessmentAttempts, ...overrides };
+}
+
+export function courseSnapshot(overrides = {}) {
+  return {
+    courseId: "course-one", title: "German Basics", level: "A1", enrollmentStatus: "IN_PROGRESS",
+    progress: { completedLessons: 3, totalLessons: 8, completionPercentage: 37.5, totalStudyMinutes: 90 },
+    ...overrides,
+  };
 }
 
 export function startedAttempt(overrides = {}) {

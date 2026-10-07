@@ -4,6 +4,17 @@ const LEVELS = ["A0", "A1", "A2", "B1", "B2", "C1", "C2"];
 const STATUSES = ["CREATED", "IN_PROGRESS", "COMPLETED", "EXPIRED", "CANCELLED"];
 const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
 const isNonblank = (value) => typeof value === "string" && value.trim().length > 0;
+const isNonnegativeInteger = (value) => Number.isInteger(value) && value >= 0;
+
+function isJourneyCourse(course) {
+  const progress = course?.progress;
+  return isObject(course) && isNonblank(course.courseId) && isNonblank(course.title) &&
+    typeof course.level === "string" && ["ENROLLED", "IN_PROGRESS"].includes(course.enrollmentStatus) &&
+    isObject(progress) && isNonnegativeInteger(progress.completedLessons) &&
+    isNonnegativeInteger(progress.totalLessons) && Number.isFinite(progress.completionPercentage) &&
+    progress.completionPercentage >= 0 && progress.completionPercentage <= 100 &&
+    isNonnegativeInteger(progress.totalStudyMinutes);
+}
 // Backend Instants include a time and zone; date-only values are not timestamps.
 export function isTimestamp(value) {
   if (!isNonblank(value)) return false;
@@ -22,7 +33,10 @@ function invalid(kind) {
 }
 
 export function parseLearningJourney(value) {
-  if (!isObject(value) || !Array.isArray(value.assessmentAttempts) ||
+  if (!isObject(value) || value.learningDomain !== "DEUTSCH" ||
+      !["UNKNOWN", ...LEVELS].includes(value.currentLevel) ||
+      !Array.isArray(value.courses) || !value.courses.every(isJourneyCourse) ||
+      !Array.isArray(value.assessmentAttempts) ||
       !value.assessmentAttempts.every((attempt) => isObject(attempt) &&
         isNonblank(attempt.assessmentAttemptId) && isNonblank(attempt.assessmentId) &&
         LEVELS.includes(attempt.targetLevel) && attempt.status === "IN_PROGRESS" &&
