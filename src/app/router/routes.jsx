@@ -12,6 +12,8 @@ import LoginPage from "@/pages/Auth/Login";
 import RegisterPage from "@/pages/Auth/Register";
 
 import MyLearningPage from "@/pages/learn-german/my-learning";
+import AssessmentCatalogPage from "@/pages/learn-german/assessment-catalog";
+import AssessmentDetailPage from "@/pages/learn-german/assessment-detail";
 import MyCourseDetailPage from "@/pages/learn-german/my-course-detail";
 import LessonPage from "@/pages/learn-german/lesson";
 
@@ -63,6 +65,14 @@ export const router = createBrowserRouter([
           {
             path: "/my-learning",
             element: <MyLearningPage />,
+          },
+          {
+            path: "/my-learning/assessments",
+            element: <AssessmentCatalogPage />,
+          },
+          {
+            path: "/my-learning/assessments/:assessmentId",
+            element: <AssessmentDetailPage />,
           },
           {
             path: "/my-learning/courses/:courseId",
