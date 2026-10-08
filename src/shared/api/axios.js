@@ -90,6 +90,7 @@ function attachAuthInterceptor(client) {
     async (error) => {
       const request = error.config;
       if (error.response?.status !== 401 || !request ||
+          request.refreshOnUnauthorized === false ||
           request.requiresAuth === false || isAuthEndpoint(request.url) ||
           !isCurrentSession(request._sessionGeneration)) throw error;
 

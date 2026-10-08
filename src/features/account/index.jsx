@@ -3,6 +3,7 @@ import ResourceState from "@/shared/ui/state/ResourceState";
 import LogoutButton from "@/features/auth/login/components/LogoutButton";
 import { Button } from "@/shared/ui/components/button";
 import ProfileForm from "./components/ProfileForm";
+import PasswordForm from "./components/PasswordForm";
 
 import useAccount from "./hooks/useAccount";
 
@@ -15,6 +16,7 @@ function Account() {
   const { account, loading, error, refetch } = useAccount();
   const [editing, setEditing] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
 
   const { username, firstName, lastName, fullName, email, phoneNumber } = account ?? {};
 
@@ -72,6 +74,21 @@ function Account() {
                   <Button onClick={() => { setSaved(false); setEditing(true); }}>Edit Profile</Button>
                 </div>
               </>
+            )}
+          </div>
+        </section>
+        <section className={cx("content")} aria-labelledby="account-security-heading">
+          <div className={cx("card")}>
+            <div className={cx("item")}>
+              <h2 id="account-security-heading" className={cx("security-title")}>Security</h2>
+              <p>Manage your password.</p>
+            </div>
+            {changingPassword ? (
+              <PasswordForm onCancel={() => setChangingPassword(false)} />
+            ) : (
+              <div className={cx("item")}>
+                <Button onClick={() => setChangingPassword(true)}>Change Password</Button>
+              </div>
             )}
           </div>
         </section>

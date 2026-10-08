@@ -156,6 +156,12 @@ export default function LoginForm() {
                   </div>
                 </div>
 
+                {location.state?.passwordChanged === true && (
+                  <p className={cx("status")} role="status">
+                    Password changed successfully. Please sign in again.
+                  </p>
+                )}
+
                 {error && (
                   <div className={cx("error")} role="alert">
                     {error}

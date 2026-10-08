@@ -72,7 +72,13 @@
   word-break: break-word;
 }
 
-.profile-form {
+.security-title {
+  font-size: 1.25rem;
+  color: var(--color-text-primary);
+}
+
+.profile-form,
+.password-form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -120,7 +126,8 @@
   }
 
   .item,
-  .profile-form {
+  .profile-form,
+  .password-form {
     padding: 1.25rem 1.5rem;
   }
 

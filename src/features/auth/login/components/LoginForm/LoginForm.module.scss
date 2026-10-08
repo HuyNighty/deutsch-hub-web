@@ -8,6 +8,15 @@
   font-family: var(--font-family-primary);
 }
 
+.status {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+}
+
 .background {
   position: absolute;
   inset: 0;
