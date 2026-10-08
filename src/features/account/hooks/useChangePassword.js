@@ -5,6 +5,7 @@ import { ApiError } from "@/shared/api/api-error";
 import { getSessionGeneration, isCurrentSession, terminateAuthSession } from "@/shared/auth/auth-session";
 import { changePassword } from "../services/account.service";
 import { globalLogoutMutationKey } from "./useGlobalLogout";
+import { deactivationMutationKey } from "./account-mutations";
 
 const mutationKey = ["account", "change-password"];
 
@@ -31,6 +32,7 @@ export default function useChangePassword() {
 
   function submit(request) {
     if (pending.current || client.isMutating({ mutationKey, exact: true }) > 0 ||
+        client.isMutating({ mutationKey: deactivationMutationKey, exact: true }) > 0 ||
         client.isMutating({ mutationKey: globalLogoutMutationKey, exact: true }) > 0) return;
     pending.current = true;
     mutation.mutate({ request, generation: getSessionGeneration() });

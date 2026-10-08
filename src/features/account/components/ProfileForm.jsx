@@ -12,7 +12,7 @@ const fields = [
   { name: "phoneNumber", label: "Phone number", max: 20, autoComplete: "tel" },
 ];
 
-export default function ProfileForm({ account, onCancel, onSaved }) {
+export default function ProfileForm({ account, onCancel, onSaved, disabled = false }) {
   const [form, setForm] = useState(() => ({
     firstName: account.firstName,
     lastName: account.lastName,
@@ -24,7 +24,7 @@ export default function ProfileForm({ account, onCancel, onSaved }) {
 
   function onSubmit(event) {
     event.preventDefault();
-    if (isPending) return;
+    if (isPending || disabled) return;
     const errors = fields.flatMap(({ name, label, max }) => {
       if (name !== "phoneNumber" && !form[name].trim()) {
         return [{ field: name, message: `${label} must not be blank.` }];
@@ -49,7 +49,7 @@ export default function ProfileForm({ account, onCancel, onSaved }) {
             <label htmlFor={`profile-${name}`}>{label}</label>
             <input
               id={`profile-${name}`} name={name} type={name === "phoneNumber" ? "tel" : "text"}
-              autoComplete={autoComplete} maxLength={max} value={form[name]} disabled={isPending}
+              autoComplete={autoComplete} maxLength={max} value={form[name]} disabled={isPending || disabled}
               aria-invalid={!!fieldError} aria-describedby={fieldError ? `profile-${name}-error` : undefined}
               onChange={(event) => {
                 setForm((current) => ({ ...current, [name]: event.target.value }));
@@ -62,8 +62,8 @@ export default function ProfileForm({ account, onCancel, onSaved }) {
         );
       })}
       <div className={cx("actions")}>
-        <Button type="submit" loading={isPending}>{isPending ? "Saving…" : "Save"}</Button>
-        <Button variant="outline" disabled={isPending} onClick={onCancel}>Cancel</Button>
+        <Button type="submit" loading={isPending} disabled={disabled}>{isPending ? "Saving…" : "Save"}</Button>
+        <Button variant="outline" disabled={isPending || disabled} onClick={onCancel}>Cancel</Button>
       </div>
     </form>
   );

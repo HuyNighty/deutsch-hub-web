@@ -3,6 +3,7 @@ import { useIsMutating, useMutation, useQueryClient } from "@tanstack/react-quer
 import { ApiError } from "@/shared/api/api-error";
 import { getSessionGeneration, isCurrentSession } from "@/shared/auth/auth-session";
 import { updateProfile } from "../services/account.service";
+import { deactivationMutationKey } from "./account-mutations";
 
 const mutationKey = ["account", "update-profile"];
 
@@ -29,7 +30,8 @@ export default function useUpdateProfile() {
   });
 
   function save(payload, onSuccess) {
-    if (pending.current || client.isMutating({ mutationKey, exact: true }) > 0) return;
+    if (pending.current || client.isMutating({ mutationKey, exact: true }) > 0 ||
+        client.isMutating({ mutationKey: deactivationMutationKey, exact: true }) > 0) return;
     pending.current = true;
     const generation = getSessionGeneration();
     mutation.mutate({ payload, generation }, {

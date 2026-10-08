@@ -4,6 +4,7 @@ import { useIsMutating, useMutation, useQueryClient } from "@tanstack/react-quer
 import { ApiError } from "@/shared/api/api-error";
 import { getSessionGeneration, isCurrentSession, terminateAuthSession } from "@/shared/auth/auth-session";
 import { logoutAllSessions } from "../services/account.service";
+import { deactivationMutationKey } from "./account-mutations";
 
 export const globalLogoutMutationKey = ["account", "logout-all"];
 const competingMutation = ({ options: { mutationKey: key } }) =>
@@ -17,7 +18,8 @@ export default function useGlobalLogout() {
   const navigate = useNavigate();
   const pending = useRef(false);
   const isPending = useIsMutating({ mutationKey: globalLogoutMutationKey, exact: true }) > 0;
-  const competingPending = useIsMutating({ predicate: competingMutation }) > 0;
+  const deactivationPending = useIsMutating({ mutationKey: deactivationMutationKey, exact: true }) > 0;
+  const competingPending = useIsMutating({ predicate: competingMutation }) > 0 || deactivationPending;
   const mutation = useMutation({
     mutationKey: globalLogoutMutationKey,
     retry: false,
@@ -36,6 +38,7 @@ export default function useGlobalLogout() {
 
   function confirm() {
     if (pending.current || client.isMutating({ mutationKey: globalLogoutMutationKey, exact: true }) > 0 ||
+        client.isMutating({ mutationKey: deactivationMutationKey, exact: true }) > 0 ||
         client.isMutating({ predicate: competingMutation }) > 0) return;
     pending.current = true;
     mutation.mutate({ generation: getSessionGeneration() });

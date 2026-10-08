@@ -7,7 +7,9 @@ import ProfileForm from "./components/ProfileForm";
 import PasswordForm from "./components/PasswordForm";
 import SessionsSection from "./components/SessionsSection";
 import GlobalLogout from "./components/GlobalLogout";
+import AccountDeactivation from "./components/AccountDeactivation";
 import { globalLogoutMutationKey } from "./hooks/useGlobalLogout";
+import { deactivationMutationKey } from "./hooks/account-mutations";
 
 import useAccount from "./hooks/useAccount";
 
@@ -22,6 +24,8 @@ function Account() {
   const [saved, setSaved] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
   const globalLogoutPending = useIsMutating({ mutationKey: globalLogoutMutationKey, exact: true }) > 0;
+  const deactivationPending = useIsMutating({ mutationKey: deactivationMutationKey, exact: true }) > 0;
+  const securityDisabled = globalLogoutPending || deactivationPending;
 
   const { username, firstName, lastName, fullName, email, phoneNumber } = account ?? {};
 
@@ -56,7 +60,7 @@ function Account() {
             </div>
 
             {editing ? (
-              <ProfileForm account={account} onCancel={() => setEditing(false)} onSaved={() => {
+              <ProfileForm account={account} disabled={deactivationPending} onCancel={() => setEditing(false)} onSaved={() => {
                 setEditing(false);
                 setSaved(true);
               }} />
@@ -76,7 +80,7 @@ function Account() {
                 </div>
                 <div className={cx("item")}>
                   {saved && <p role="status">Profile saved.</p>}
-                  <Button onClick={() => { setSaved(false); setEditing(true); }}>Edit Profile</Button>
+                  <Button disabled={deactivationPending} onClick={() => { setSaved(false); setEditing(true); }}>Edit Profile</Button>
                 </div>
               </>
             )}
@@ -89,16 +93,17 @@ function Account() {
               <p>Manage your password.</p>
             </div>
             {changingPassword ? (
-              <PasswordForm disabled={globalLogoutPending} onCancel={() => setChangingPassword(false)} />
+              <PasswordForm disabled={securityDisabled} onCancel={() => setChangingPassword(false)} />
             ) : (
               <div className={cx("item")}>
-                <Button disabled={globalLogoutPending} onClick={() => setChangingPassword(true)}>Change Password</Button>
+                <Button disabled={securityDisabled} onClick={() => setChangingPassword(true)}>Change Password</Button>
               </div>
             )}
             <GlobalLogout />
           </div>
         </section>
-        <SessionsSection actionsDisabled={globalLogoutPending} />
+        <SessionsSection actionsDisabled={securityDisabled} />
+        <AccountDeactivation />
       </main>
     </ResourceState>
   );

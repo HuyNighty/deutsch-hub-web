@@ -51,8 +51,10 @@ export default function LoginForm() {
         usernameOrEmail: usernameOrEmail.trim(),
         password,
       });
-    } catch {
-      setError("Invalid username/email or password.");
+    } catch (failure) {
+      setError(failure.status === 403 && failure.code === 4005
+        ? "Your account has been deactivated. You cannot sign in unless it is reactivated."
+        : "Invalid username/email or password.");
     }
   }
 
@@ -171,6 +173,12 @@ export default function LoginForm() {
                 {location.state?.allSessionsRevoked === true && (
                   <p className={cx("status")} role="status">
                     All login sessions were revoked. Please sign in again.
+                  </p>
+                )}
+
+                {location.state?.accountDeactivated === true && (
+                  <p className={cx("status")} role="status">
+                    Your account has been deactivated. You cannot sign in unless it is reactivated.
                   </p>
                 )}
 

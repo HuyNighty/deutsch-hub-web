@@ -31,3 +31,10 @@ export function logoutAllSessions() {
     validateStatus: (status) => status === 200,
   });
 }
+
+export function deactivateAccount({ password }) {
+  return apiClient.patch("/users/me/deactivate", { password }, {
+    refreshOnUnauthorized: false,
+    validateStatus: (status) => status === 200,
+  });
+}
