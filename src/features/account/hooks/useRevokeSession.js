@@ -5,6 +5,7 @@ import { ApiError } from "@/shared/api/api-error";
 import { getSessionGeneration, isCurrentSession, terminateAuthSession } from "@/shared/auth/auth-session";
 import { revokeSession } from "../services/account.service";
 import { sessionsQueryKey } from "./useSessions";
+import { globalLogoutMutationKey } from "./useGlobalLogout";
 
 const mutationKey = ["account", "sessions", "revoke"];
 
@@ -39,7 +40,8 @@ export default function useRevokeSession() {
   });
 
   function revoke(session, onSuccess) {
-    if (pending.current || client.isMutating({ mutationKey, exact: true }) > 0) return;
+    if (pending.current || client.isMutating({ mutationKey, exact: true }) > 0 ||
+        client.isMutating({ mutationKey: globalLogoutMutationKey, exact: true }) > 0) return;
     pending.current = true;
     setSuccess(null);
     const generation = getSessionGeneration();

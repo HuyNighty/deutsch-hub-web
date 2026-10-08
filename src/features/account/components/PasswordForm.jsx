@@ -12,7 +12,7 @@ const fields = [
   { name: "verifyNewPassword", label: "Confirm new password", autoComplete: "new-password" },
 ];
 
-export default function PasswordForm({ onCancel }) {
+export default function PasswordForm({ onCancel, disabled = false }) {
   const [form, setForm] = useState({ currentPassword: "", newPassword: "", verifyNewPassword: "" });
   const [validationError, setValidationError] = useState(null);
   const { submit, isPending, error: updateError, reset } = useChangePassword();
@@ -20,7 +20,7 @@ export default function PasswordForm({ onCancel }) {
 
   function onSubmit(event) {
     event.preventDefault();
-    if (isPending) return;
+    if (isPending || disabled) return;
     const errors = fields.filter(({ name }) => !form[name].trim())
       .map(({ name, label }) => ({ field: name, message: `${label} must not be blank.` }));
     if (form.newPassword.trim() && (form.newPassword.length < 8 || form.newPassword.length > 100)) {
@@ -47,7 +47,7 @@ export default function PasswordForm({ onCancel }) {
             <label htmlFor={`password-${name}`}>{label}</label>
             <input
               id={`password-${name}`} name={name} type="password" autoComplete={autoComplete}
-              value={form[name]} disabled={isPending}
+              value={form[name]} disabled={isPending || disabled}
               aria-invalid={!!fieldError} aria-describedby={fieldError ? `password-${name}-error` : undefined}
               onChange={(event) => {
                 setForm((current) => ({ ...current, [name]: event.target.value }));
@@ -60,8 +60,8 @@ export default function PasswordForm({ onCancel }) {
         );
       })}
       <div className={cx("actions")}>
-        <Button type="submit" loading={isPending}>{isPending ? "Changing password…" : "Change Password"}</Button>
-        <Button variant="outline" disabled={isPending} onClick={onCancel}>Cancel</Button>
+        <Button type="submit" loading={isPending} disabled={disabled}>{isPending ? "Changing password…" : "Change Password"}</Button>
+        <Button variant="outline" disabled={isPending || disabled} onClick={onCancel}>Cancel</Button>
       </div>
     </form>
   );

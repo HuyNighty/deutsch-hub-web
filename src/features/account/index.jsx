@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useIsMutating } from "@tanstack/react-query";
 import ResourceState from "@/shared/ui/state/ResourceState";
 import LogoutButton from "@/features/auth/login/components/LogoutButton";
 import { Button } from "@/shared/ui/components/button";
 import ProfileForm from "./components/ProfileForm";
 import PasswordForm from "./components/PasswordForm";
 import SessionsSection from "./components/SessionsSection";
+import GlobalLogout from "./components/GlobalLogout";
+import { globalLogoutMutationKey } from "./hooks/useGlobalLogout";
 
 import useAccount from "./hooks/useAccount";
 
@@ -18,6 +21,7 @@ function Account() {
   const [editing, setEditing] = useState(false);
   const [saved, setSaved] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
+  const globalLogoutPending = useIsMutating({ mutationKey: globalLogoutMutationKey, exact: true }) > 0;
 
   const { username, firstName, lastName, fullName, email, phoneNumber } = account ?? {};
 
@@ -85,15 +89,16 @@ function Account() {
               <p>Manage your password.</p>
             </div>
             {changingPassword ? (
-              <PasswordForm onCancel={() => setChangingPassword(false)} />
+              <PasswordForm disabled={globalLogoutPending} onCancel={() => setChangingPassword(false)} />
             ) : (
               <div className={cx("item")}>
-                <Button onClick={() => setChangingPassword(true)}>Change Password</Button>
+                <Button disabled={globalLogoutPending} onClick={() => setChangingPassword(true)}>Change Password</Button>
               </div>
             )}
+            <GlobalLogout />
           </div>
         </section>
-        <SessionsSection />
+        <SessionsSection actionsDisabled={globalLogoutPending} />
       </main>
     </ResourceState>
   );

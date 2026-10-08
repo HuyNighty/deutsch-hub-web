@@ -168,6 +168,12 @@ export default function LoginForm() {
                   </p>
                 )}
 
+                {location.state?.allSessionsRevoked === true && (
+                  <p className={cx("status")} role="status">
+                    All login sessions were revoked. Please sign in again.
+                  </p>
+                )}
+
                 {error && (
                   <div className={cx("error")} role="alert">
                     {error}

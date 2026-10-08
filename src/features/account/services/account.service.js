@@ -24,3 +24,10 @@ export async function getSessions({ signal } = {}) {
 export function revokeSession(sessionId) {
   return apiClient.delete(`/users/me/sessions/${sessionId}`, { validateStatus: (status) => status === 200 });
 }
+
+export function logoutAllSessions() {
+  return apiClient.post("/users/me/logout-all", undefined, {
+    refreshOnUnauthorized: false,
+    validateStatus: (status) => status === 200,
+  });
+}

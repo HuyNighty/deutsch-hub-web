@@ -8,7 +8,7 @@ import styles from "../Account.module.scss";
 const cx = classNames.bind(styles);
 const localTime = (value) => <time dateTime={value}>{value.replace("T", " ")}</time>;
 
-export default function SessionsSection() {
+export default function SessionsSection({ actionsDisabled = false }) {
   const { sessions, loading, error, refetch } = useSessions();
   const { revoke, isPending, error: revokeError, success, reset } = useRevokeSession();
   const [selected, setSelected] = useState(null);
@@ -42,15 +42,15 @@ export default function SessionsSection() {
                 {session.active && (selected === session.id ? (
                   <form aria-label="Revoke session" onSubmit={(event) => {
                     event.preventDefault();
-                    if (!isPending) revoke(session, () => setSelected(null));
+                    if (!isPending && !actionsDisabled) revoke(session, () => setSelected(null));
                   }}>
                     <p>{session.current ? "Revoke your current login session? You will need to sign in again." : "Revoke this login session?"}</p>
                     <div className={cx("actions")}>
-                      <Button type="submit" loading={isPending}>{isPending ? "Revoking…" : "Confirm revoke"}</Button>
-                      <Button variant="outline" disabled={isPending} onClick={() => { setSelected(null); reset(); }}>Cancel revoke</Button>
+                      <Button type="submit" loading={isPending} disabled={actionsDisabled}>{isPending ? "Revoking…" : "Confirm revoke"}</Button>
+                      <Button variant="outline" disabled={isPending || actionsDisabled} onClick={() => { setSelected(null); reset(); }}>Cancel revoke</Button>
                     </div>
                   </form>
-                ) : <Button variant="outline" disabled={isPending} onClick={() => { reset(); setSelected(session.id); }}>Revoke session</Button>)}
+                ) : <Button variant="outline" disabled={isPending || actionsDisabled} onClick={() => { reset(); setSelected(session.id); }}>Revoke session</Button>)}
               </li>
             ))}
           </ol>
