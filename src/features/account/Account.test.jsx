@@ -22,6 +22,7 @@ describe("Account logout reachability", () => {
     const logoutStarted = deferred();
     const http = vi.fn((config) => {
       if (config.url === "/auth/me") return ok(config, account);
+      if (config.url === "/users/me/sessions") return ok(config, []);
       if (config.url === "/auth/logout") {
         expect(JSON.parse(config.data)).toEqual({ refreshToken: "original-learner-a" });
         logoutStarted.resolve();
@@ -56,6 +57,7 @@ describe("Account logout reachability", () => {
     let logoutConfig;
     setHttpHandler((config) => {
       if (config.url === "/auth/me") return ok(config, account);
+      if (config.url === "/users/me/sessions") return ok(config, []);
       if (config.url === "/auth/refresh") {
         refreshStarted.resolve();
         return refreshResponse.promise.then(() => ok(config, refreshResult()));
@@ -85,6 +87,7 @@ describe("Account logout reachability", () => {
     const serverFinished = deferred();
     setHttpHandler((config) => {
       if (config.url === "/auth/me") return ok(config, account);
+      if (config.url === "/users/me/sessions") return ok(config, []);
       return serverLogout.promise.then(() => {
         serverFinished.resolve();
         return fail(config, 500);

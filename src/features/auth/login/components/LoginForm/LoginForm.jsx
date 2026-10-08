@@ -162,6 +162,12 @@ export default function LoginForm() {
                   </p>
                 )}
 
+                {location.state?.sessionEnded === true && (
+                  <p className={cx("status")} role="status">
+                    Your session has ended. Please sign in again.
+                  </p>
+                )}
+
                 {error && (
                   <div className={cx("error")} role="alert">
                     {error}

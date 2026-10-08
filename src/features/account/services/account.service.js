@@ -1,5 +1,6 @@
 import apiClient from "@/shared/api/api-client";
 import { parseAccount } from "../account-response";
+import { parseSessions } from "../session-response";
 
 export async function getAccount() {
   return parseAccount(await apiClient.get("/auth/me"));
@@ -14,4 +15,12 @@ export function changePassword({ currentPassword, newPassword, verifyNewPassword
     refreshOnUnauthorized: false,
     validateStatus: (status) => status === 200,
   });
+}
+
+export async function getSessions({ signal } = {}) {
+  return parseSessions(await apiClient.get("/users/me/sessions", { signal }));
+}
+
+export function revokeSession(sessionId) {
+  return apiClient.delete(`/users/me/sessions/${sessionId}`, { validateStatus: (status) => status === 200 });
 }

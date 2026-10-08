@@ -30,6 +30,7 @@ async function setup({ put = (config) => ok(config), read = () => account, login
   seedSession();
   const http = vi.fn((config) => {
     if (config.url === "/auth/me") return ok(config, read());
+    if (config.url === "/users/me/sessions") return ok(config, []);
     if (config.url === "/users/me/password") return put(config);
     if (config.url === "/auth/login" && login) return login(config);
     if (config.url === "/auth/logout") return ok(config);

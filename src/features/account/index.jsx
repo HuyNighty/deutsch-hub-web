@@ -4,6 +4,7 @@ import LogoutButton from "@/features/auth/login/components/LogoutButton";
 import { Button } from "@/shared/ui/components/button";
 import ProfileForm from "./components/ProfileForm";
 import PasswordForm from "./components/PasswordForm";
+import SessionsSection from "./components/SessionsSection";
 
 import useAccount from "./hooks/useAccount";
 
@@ -92,6 +93,7 @@ function Account() {
             )}
           </div>
         </section>
+        <SessionsSection />
       </main>
     </ResourceState>
   );

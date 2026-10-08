@@ -23,6 +23,7 @@ async function setup(update = (config) => ok(config, account)) {
   seedSession();
   const http = vi.fn((config) => {
     if (config.url === "/auth/me") return ok(config, account);
+    if (config.url === "/users/me/sessions") return ok(config, []);
     if (config.url === "/users/me/profile") return update(config);
     if (config.url === "/auth/logout") return ok(config, null);
     throw new Error(`Unexpected request: ${config.url}`);
