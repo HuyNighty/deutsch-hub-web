@@ -31,8 +31,12 @@ export default function CourseAction({ courseId, enrollmentStatus }) {
 
     case "COMPLETED":
       button = (
-        <Button size="lg" fullWidth>
-          View certificate
+        <Button
+          size="lg"
+          fullWidth
+          onClick={() => navigate(`/my-learning/courses/${courseId}`)}
+        >
+          Review course
         </Button>
       );
       break;
