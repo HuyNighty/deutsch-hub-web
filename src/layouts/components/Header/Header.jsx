@@ -118,6 +118,10 @@ export default function Header() {
                 My Learning
               </AppLink>
 
+              <AppLink to="/my-learning/assessments" variant="outline" className={cx("assessment-shortcut")}>
+                Assessments
+              </AppLink>
+
               <Button
                 type="button"
                 className={cx("icon-button")}

@@ -246,6 +246,15 @@
   flex-shrink: 0;
 }
 
+.assessment-shortcut {
+  white-space: nowrap;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+  }
+}
+
 .icon-button {
   width: 40px;
   height: 40px;
@@ -314,7 +323,18 @@
   white-space: nowrap;
 }
 
+@media (max-width: 1152px) {
+  // My Learning retains the existing assessment entry when the action row is tight.
+  .assessment-shortcut {
+    display: none;
+  }
+}
+
 @media (max-width: 992px) {
+  .brand-name {
+    display: none;
+  }
+
   .navigation {
     gap: 0;
   }
