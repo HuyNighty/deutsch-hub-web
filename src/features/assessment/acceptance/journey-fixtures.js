@@ -180,20 +180,20 @@ export async function submitAndReturn(user, server, task, router) {
 }
 
 export async function expectOfficialResult(server, client) {
-  await screen.findByText("Overall result: Passed");
-  expect(screen.getByText("Assessment target: B1")).toBeInTheDocument();
-  const level = screen.getByRole("region", { name: "Current German level" });
+  await screen.findByText("Kết quả tổng thể: Đạt");
+  expect(screen.getByText("Trình độ mục tiêu: B1")).toBeInTheDocument();
+  const level = screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" });
   await within(level).findByText("B2");
-  const evidence = screen.getByRole("region", { name: "Assessment result" });
+  const evidence = screen.getByRole("region", { name: "Kết quả đánh giá chính thức" });
   expect(within(evidence).getAllByRole("heading", { level: 3 }).map((item) => item.textContent))
-    .toEqual(["Writing", "Listening", "Reading", "Speaking"]);
+    .toEqual(["Viết", "Nghe", "Đọc", "Nói"]);
   expect(server.result.componentResults.map((item) => item.skillDimension)).toEqual(["SPEAKING", "READING", "LISTENING", "WRITING"]);
   for (const card of within(evidence).getAllByRole("article")) {
-    expect(within(card).getByText("Performance: 80%")).toBeInTheDocument();
-    expect(within(card).getByText("Result: Passed")).toBeInTheDocument();
+    expect(within(card).getByText("Tỷ lệ thực hiện: 80%")).toBeInTheDocument();
+    expect(within(card).getByText("Kết quả: Đạt")).toBeInTheDocument();
     expect(card.textContent).not.toMatch(/B1|B2|CEFR/);
   }
-  const page = screen.getByRole("region", { name: "Assessment result page" });
+  const page = screen.getByRole("region", { name: "Trang kết quả đánh giá" });
   expect(page.textContent).not.toMatch(/promot|new level|achieved|mismatch|downgrade|recommend|next activity/i);
   expect(within(page).queryByRole("alert")).not.toBeInTheDocument();
   expect(within(page).queryByRole("button")).not.toBeInTheDocument();

@@ -1,0 +1,206 @@
+{
+  "milestone": "FE3-M6-C1",
+  "approvalStatus": "APPROVED_BY_PRODUCT_OWNER",
+  "locale": "vi",
+  "purpose": "Official Assessment — Performance Feedback + Curated Learning Guidance",
+  "notes": [
+    "Authoritative copy of the 24 content entries approved in the DeutschHub Architect conversation.",
+    "targetLevel:null means generic skill/outcome fallback.",
+    "The content strings preserve the approved text and paragraph breaks. Markdown italics in writing.a2.not_passed are preserved as source markup.",
+    "Do not claim diagnostic certainty or expose question-level evidence."
+  ],
+  "entries": [
+    {
+      "id": "reading.a1.not_passed",
+      "locale": "vi",
+      "targetLevel": "A1",
+      "skillDimension": "READING",
+      "passed": false,
+      "content": "Kết quả kỹ năng Đọc của bạn chưa đạt yêu cầu trong bài đánh giá A1 này.\n\nBạn có thể bắt đầu bằng việc đọc những đoạn văn ngắn bằng tiếng Đức, chẳng hạn như tin nhắn, biển báo, thực đơn hoặc thông báo đơn giản. Hãy luyện tìm thông tin cụ thể như thời gian, địa điểm và giá cả, sau đó thử tóm tắt ý chính của văn bản.\n\nDuy trì luyện tập với những nội dung phù hợp trình độ sẽ giúp bạn từng bước củng cố khả năng đọc hiểu."
+    },
+    {
+      "id": "reading.a1.passed",
+      "locale": "vi",
+      "targetLevel": "A1",
+      "skillDimension": "READING",
+      "passed": true,
+      "content": "Bạn đã đạt yêu cầu ở phần Đọc trong bài đánh giá A1 này.\n\nĐể tiếp tục phát triển, bạn có thể mở rộng sang các văn bản đời sống đa dạng hơn, chẳng hạn như email ngắn, lịch trình, lời mời và thông báo. Hãy luyện đọc để nắm ý chính trước, sau đó tìm các thông tin cụ thể mà không cần dịch từng từ.\n\nBạn cũng có thể bắt đầu thử sức với những văn bản A2 đơn giản khi cảm thấy sẵn sàng."
+    },
+    {
+      "id": "listening.a1.not_passed",
+      "locale": "vi",
+      "targetLevel": "A1",
+      "skillDimension": "LISTENING",
+      "passed": false,
+      "content": "Kết quả phần Nghe của bạn chưa đạt yêu cầu trong bài đánh giá A1 này.\n\nBạn có thể luyện nghe những cuộc hội thoại tiếng Đức ngắn về chào hỏi, giới thiệu bản thân, mua sắm hoặc hỏi giờ. Ở lượt nghe đầu tiên, hãy tập xác định chủ đề chung. Sau đó nghe lại để nhận biết các thông tin như tên, số điện thoại, thời gian và giá cả.\n\nHãy chọn những đoạn nghe ngắn, có tốc độ phù hợp để luyện tập đều đặn."
+    },
+    {
+      "id": "listening.a1.passed",
+      "locale": "vi",
+      "targetLevel": "A1",
+      "skillDimension": "LISTENING",
+      "passed": true,
+      "content": "Bạn đã đạt yêu cầu ở phần Nghe trong bài đánh giá A1 này.\n\nĐể tiếp tục củng cố kỹ năng, hãy thử nghe các cuộc hội thoại ngắn trong nhiều tình huống đời sống, chẳng hạn như đặt lịch hẹn, mua vé hoặc hỏi đường. Bạn có thể nghe lần đầu mà không xem phụ đề, sau đó kiểm tra lại những thông tin chưa nắm rõ.\n\nKhi cảm thấy sẵn sàng, hãy thử những đoạn nghe A2 đơn giản."
+    },
+    {
+      "id": "writing.a1.not_passed",
+      "locale": "vi",
+      "targetLevel": "A1",
+      "skillDimension": "WRITING",
+      "passed": false,
+      "content": "Kết quả thành phần Viết của bạn chưa đạt yêu cầu trong bài đánh giá A1 này.\n\nĐể luyện tập, bạn có thể bắt đầu bằng những câu ngắn giới thiệu bản thân, gia đình, sở thích hoặc lịch sinh hoạt. Sau đó thử viết một tin nhắn đơn giản để mời bạn bè, xin lỗi hoặc hẹn gặp.\n\nSau khi viết, hãy đọc lại để kiểm tra cách chia động từ, trật tự từ và những thông tin quan trọng mà bạn muốn truyền đạt."
+    },
+    {
+      "id": "writing.a1.passed",
+      "locale": "vi",
+      "targetLevel": "A1",
+      "skillDimension": "WRITING",
+      "passed": true,
+      "content": "Bạn đã đạt yêu cầu ở thành phần Viết trong bài đánh giá A1 này.\n\nBạn có thể tiếp tục luyện viết tin nhắn, lời mời và email ngắn bằng tiếng Đức. Hãy tập diễn đạt một ý rõ ràng trong mỗi câu, sau đó kết nối các câu để tạo thành một đoạn văn đơn giản.\n\nKhi đã quen, bạn có thể thử viết về những hoạt động hằng ngày hoặc một trải nghiệm gần đây bằng các cấu trúc phù hợp trình độ."
+    },
+    {
+      "id": "speaking.a1.not_passed",
+      "locale": "vi",
+      "targetLevel": "A1",
+      "skillDimension": "SPEAKING",
+      "passed": false,
+      "content": "Kết quả thành phần Nói của bạn chưa đạt yêu cầu trong bài đánh giá A1 này.\n\nĐể rèn luyện khả năng giao tiếp, bạn có thể bắt đầu bằng việc tự giới thiệu, nói về sở thích, hỏi giờ hoặc đặt những câu hỏi đơn giản trong tình huống quen thuộc. Hãy thử luyện đối thoại ngắn với bạn học hoặc tự ghi âm khi nói.\n\nMục tiêu trước mắt là diễn đạt những thông tin cơ bản bằng các câu rõ ràng, dễ hiểu."
+    },
+    {
+      "id": "speaking.a1.passed",
+      "locale": "vi",
+      "targetLevel": "A1",
+      "skillDimension": "SPEAKING",
+      "passed": true,
+      "content": "Bạn đã đạt yêu cầu ở thành phần Nói trong bài đánh giá A1 này.\n\nĐể phát triển thêm khả năng giao tiếp, bạn có thể luyện những đoạn hội thoại dài hơn về học tập, mua sắm, gia đình hoặc kế hoạch cuối tuần. Hãy thử đặt câu hỏi nối tiếp và phản hồi bằng nhiều cách diễn đạt khác nhau.\n\nBạn cũng có thể ghi âm những đoạn nói ngắn và nghe lại để nhận biết cách phát âm hoặc diễn đạt mà mình muốn cải thiện."
+    },
+    {
+      "id": "reading.a2.not_passed",
+      "locale": "vi",
+      "targetLevel": "A2",
+      "skillDimension": "READING",
+      "passed": false,
+      "content": "Kết quả phần Đọc của bạn chưa đạt yêu cầu trong bài đánh giá A2 này.\n\nBạn có thể luyện với các email cá nhân, thông báo, quảng cáo và những bài viết ngắn về cuộc sống hằng ngày. Hãy đọc để xác định chủ đề chính trước khi tìm những thông tin cụ thể.\n\nKhi gặp từ mới, hãy thử dựa vào ngữ cảnh để hiểu nội dung thay vì dịch ngay từng từ. Sau đó kiểm tra lại cách hiểu của mình."
+    },
+    {
+      "id": "reading.a2.passed",
+      "locale": "vi",
+      "targetLevel": "A2",
+      "skillDimension": "READING",
+      "passed": true,
+      "content": "Bạn đã đạt yêu cầu ở phần Đọc trong bài đánh giá A2 này.\n\nĐể tiếp tục phát triển, hãy thử đọc các bài viết dài hơn về công việc, học tập, du lịch hoặc những chủ đề quen thuộc. Bạn có thể luyện phân biệt ý chính với thông tin bổ sung và tự tóm tắt nội dung bằng vài câu ngắn.\n\nKhi cảm thấy phù hợp, hãy thử sức với những văn bản B1 đơn giản để làm quen với cách diễn đạt đa dạng hơn."
+    },
+    {
+      "id": "listening.a2.not_passed",
+      "locale": "vi",
+      "targetLevel": "A2",
+      "skillDimension": "LISTENING",
+      "passed": false,
+      "content": "Kết quả phần Nghe của bạn chưa đạt yêu cầu trong bài đánh giá A2 này.\n\nBạn có thể luyện nghe những cuộc hội thoại về đặt lịch hẹn, thay đổi kế hoạch, hỏi đường hoặc các tình huống tại nơi làm việc. Trước khi nghe, hãy nghĩ về những thông tin mình cần tìm.\n\nSau lượt nghe đầu tiên, hãy ghi lại nội dung chính. Ở lượt tiếp theo, tập xác định các chi tiết như lý do, thời gian và địa điểm."
+    },
+    {
+      "id": "listening.a2.passed",
+      "locale": "vi",
+      "targetLevel": "A2",
+      "skillDimension": "LISTENING",
+      "passed": true,
+      "content": "Bạn đã đạt yêu cầu ở phần Nghe trong bài đánh giá A2 này.\n\nBạn có thể tiếp tục luyện với những cuộc hội thoại tự nhiên hơn, các thông báo ngắn hoặc nội dung âm thanh về đời sống ở Đức. Hãy tập nhận biết mục đích của người nói và những thông tin quan trọng mà không cần hiểu mọi từ.\n\nKhi sẵn sàng, bạn có thể thử các đoạn nghe B1 đơn giản để mở rộng khả năng tiếp nhận thông tin."
+    },
+    {
+      "id": "writing.a2.not_passed",
+      "locale": "vi",
+      "targetLevel": "A2",
+      "skillDimension": "WRITING",
+      "passed": false,
+      "content": "Kết quả thành phần Viết của bạn chưa đạt yêu cầu trong bài đánh giá A2 này.\n\nBạn có thể luyện viết email hoặc đoạn văn ngắn về kế hoạch, trải nghiệm và những tình huống quen thuộc. Trước khi viết, hãy xác định người nhận, mục đích và các ý chính cần trình bày.\n\nSau đó, tập kết nối câu bằng những từ phù hợp như *und*, *aber*, *weil* hoặc *deshalb*. Cuối cùng, đọc lại để kiểm tra nội dung và sự rõ ràng của cách diễn đạt."
+    },
+    {
+      "id": "writing.a2.passed",
+      "locale": "vi",
+      "targetLevel": "A2",
+      "skillDimension": "WRITING",
+      "passed": true,
+      "content": "Bạn đã đạt yêu cầu ở thành phần Viết trong bài đánh giá A2 này.\n\nĐể phát triển thêm, hãy luyện viết những email và đoạn văn có mở đầu, nội dung chính và kết thúc rõ ràng. Bạn có thể kể lại một trải nghiệm, trình bày kế hoạch hoặc giải thích ngắn gọn lý do cho một lựa chọn.\n\nHãy thử sử dụng các cấu trúc câu đa dạng hơn, nhưng vẫn ưu tiên sự chính xác và dễ hiểu của nội dung."
+    },
+    {
+      "id": "speaking.a2.not_passed",
+      "locale": "vi",
+      "targetLevel": "A2",
+      "skillDimension": "SPEAKING",
+      "passed": false,
+      "content": "Kết quả thành phần Nói của bạn chưa đạt yêu cầu trong bài đánh giá A2 này.\n\nBạn có thể luyện nói về những tình huống quen thuộc như kể lại một ngày, mô tả công việc, sắp xếp cuộc hẹn hoặc trao đổi kế hoạch. Hãy chuẩn bị một vài ý chính rồi thử diễn đạt thành những câu liên kết.\n\nBạn cũng có thể luyện hỏi đáp với bạn học, tập giải thích lý do và phản hồi khi người khác muốn biết thêm thông tin."
+    },
+    {
+      "id": "speaking.a2.passed",
+      "locale": "vi",
+      "targetLevel": "A2",
+      "skillDimension": "SPEAKING",
+      "passed": true,
+      "content": "Bạn đã đạt yêu cầu ở thành phần Nói trong bài đánh giá A2 này.\n\nĐể tiếp tục phát triển khả năng giao tiếp, hãy luyện kể lại trải nghiệm, đưa ra ý kiến và giải thích lựa chọn trong những chủ đề quen thuộc. Bạn có thể thực hành đối thoại mà không chuẩn bị trước toàn bộ câu trả lời.\n\nHãy chú ý diễn đạt ý tưởng một cách mạch lạc, đồng thời làm quen dần với những cuộc trao đổi dài hơn."
+    },
+    {
+      "id": "reading.generic.not_passed",
+      "locale": "vi",
+      "targetLevel": null,
+      "skillDimension": "READING",
+      "passed": false,
+      "content": "Kết quả phần Đọc của bạn chưa đạt yêu cầu trong bài đánh giá này.\n\nBạn có thể củng cố kỹ năng bằng cách luyện đọc những văn bản tiếng Đức phù hợp với trình độ đang học. Hãy bắt đầu bằng việc xác định chủ đề, sau đó tìm những thông tin quan trọng trong nội dung.\n\nThử tóm tắt văn bản bằng vài câu ngắn và kiểm tra lại những đoạn mình chưa hiểu để từng bước cải thiện khả năng đọc hiểu."
+    },
+    {
+      "id": "reading.generic.passed",
+      "locale": "vi",
+      "targetLevel": null,
+      "skillDimension": "READING",
+      "passed": true,
+      "content": "Bạn đã đạt yêu cầu ở phần Đọc trong bài đánh giá này.\n\nĐể tiếp tục phát triển, hãy mở rộng những loại văn bản tiếng Đức mà bạn thường đọc. Bạn có thể luyện nhận biết ý chính, xác định thông tin quan trọng và tóm tắt nội dung bằng lời của mình.\n\nKhi cảm thấy sẵn sàng, hãy thử những văn bản có độ khó cao hơn một chút để tiếp tục rèn luyện."
+    },
+    {
+      "id": "listening.generic.not_passed",
+      "locale": "vi",
+      "targetLevel": null,
+      "skillDimension": "LISTENING",
+      "passed": false,
+      "content": "Kết quả phần Nghe của bạn chưa đạt yêu cầu trong bài đánh giá này.\n\nBạn có thể luyện với những đoạn hội thoại hoặc nội dung âm thanh tiếng Đức phù hợp trình độ. Ở lượt nghe đầu tiên, hãy tập nắm chủ đề và mục đích của người nói.\n\nSau đó, nghe lại để tìm những thông tin cụ thể. Việc luyện nghe đều đặn với nội dung vừa sức có thể giúp bạn dần cải thiện khả năng tiếp nhận ngôn ngữ."
+    },
+    {
+      "id": "listening.generic.passed",
+      "locale": "vi",
+      "targetLevel": null,
+      "skillDimension": "LISTENING",
+      "passed": true,
+      "content": "Bạn đã đạt yêu cầu ở phần Nghe trong bài đánh giá này.\n\nBạn có thể tiếp tục luyện nghe bằng nhiều loại nội dung, chẳng hạn như hội thoại, thông báo hoặc những đoạn nói ngắn về đời sống. Hãy thử xác định ý chính trước khi tập trung vào các chi tiết.\n\nKhi đã quen với tốc độ nghe hiện tại, bạn có thể tăng dần độ khó để mở rộng khả năng hiểu tiếng Đức."
+    },
+    {
+      "id": "writing.generic.not_passed",
+      "locale": "vi",
+      "targetLevel": null,
+      "skillDimension": "WRITING",
+      "passed": false,
+      "content": "Kết quả thành phần Viết của bạn chưa đạt yêu cầu trong bài đánh giá này.\n\nĐể luyện tập, hãy chọn những chủ đề quen thuộc và viết các đoạn văn tiếng Đức phù hợp trình độ của mình. Trước khi viết, bạn có thể lập dàn ý ngắn để xác định nội dung cần trình bày.\n\nSau khi hoàn thành, hãy kiểm tra cách sử dụng từ, cấu trúc câu và sự liên kết giữa các ý để cải thiện dần cách diễn đạt."
+    },
+    {
+      "id": "writing.generic.passed",
+      "locale": "vi",
+      "targetLevel": null,
+      "skillDimension": "WRITING",
+      "passed": true,
+      "content": "Bạn đã đạt yêu cầu ở thành phần Viết trong bài đánh giá này.\n\nĐể tiếp tục phát triển, hãy thử viết về nhiều chủ đề và tình huống giao tiếp khác nhau. Bạn có thể tập tổ chức ý tưởng rõ ràng, lựa chọn từ vựng phù hợp và sử dụng các cấu trúc câu đa dạng hơn.\n\nViệc đọc lại và chỉnh sửa bài viết sau khi hoàn thành cũng là một cách hữu ích để nâng cao chất lượng diễn đạt."
+    },
+    {
+      "id": "speaking.generic.not_passed",
+      "locale": "vi",
+      "targetLevel": null,
+      "skillDimension": "SPEAKING",
+      "passed": false,
+      "content": "Kết quả thành phần Nói của bạn chưa đạt yêu cầu trong bài đánh giá này.\n\nBạn có thể luyện giao tiếp bằng những chủ đề phù hợp với trình độ, chẳng hạn như giới thiệu bản thân, nói về sinh hoạt hoặc trao đổi kế hoạch. Hãy bắt đầu bằng các câu ngắn, sau đó tập kết nối chúng để trình bày ý tưởng rõ ràng hơn.\n\nThử nói thành tiếng, ghi âm hoặc thực hành với bạn học để duy trì thói quen luyện tập."
+    },
+    {
+      "id": "speaking.generic.passed",
+      "locale": "vi",
+      "targetLevel": null,
+      "skillDimension": "SPEAKING",
+      "passed": true,
+      "content": "Bạn đã đạt yêu cầu ở thành phần Nói trong bài đánh giá này.\n\nĐể tiếp tục phát triển, hãy luyện trao đổi về những chủ đề đa dạng hơn và thử diễn đạt cùng một ý tưởng theo nhiều cách. Bạn có thể thực hành đặt câu hỏi, phản hồi ý kiến và duy trì cuộc hội thoại.\n\nHãy tăng dần độ phức tạp của chủ đề khi cảm thấy phù hợp, đồng thời ưu tiên khả năng diễn đạt rõ ràng và tự nhiên."
+    }
+  ]
+}

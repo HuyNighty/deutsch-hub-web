@@ -56,11 +56,11 @@ describe("Read-only View result entry", () => {
     client.setQueryData(otherResult, { unchanged: true });
     const view = await screen.findByRole("link", { name: "View result" });
     await user.click(view);
-    await screen.findByText("Assessment result is not available yet.");
+    await screen.findByText("Kết quả đánh giá chưa có.");
     expect(auth.current.status).toBe("AUTHENTICATED");
     expect(http.mock.calls.filter(([config]) => config.method !== "get")).toHaveLength(0);
-    expect(within(screen.getByRole("region", { name: "Current German level" })).getByText("A2")).toBeInTheDocument();
-    await user.click(screen.getByRole("link", { name: "Back to assessment" }));
+    expect(within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).getByText("A2")).toBeInTheDocument();
+    await user.click(screen.getByRole("link", { name: "Quay lại bài đánh giá" }));
     await user.click(await screen.findByRole("button", { name: "Finalize expired assessment" }));
     await screen.findByText("Assessment finalized successfully.");
     expect(router.state.location.pathname).toBe(attemptPath);
@@ -70,8 +70,8 @@ describe("Read-only View result entry", () => {
     expect(client.getQueryState(otherResult).isInvalidated).toBe(false);
     expect(client.getQueryState(["learner-assessment-attempt-definition", ATTEMPT_ID]).isInvalidated).toBe(false);
     await user.click(screen.getByRole("link", { name: "View result" }));
-    await screen.findByText("Overall result: Passed");
-    await within(screen.getByRole("region", { name: "Current German level" })).findByText("B2");
+    await screen.findByText("Kết quả tổng thể: Đạt");
+    await within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).findByText("B2");
     expect(http.mock.calls.filter(([config]) => config.url === RESULT_URL)).toHaveLength(2);
     expect(http.mock.calls.filter(([config]) => config.method === "post").map(([config]) => config.url)).toEqual([FINAL_URL]);
   });
@@ -85,7 +85,7 @@ describe("Read-only View result entry", () => {
     }, { allowResultReads: true });
     const { router } = mountAssessmentApp(attemptPath);
     await user.click(await screen.findByRole("link", { name: "View result" }));
-    await screen.findByText("Overall result: Not passed");
+    await screen.findByText("Kết quả tổng thể: Chưa đạt");
     await waitFor(() => expect(http.mock.calls.some(([config]) => config.url === COMPETENCY_URL)).toBe(true));
     expect(router.state.location.pathname).toBe(RESULT_PATH);
     expect(http.mock.calls.filter(([config]) => config.url === attemptUrl)).toHaveLength(1);

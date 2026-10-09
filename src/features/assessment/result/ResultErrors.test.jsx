@@ -7,7 +7,7 @@ import { assessmentDetail } from "../test/fixtures";
 import { attemptUrl } from "../test/attempt-fixtures";
 import { finalResult } from "../test/final-submit-fixtures";
 import {
-  RESULT_PATH, RESULT_URL, RESULT_KEY, COMPETENCY_URL, competency, resultFixture, resultHttp,
+  RESULT_PATH, RESULT_URL, RESULT_KEY, COMPETENCY_URL, COMPETENCY_KEY, competency, resultFixture, resultHttp,
 } from "../test/result-fixtures";
 
 describe("Independent Result and Competency failures", () => {
@@ -20,17 +20,17 @@ describe("Independent Result and Competency failures", () => {
       return failed ? fail(config, status) : ok(config, resultFixture());
     } });
     const { auth, client } = mountAssessmentApp(RESULT_PATH);
-    const evidence = await screen.findByRole("region", { name: "Assessment result" });
+    const evidence = await screen.findByRole("region", { name: "Kết quả đánh giá chính thức" });
     const alert = await within(evidence).findByRole("alert");
-    if (status === 404) expect(alert).toHaveTextContent("Assessment result is not available yet.");
-    expect(await within(screen.getByRole("region", { name: "Current German level" })).findByText("A2")).toBeInTheDocument();
+    if (status === 404) expect(alert).toHaveTextContent("Kết quả đánh giá chưa có.");
+    expect(await within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).findByText("A2")).toBeInTheDocument();
     expect(auth.current.status).toBe("AUTHENTICATED");
-    expect(screen.queryByText(/Overall result:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Kết quả tổng thể:/)).not.toBeInTheDocument();
     expect(http).toHaveBeenCalledTimes(3);
     expect(client.getQueryData(RESULT_KEY)).toBeUndefined();
     failed = false;
-    await user.click(within(evidence).getByRole("button", { name: "Retry result" }));
-    await within(evidence).findByText("Overall result: Not passed");
+    await user.click(within(evidence).getByRole("button", { name: "Thử tải lại kết quả" }));
+    await within(evidence).findByText("Kết quả tổng thể: Chưa đạt");
     expect(http.mock.calls.filter(([config]) => config.url === RESULT_URL)).toHaveLength(2);
     expect(http.mock.calls.filter(([config]) => config.url === COMPETENCY_URL)).toHaveLength(1);
     expect(http.mock.calls.filter(([config]) => config.url === `${attemptUrl}/assessment`)).toHaveLength(1);
@@ -46,12 +46,12 @@ describe("Independent Result and Competency failures", () => {
       return failed ? fail(config, 500) : ok(config, competency({ currentLevel: "B2" }));
     } });
     mountAssessmentApp(RESULT_PATH);
-    await screen.findByText("Overall result: Not passed");
-    const state = screen.getByRole("region", { name: "Current German level" });
-    expect(await within(state).findByRole("alert")).toHaveTextContent("Unable to load current German level");
-    expect(screen.getByText("Performance: 37.5%")).toBeInTheDocument();
+    await screen.findByText("Kết quả tổng thể: Chưa đạt");
+    const state = screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" });
+    expect(await within(state).findByRole("alert")).toHaveTextContent("Không thể tải trình độ tiếng Đức hiện tại");
+    expect(screen.getByText("Tỷ lệ thực hiện: 37.5%")).toBeInTheDocument();
     failed = false;
-    await user.click(within(state).getByRole("button", { name: "Retry current level" }));
+    await user.click(within(state).getByRole("button", { name: "Thử tải lại trình độ hiện tại" }));
     await within(state).findByText("B2");
     expect(http.mock.calls.filter(([config]) => config.url === COMPETENCY_URL)).toHaveLength(2);
     expect(http.mock.calls.filter(([config]) => config.url === RESULT_URL)).toHaveLength(1);
@@ -63,11 +63,11 @@ describe("Independent Result and Competency failures", () => {
     resultHttp({ handler: (config) => config.url === COMPETENCY_URL ? read.promise.then(() => ok(config, competency()))
       : ok(config, config.url === RESULT_URL ? resultFixture() : assessmentDetail()) });
     mountAssessmentApp(RESULT_PATH);
-    await screen.findByText("Overall result: Not passed");
-    expect(within(screen.getByRole("region", { name: "Current German level" })).getByRole("status"))
-      .toHaveTextContent("Loading current German level");
+    await screen.findByText("Kết quả tổng thể: Chưa đạt");
+    expect(within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).getByRole("status"))
+      .toHaveTextContent("Đang tải trình độ tiếng Đức hiện tại");
     await act(async () => { read.resolve(); });
-    await within(screen.getByRole("region", { name: "Current German level" })).findByText("A2");
+    await within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).findByText("A2");
   });
 
   it("valid Competency renders while Result is still pending", async () => {
@@ -75,10 +75,10 @@ describe("Independent Result and Competency failures", () => {
     resultHttp({ handler: (config) => config.url === RESULT_URL ? read.promise.then(() => ok(config, resultFixture()))
       : ok(config, config.url === COMPETENCY_URL ? competency() : assessmentDetail()) });
     mountAssessmentApp(RESULT_PATH);
-    await within(screen.getByRole("region", { name: "Current German level" })).findByText("A2");
-    expect(await screen.findByText("Loading assessment result...")).toBeInTheDocument();
+    await within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).findByText("A2");
+    expect(await screen.findByText("Đang tải kết quả đánh giá...")).toBeInTheDocument();
     await act(async () => { read.resolve(); });
-    await screen.findByText("Overall result: Not passed");
+    await screen.findByText("Kết quả tổng thể: Chưa đạt");
   });
 
   it.each([
@@ -92,22 +92,25 @@ describe("Independent Result and Competency failures", () => {
   ])("rejects %s with a Result-specific error and no partial evidence", async (_, result) => {
     const http = resultHttp({ result });
     const { client } = mountAssessmentApp(RESULT_PATH);
-    const evidence = await screen.findByRole("region", { name: "Assessment result" });
-    expect(await within(evidence).findByRole("alert")).toHaveTextContent("invalid assessment result response");
+    const evidence = await screen.findByRole("region", { name: "Kết quả đánh giá chính thức" });
+    expect(await within(evidence).findByRole("alert")).toHaveTextContent("Không thể tải kết quả đánh giá. Vui lòng thử lại.");
     expect(evidence.textContent).not.toContain("final submit");
-    expect(screen.queryByText(/Overall result:|Performance:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Kết quả tổng thể:|Tỷ lệ thực hiện:/)).not.toBeInTheDocument();
     expect(client.getQueryData(RESULT_KEY)).toBeUndefined();
-    expect(await within(screen.getByRole("region", { name: "Current German level" })).findByText("A2")).toBeInTheDocument();
+    expect(client.getQueryState(RESULT_KEY).error.message).toContain("invalid assessment result response");
+    expect(screen.queryByRole("region", { name: /^Gợi ý học tập/ })).not.toBeInTheDocument();
+    expect(await within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).findByText("A2")).toBeInTheDocument();
     expect(http).toHaveBeenCalledTimes(3);
   });
 
   it.each([competency({ learningDomain: "GERMAN" }), competency({ currentLevel: "INVALID" })])(
     "malformed competency %# never substitutes the Result target level", async (state) => {
       resultHttp({ state });
-      mountAssessmentApp(RESULT_PATH);
-      await screen.findByText("Overall result: Not passed");
-      const section = screen.getByRole("region", { name: "Current German level" });
-      expect(await within(section).findByRole("alert")).toHaveTextContent("invalid competency response");
+      const { client } = mountAssessmentApp(RESULT_PATH);
+      await screen.findByText("Kết quả tổng thể: Chưa đạt");
+      const section = screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" });
+      expect(await within(section).findByRole("alert")).toHaveTextContent("Không thể tải trình độ tiếng Đức hiện tại.");
+      expect(client.getQueryState(COMPETENCY_KEY).error.message).toContain("invalid competency response");
       expect(within(section).queryByText("B1")).not.toBeInTheDocument();
       expect(within(section).queryByText("A0")).not.toBeInTheDocument();
     },
@@ -121,12 +124,12 @@ describe("Independent Result and Competency failures", () => {
       return ok(config, config.url === COMPETENCY_URL ? competency() : resultFixture());
     } });
     mountAssessmentApp(RESULT_PATH);
-    await screen.findByText("Something went wrong");
-    expect(screen.queryByRole("region", { name: "Assessment result" })).not.toBeInTheDocument();
+    await screen.findByText("Không thể tải thông tin bài đánh giá. Vui lòng thử lại.");
+    expect(screen.queryByRole("region", { name: "Kết quả đánh giá chính thức" })).not.toBeInTheDocument();
     expect(http.mock.calls.some(([config]) => config.url === RESULT_URL)).toBe(false);
     failed = false;
-    await user.click(screen.getByRole("button", { name: "Try Again" }));
-    await screen.findByText("Overall result: Not passed");
+    await user.click(screen.getByRole("button", { name: "Thử tải lại bài đánh giá" }));
+    await screen.findByText("Kết quả tổng thể: Chưa đạt");
     expect(http.mock.calls.filter(([config]) => config.url === `${attemptUrl}/assessment`)).toHaveLength(2);
     expect(http.mock.calls.filter(([config]) => config.url === COMPETENCY_URL)).toHaveLength(1);
     expect(http.mock.calls.filter(([config]) => config.url === RESULT_URL)).toHaveLength(1);
@@ -135,9 +138,9 @@ describe("Independent Result and Competency failures", () => {
   it("rejects malformed definition before requesting Result", async () => {
     const http = resultHttp({ definition: assessmentDetail({ targetLevel: "UNKNOWN" }) });
     mountAssessmentApp(RESULT_PATH);
-    await screen.findByText("Something went wrong");
+    await screen.findByText("Không thể tải thông tin bài đánh giá. Vui lòng thử lại.");
     await waitFor(() => expect(http).toHaveBeenCalledTimes(2));
     expect(http.mock.calls.some(([config]) => config.url === RESULT_URL)).toBe(false);
-    expect(screen.queryByText(/Overall result:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Kết quả tổng thể:/)).not.toBeInTheDocument();
   });
 });

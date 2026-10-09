@@ -98,8 +98,8 @@ describe("Learner Assessment integrated journey", () => {
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(screen.getByText("Status: Completed")).toBeInTheDocument();
     expect(client.getQueryData(PARENT_KEY)).toEqual(server.parent());
-    expect(screen.queryByRole("region", { name: "Assessment result" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("region", { name: "Current German level" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Kết quả đánh giá chính thức" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).not.toBeInTheDocument();
     expect(client.getQueryData(RESULT_KEY)).toBeUndefined();
     expect(client.getQueryData(COMPETENCY_KEY)).toEqual(competency());
     direction(true);
@@ -148,13 +148,13 @@ describe("Learner Assessment integrated journey", () => {
     await user.type(screen.getByLabelText("Username or Email"), "learner-a");
     await user.type(screen.getByLabelText("Password"), "password");
     await user.click(screen.getByRole("button", { name: /Login to DeutschHub/ }));
-    await screen.findByText("Overall result: Passed");
+    await screen.findByText("Kết quả tổng thể: Đạt");
     expect(router.state.location.pathname).toBe(RESULT_PATH);
     expect(auth.current.status).toBe("AUTHENTICATED");
     expect(client.getQueryData(RESULT_KEY)).toEqual(server.result);
     expect(client.getQueryData(COMPETENCY_KEY)).toBeUndefined();
-    const current = screen.getByRole("region", { name: "Current German level" });
-    expect(within(current).getByRole("status")).toHaveTextContent("Loading current German level");
+    const current = screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" });
+    expect(within(current).getByRole("status")).toHaveTextContent("Đang tải trình độ tiếng Đức hiện tại");
     await act(async () => { competencyGate.resolve(); });
     await expectOfficialResult(server, client);
     expect(requestSequence(server.http).filter(([, url]) => url.startsWith("/me/")).sort()).toEqual([

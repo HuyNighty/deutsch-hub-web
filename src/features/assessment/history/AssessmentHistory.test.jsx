@@ -257,7 +257,7 @@ describe("Learner Assessment History production route", () => {
     const link = await screen.findByRole("link", { name: /View result for/ });
     expect(http).toHaveBeenCalledTimes(1);
     await user.click(link);
-    await screen.findByText("Overall result: Not passed");
+    await screen.findByText("Kết quả tổng thể: Chưa đạt");
     expect(router.state.location.pathname).toBe(resultRoute(HISTORY_ATTEMPT_ID));
     expect(client.getQueryData(historyKey())).toEqual(page);
     expect(http.mock.calls.map(([config]) => config.url).sort())

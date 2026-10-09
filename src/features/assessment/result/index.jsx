@@ -1,9 +1,8 @@
 import { useParams } from "react-router-dom";
 import classNames from "classnames/bind";
-import ResourceState from "@/shared/ui/state/ResourceState";
 import { AppLink } from "@/shared/ui/components/app-link";
+import { Button } from "@/shared/ui/components/button";
 import { useAttemptDefinition } from "../attempt/hooks/useAttemptDefinition";
-import { assessmentTitle } from "../shared/assessment-presentation";
 import { useAssessmentResult } from "./hooks/useAssessmentResult";
 import ResultEvidence from "./ResultEvidence";
 import CurrentLevel from "./CurrentLevel";
@@ -17,20 +16,21 @@ export default function AssessmentResult() {
   const definition = useAttemptDefinition(assessmentAttemptId);
   const result = useAssessmentResult(assessmentAttemptId, definition.error ? null : definition.data);
   return (
-    <section className={cx("page")} aria-label="Assessment result page">
-      <AppLink to={parentRoute}>Back to assessment</AppLink>
-      <ResourceState loading={definition.isPending} error={definition.error} errorProps={{
-        onRetry: definition.refetch,
-        actions: {
-          notFound: { to: parentRoute, label: "Back to assessment" },
-          forbidden: { to: parentRoute, label: "Back to assessment" },
-        },
-      }}>
-        {definition.data && !definition.error && <>
-          <h1 className={cx("title")}>{assessmentTitle(definition.data.title)}</h1>
+    <section className={cx("page")} lang="vi" aria-label="Trang kết quả đánh giá">
+      <AppLink to={parentRoute}>Quay lại bài đánh giá</AppLink>
+      {definition.isPending ? <p role="status">Đang tải thông tin bài đánh giá...</p>
+        : definition.error ? <>
+          <p role="alert">{definition.error.status === 403
+            ? "Bạn không có quyền xem bài đánh giá này."
+            : definition.error.status === 404 ? "Không tìm thấy bài đánh giá này."
+              : "Không thể tải thông tin bài đánh giá. Vui lòng thử lại."}</p>
+          {![403, 404].includes(definition.error.status) &&
+            <Button onClick={() => definition.refetch()} loading={definition.isFetching}>Thử tải lại bài đánh giá</Button>}
+        </>
+        : definition.data && <>
+          <h1 className={cx("title")}>{definition.data.title ?? "Bài đánh giá chưa có tên"}</h1>
           <ResultEvidence query={result} definition={definition.data} />
         </>}
-      </ResourceState>
       <CurrentLevel />
     </section>
   );

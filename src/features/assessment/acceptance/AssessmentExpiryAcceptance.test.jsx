@@ -15,14 +15,14 @@ describe("Expired Assessment integrated settlement", () => {
     await screen.findByText("Status: Expired");
     expect(screen.getByRole("button", { name: "Finalize expired assessment" })).toBeEnabled();
     await user.click(screen.getByRole("link", { name: "View result" }));
-    await screen.findByText("Assessment result is not available yet.");
-    await within(screen.getByRole("region", { name: "Current German level" })).findByText("A2");
+    await screen.findByText("Kết quả đánh giá chưa có.");
+    await within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).findByText("A2");
     expect(router.state.location.pathname).toBe(RESULT_PATH);
     expect(auth.current.status).toBe("AUTHENTICATED");
     expect(writes(server.http)).toEqual([]);
     expect(server.http.mock.calls.filter(([config]) => config.url === RESULT_URL)).toHaveLength(1);
     expect(server.state.settled).toBe(false);
-    await user.click(screen.getByRole("link", { name: "Back to assessment" }));
+    await user.click(screen.getByRole("link", { name: "Quay lại bài đánh giá" }));
     await screen.findByText("Status: Expired");
     expect(writes(server.http)).toEqual([]);
     const before = server.http.mock.calls.length;

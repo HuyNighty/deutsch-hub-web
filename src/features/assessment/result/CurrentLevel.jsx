@@ -4,14 +4,14 @@ import { useCompetency } from "./hooks/useCompetency";
 export default function CurrentLevel() {
   const query = useCompetency();
   return (
-    <section aria-label="Current German level">
-      <h2>Current German level</h2>
-      {query.isPending ? <p role="status">Loading current German level...</p>
+    <section aria-label="Trình độ tiếng Đức hiện tại">
+      <h2>Trình độ tiếng Đức hiện tại</h2>
+      {query.isPending ? <p role="status">Đang tải trình độ tiếng Đức hiện tại...</p>
         : query.error ? <>
-          <p role="alert">Unable to load current German level. {query.error.message}</p>
-          <Button onClick={() => query.refetch()} loading={query.isFetching}>Retry current level</Button>
+          <p role="alert">Không thể tải trình độ tiếng Đức hiện tại. Vui lòng thử lại.</p>
+          <Button onClick={() => query.refetch()} loading={query.isFetching}>Thử tải lại trình độ hiện tại</Button>
         </>
-        : query.data && <p>{query.data.currentLevel === "UNKNOWN" ? "Not established yet" : query.data.currentLevel}</p>}
+        : query.data && <p>{query.data.currentLevel === "UNKNOWN" ? "Chưa xác định" : query.data.currentLevel}</p>}
     </section>
   );
 }
