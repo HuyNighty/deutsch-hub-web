@@ -1,9 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { AxiosError } from "axios";
 import { QueryClient } from "@tanstack/react-query";
-import { act, fireEvent, screen, within } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import AccountPage from "@/pages/Account";
+import PasswordForm from "./components/PasswordForm";
 import LoginForm from "@/features/auth/login/components/LoginForm/LoginForm";
 import ProtectedRoute from "@/shared/routing/ProtectedRoute";
 import GuestRoute from "@/shared/routing/GuestRoute";
@@ -20,6 +21,7 @@ const routes = [
 const passwords = { currentPassword: "CurrentPassword123", newPassword: "NewPassword456", verifyNewPassword: "NewPassword456" };
 const labels = { currentPassword: "Current password", newPassword: "New password", verifyNewPassword: "Confirm new password" };
 const changedMessage = "Password changed successfully. Please sign in again.";
+const uncertaintyMessage = "We couldn't confirm whether your password changed. The safest recovery is to use Logout to end this local session, then sign in again.";
 
 function reject(config, { status = 400, code = 400, message = "Validation failed", errors = [] } = {}) {
   throw new AxiosError(message, AxiosError.ERR_BAD_REQUEST, config, null, {
@@ -161,6 +163,78 @@ describe("Learner password rotation", () => {
     expect(client.getMutationCache().find({ mutationKey: ["account", "change-password"], exact: true }).options.retry).toBe(false);
   });
 
+  it.each([AxiosError.ERR_NETWORK, "ECONNABORTED"])("%s without an HTTP response preserves the session until explicit Logout, explains uncertainty and never replays the PUT", async (code) => {
+    const response = deferred();
+    const started = deferred();
+    const client = new QueryClient({ defaultOptions: {
+      queries: { retry: false, gcTime: Infinity }, mutations: { retry: 3, retryDelay: 0 },
+    } });
+    const logs = ["log", "warn", "error", "info", "debug"].map((method) => vi.spyOn(console, method));
+    const { user, http, auth, router } = await setup({ client, put: (config) => {
+      started.resolve(config);
+      return response.promise;
+    } });
+    await screen.findByText("No login sessions found.");
+    const identity = auth.current.user;
+    const generation = getSessionGeneration();
+    const access = getAccessToken();
+    const refresh = getRefreshToken();
+    const cached = [ ["account"], ["account", "sessions"], ["sentinel"] ]
+      .map((key) => ({ key, state: client.getQueryState(key) }));
+    await open(user);
+    fill();
+    const form = screen.getByRole("form", { name: "Change password" });
+    act(() => { fireEvent.submit(form); fireEvent.submit(form); fireEvent.submit(form); });
+    let config;
+    await act(async () => { config = await started.promise; });
+    expect(await screen.findByRole("button", { name: "Changing password…" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Logout", exact: true })).toBeEnabled();
+    expect(puts(http)).toHaveLength(1);
+    // Even a transport diagnostic containing a password must not reach the UI or logs.
+    await act(async () => { response.reject(new AxiosError(`Disconnected: ${passwords.currentPassword}`, code, config)); });
+    expect(await screen.findByRole("alert")).toHaveTextContent(uncertaintyMessage);
+    expect(screen.queryByText(changedMessage)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Please try again|Unable to reach the server/)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Change Password" })).toBeEnabled();
+    expect(auth.current.status).toBe("AUTHENTICATED");
+    expect(auth.current.user).toBe(identity);
+    expect(getSessionGeneration()).toBe(generation);
+    expect(getAccessToken()).toBe(access);
+    expect(getRefreshToken()).toBe(refresh);
+    for (const { key, state } of cached) {
+      expect(client.getQueryState(key)).toBe(state);
+      expect(state.isInvalidated).toBe(false);
+    }
+    expect(router.state.location.pathname).toBe("/account");
+    expect(router.state.location.search).toBe("");
+    expect(router.state.location.state).toBeNull();
+    expect(config.params).toBeUndefined();
+    expect(config.url).toBe("/users/me/password");
+    expect(puts(http)).toHaveLength(1);
+    expect(logouts(http)).toHaveLength(0);
+    expect(http.mock.calls.some(([request]) => request.url === "/auth/refresh")).toBe(false);
+    const mutation = client.getMutationCache().find({ mutationKey: ["account", "change-password"], exact: true });
+    expect(mutation.state.status).toBe("error");
+    expect(mutation.state.failureCount).toBe(1);
+    expect(mutation.options.retry).toBe(false);
+    for (const value of Object.values(passwords)) {
+      expect(screen.getByRole("alert")).not.toHaveTextContent(value);
+      expect(logs.flatMap((spy) => spy.mock.calls).flat().map(String).join(" ")).not.toContain(value);
+    }
+    await user.click(screen.getByRole("button", { name: "Logout", exact: true }));
+    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    expect(auth.current.status).toBe("ANONYMOUS");
+    expect(getSessionGeneration()).toBe(generation + 1);
+    expect(getAccessToken()).toBeNull();
+    expect(getRefreshToken()).toBeNull();
+    expect(client.getQueryCache().getAll()).toHaveLength(0);
+    expect(router.state.location.pathname).toBe("/login");
+    expect(router.state.location.state?.passwordChanged).not.toBe(true);
+    expect(screen.queryByText(changedMessage)).not.toBeInTheDocument();
+    expect(puts(http)).toHaveLength(1);
+    expect(logouts(http)).toHaveLength(1);
+  });
+
   it("confirmed success terminates the same generation, clears tokens/private cache and replaces navigation with explained Login", async () => {
     const { user, http, auth, client, router, observations } = await setup();
     const generation = getSessionGeneration();
@@ -231,14 +305,20 @@ describe("Learner password rotation", () => {
     expect(puts(http)).toHaveLength(1);
   });
 
-  it.each(["learner-a", "learner-b"])("a late generation-A success after Logout/new login cannot terminate generation B (%s)", async (id) => {
+  it.each(["learner-a", "learner-b"].flatMap((id) => [
+    [id, "success"], [id, AxiosError.ERR_NETWORK], [id, "ECONNABORTED"],
+  ]))("a late generation-A response after Logout/new login cannot alter generation B (%s, %s)", async (id, outcome) => {
     const response = deferred();
     const started = deferred();
     const finished = deferred();
     let canonical = account;
     const { user, http, client, auth, router } = await setup({ read: () => canonical, put: (config) => {
       started.resolve();
-      return response.promise.then(() => { finished.resolve(); return ok(config); });
+      return response.promise.then(() => {
+        finished.resolve();
+        if (outcome !== "success") throw new AxiosError("Uncertain old request", outcome, config);
+        return ok(config);
+      });
     } });
     await open(user);
     fill();
@@ -262,7 +342,41 @@ describe("Learner password rotation", () => {
     expect(client.getQueryData(["sentinel"])).toBe("new session private data");
     expect(router.state.location.pathname).toBe("/account");
     expect(screen.queryByText(changedMessage)).not.toBeInTheDocument();
+    await open(user);
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(puts(http)).toHaveLength(1);
     expect(logouts(http)).toHaveLength(1);
+  });
+
+  it("suppresses an old generation's uncertainty even when the password form stays mounted across a same-user session replacement", async () => {
+    const response = deferred();
+    const started = deferred();
+    seedSession();
+    const http = vi.fn((config) => { started.resolve(config); return response.promise; });
+    setHttpHandler(http);
+    const { auth, client, router } = mountSession([{ path: "/account", element: <PasswordForm /> }], { path: "/account" });
+    fill();
+    fireEvent.submit(screen.getByRole("form", { name: "Change password" }));
+    let config;
+    await act(async () => { config = await started.promise; });
+    await screen.findByRole("button", { name: "Changing password…" });
+    const mutation = client.getMutationCache().find({ mutationKey: ["account", "change-password"], exact: true });
+    const form = screen.getByRole("form", { name: "Change password" });
+    const sessionB = loginResult("learner-a");
+    await act(async () => { auth.current.setSession(sessionB); });
+    client.setQueryData(["sentinel"], "new private data");
+    const generationB = getSessionGeneration();
+    await act(async () => { response.reject(new AxiosError("Old network failure", AxiosError.ERR_NETWORK, config)); });
+    await waitFor(() => expect(mutation.state.status).toBe("error"));
+    expect(screen.getByRole("form", { name: "Change password" })).toBe(form);
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(auth.current.status).toBe("AUTHENTICATED");
+    expect(auth.current.user.id).toBe("learner-a");
+    expect(getSessionGeneration()).toBe(generationB);
+    expect(getAccessToken()).toBe(sessionB.accessToken);
+    expect(getRefreshToken()).toBe(sessionB.refreshToken);
+    expect(client.getQueryData(["sentinel"])).toBe("new private data");
+    expect(router.state.location.pathname).toBe("/account");
+    expect(puts(http)).toHaveLength(1);
   });
 });

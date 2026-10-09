@@ -38,5 +38,6 @@ export default function useChangePassword() {
     mutation.mutate({ request, generation: getSessionGeneration() });
   }
 
-  return { submit, isPending, error: mutation.error, reset: mutation.reset };
+  return { submit, isPending, reset: mutation.reset,
+    error: isCurrentSession(mutation.variables?.generation) ? mutation.error : null };
 }

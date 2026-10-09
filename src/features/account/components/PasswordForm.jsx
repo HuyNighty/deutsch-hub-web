@@ -17,6 +17,7 @@ export default function PasswordForm({ onCancel, disabled = false }) {
   const [validationError, setValidationError] = useState(null);
   const { submit, isPending, error: updateError, reset } = useChangePassword();
   const error = validationError ?? updateError;
+  const uncertain = !validationError && updateError && updateError.status == null;
 
   function onSubmit(event) {
     event.preventDefault();
@@ -39,7 +40,9 @@ export default function PasswordForm({ onCancel, disabled = false }) {
 
   return (
     <form onSubmit={onSubmit} noValidate aria-label="Change password" className={cx("password-form")}>
-      {error && <p role="alert" className={cx("field-error")}>{error.message}</p>}
+      {error && <p role="alert" className={cx("field-error")}>
+        {uncertain ? "We couldn't confirm whether your password changed. The safest recovery is to use Logout to end this local session, then sign in again." : error.message}
+      </p>}
       {fields.map(({ name, label, autoComplete }) => {
         const fieldError = getFieldMessage(error, name);
         return (
