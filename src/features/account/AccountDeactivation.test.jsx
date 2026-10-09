@@ -249,7 +249,9 @@ describe("Learner Account Deactivation", () => {
     try {
       await act(async () => { auth.current.setSession(sessionB); });
       await screen.findByRole("button", { name: "Deactivate account", exact: true });
-      await within(screen.getByRole("region", { name: "Login sessions" })).findByRole("list");
+      // The old button can resolve before the cache-clear loading render; wait for B's profile.
+      await screen.findByText(canonical.username);
+      await within(await screen.findByRole("region", { name: "Login sessions" })).findByRole("list");
       client.setQueryData(["sentinel"], "B private data");
       generationB = getSessionGeneration();
     } finally { await act(async () => { response.resolve(); await finished.promise; }); }
