@@ -5,7 +5,7 @@ import { parseAssessmentHistoryPage } from "./history-response";
 
 describe("Assessment History contract", () => {
   it.each(["COMPLETED", "EXPIRED", "CANCELLED"])("preserves %s and official outcomes without deriving pass from status", (status) => {
-    for (const passed of [true, false, null]) {
+    for (const passed of [true, false]) {
       const value = historyPage({ items: [historyItem({ status, passed })] });
       expect(parseAssessmentHistoryPage(value)).toBe(value);
       expect(value.items[0].passed).toBe(passed);
@@ -63,6 +63,12 @@ describe("Assessment History contract", () => {
   it.each([true, false])("rejects an outcome %s when no official Result exists", (passed) => {
     expect(() => parseAssessmentHistoryPage(historyPage({ items: [historyItem({ resultAvailable: false, passed })] })))
       .toThrow(ApiError);
+  });
+
+  it.each(["COMPLETED", "EXPIRED", "CANCELLED"])("rejects %s with an available Result and null outcome", (status) => {
+    const page = historyPage({ items: [historyItem({ status, resultAvailable: true, passed: null })] });
+    expect(() => parseAssessmentHistoryPage(page)).toThrow(ApiError);
+    expect(() => parseAssessmentHistoryPage(page)).toThrow("The server returned an invalid assessment history response.");
   });
 
   it.each([

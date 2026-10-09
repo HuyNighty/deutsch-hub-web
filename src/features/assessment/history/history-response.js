@@ -16,8 +16,7 @@ function isHistoryItem(value) {
     LEVELS.includes(value.targetLevel) && STATUSES.includes(value.status) &&
     isNullableTimestamp(value.startedAt) && isNullableTimestamp(value.expiresAt) &&
     typeof value.resultAvailable === "boolean" &&
-    (value.passed === null || typeof value.passed === "boolean") &&
-    (value.resultAvailable || value.passed === null);
+    (value.resultAvailable ? typeof value.passed === "boolean" : value.passed === null);
 }
 
 export function parseAssessmentHistoryPage(value, pagination) {

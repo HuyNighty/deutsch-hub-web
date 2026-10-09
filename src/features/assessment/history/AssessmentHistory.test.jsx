@@ -50,8 +50,9 @@ describe("Learner Assessment History production route", () => {
     ["EXPIRED", true, true, "Expired", "Passed"],
     ["EXPIRED", true, false, "Expired", "Not passed"],
     ["EXPIRED", false, null, "Expired", "Result not available yet"],
+    ["CANCELLED", true, true, "Cancelled", "Passed"],
+    ["CANCELLED", true, false, "Cancelled", "Not passed"],
     ["CANCELLED", false, null, "Cancelled", "Result not available"],
-    ["COMPLETED", true, null, "Completed", "Outcome not available"],
   ])("keeps status %s, availability %s and outcome %s independent", async (status, resultAvailable, passed, statusLabel, outcome) => {
     const http = assessmentHttp((config) => ok(config, historyPage({ items: [historyItem({ status, resultAvailable, passed })] })));
     mountAssessmentApp(HISTORY_PATH);
@@ -119,6 +120,10 @@ describe("Learner Assessment History production route", () => {
   it.each([
     ["invalid row", () => historyPage({ items: [historyItem(), historyItem({ status: "IN_PROGRESS" })], totalElements: 2 })],
     ["inconsistent Result", () => historyPage({ items: [historyItem({ resultAvailable: false })] })],
+    ...["COMPLETED", "EXPIRED", "CANCELLED"].map((status) => [
+      `${status} with available Result and null outcome`,
+      () => historyPage({ items: [historyItem(), historyItem({ status, resultAvailable: true, passed: null })], totalElements: 2 }),
+    ]),
     ["wrong page", () => historyPage({ page: 1, totalElements: 21, totalPages: 2 })],
   ])("rejects a malformed 200 %s before caching any rows and permits retry", async (_, invalid) => {
     const user = userEvent.setup();

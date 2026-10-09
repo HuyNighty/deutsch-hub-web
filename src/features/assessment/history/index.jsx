@@ -15,7 +15,6 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", 
 
 function outcomeLabel(item) {
   if (item.resultAvailable) {
-    if (item.passed === null) return "Outcome not available";
     return item.passed ? "Passed" : "Not passed";
   }
   return item.status === "EXPIRED" ? "Result not available yet" : "Result not available";
