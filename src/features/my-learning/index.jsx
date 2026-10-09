@@ -25,9 +25,14 @@ function MyLearning() {
 
       <section aria-labelledby="assessment-entry-title">
         <h2 id="assessment-entry-title">Assessments</h2>
-        <AppLink to="/my-learning/assessments" variant="outline">
-          Explore available assessments
-        </AppLink>
+        <div className={cx("assessment-links")}>
+          <AppLink to="/my-learning/assessments" variant="outline">
+            Explore available assessments
+          </AppLink>
+          <AppLink to="/my-learning/assessment-history" variant="outline">
+            Assessment History
+          </AppLink>
+        </div>
       </section>
 
       <ResourceState

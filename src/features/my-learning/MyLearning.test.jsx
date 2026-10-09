@@ -22,6 +22,7 @@ function expectNoPartialSnapshot() {
   expect(screen.queryByText("German Basics")).not.toBeInTheDocument();
   expect(screen.queryByRole("link", { name: "Continue assessment" })).not.toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Assessment History" })).toHaveAttribute("href", "/my-learning/assessment-history");
 }
 
 describe("My Learning canonical Journey snapshot", () => {
@@ -40,6 +41,7 @@ describe("My Learning canonical Journey snapshot", () => {
     expect(screen.getByText("Continue your German learning journey.")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Continue assessment" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Assessment History" })).toHaveAttribute("href", "/my-learning/assessment-history");
     expect(client.getQueryData(["learner-learning-journey"])).toEqual(snapshot);
     expect(client.getQueryData(["my-courses"])).toBeUndefined();
     expect(client.getQueryData(["learner-competency"])).toBeUndefined();

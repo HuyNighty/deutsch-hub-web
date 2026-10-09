@@ -58,7 +58,14 @@ afterEach(() => {
     const isResultRead = /^\/me\/assessment-attempts\/[^/]+\/result$/.test(config.url) || config.url === "/me/competency";
     const isLesson = /^\/me\/courses\/[^/]+\/lessons\/[^/]+$/.test(config.url);
     const isLessonComplete = /^\/me\/courses\/[^/]+\/lessons\/[^/]+\/complete$/.test(config.url);
-    if (isLessonComplete) {
+    const isHistory = config.url === "/me/assessment-attempts/history";
+    if (isHistory) {
+      expect(config.method).toBe("get");
+      expect(config.data).toBeUndefined();
+      expect(Object.keys(config.params).sort()).toEqual(["page", "size"]);
+      expect(Number.isInteger(config.params.page) && config.params.page >= 0).toBe(true);
+      expect(Number.isInteger(config.params.size) && config.params.size > 0).toBe(true);
+    } else if (isLessonComplete) {
       expect(lessonCompleteAllowed).toBe(true);
       expect(config.method).toBe("post");
       expect(Object.keys(JSON.parse(config.data))).toEqual(["studyMinutes"]);

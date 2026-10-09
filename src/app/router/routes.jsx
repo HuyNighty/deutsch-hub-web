@@ -13,6 +13,7 @@ import RegisterPage from "@/pages/Auth/Register";
 
 import MyLearningPage from "@/pages/learn-german/my-learning";
 import AssessmentCatalogPage from "@/pages/learn-german/assessment-catalog";
+import AssessmentHistoryPage from "@/pages/learn-german/assessment-history";
 import AssessmentDetailPage from "@/pages/learn-german/assessment-detail";
 import AssessmentAttemptPage from "@/pages/learn-german/assessment-attempt";
 import AssessmentTaskPage from "@/pages/learn-german/assessment-task";
@@ -72,6 +73,10 @@ export const router = createBrowserRouter([
           {
             path: "/my-learning/assessments",
             element: <AssessmentCatalogPage />,
+          },
+          {
+            path: "/my-learning/assessment-history",
+            element: <AssessmentHistoryPage />,
           },
           {
             path: "/my-learning/assessments/:assessmentId",
