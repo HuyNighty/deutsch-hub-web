@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import classNames from "classnames/bind";
 
@@ -23,19 +22,6 @@ function LessonDetail() {
     lessonId,
   );
 
-  const [lessonData, setLessonData] = useState(null);
-
-  useEffect(() => {
-    setLessonData(lesson);
-  }, [lesson]);
-
-  const handleLessonCompleted = () => {
-    setLessonData((prev) => ({
-      ...prev,
-      completed: true,
-    }));
-  };
-
   return (
     <ResourceState
       loading={loading}
@@ -44,30 +30,29 @@ function LessonDetail() {
         onRetry: refetch,
       }}
     >
-      {lessonData && (
+      {lesson && (
         <main className={cx("page")}>
-          <LessonHeader lesson={lessonData} />
+          <LessonHeader lesson={lesson} />
 
           <section className={cx("content")}>
             <LessonItemRenderer
               courseId={courseId}
-              lessonId={lessonData.id}
-              items={lessonData.items}
+              lessonId={lesson.id}
+              items={lesson.items}
             />
           </section>
 
           <section className={cx("actions")}>
             <CompleteLessonButton
+              key={`${courseId}:${lessonId}`}
               courseId={courseId}
-              lessonId={lessonData.id}
-              lesson={lessonData}
-              onCompleted={handleLessonCompleted}
+              lesson={lesson}
             />
 
             <LessonNavigation
               courseId={courseId}
-              previousLessonId={lessonData.previousLessonId}
-              nextLessonId={lessonData.nextLessonId}
+              previousLessonId={lesson.previousLessonId}
+              nextLessonId={lesson.nextLessonId}
             />
           </section>
         </main>

@@ -45,22 +45,24 @@ describe("Complete Lesson cache coherence", () => {
     expect(http.mock.calls.map(([config]) => [config.method, config.url])).toEqual([["post", completeUrl]]);
   });
 
-  it("returns the completion failure and keeps Journey and Course caches fresh without completion or navigation", async () => {
+  it("handles an ordinary authorization failure without rejecting, logging, completion or cache invalidation", async () => {
     seedSession();
     const cache = seedCourseState();
     vi.spyOn(console, "log").mockImplementation(() => {});
-    const http = vi.fn((config) => fail(config, 500));
+    const http = vi.fn((config) => fail(config, 403));
     setHttpHandler(http);
     let completion;
     function Probe() {
-      completion = useCompleteLesson();
+      completion = useCompleteLesson(COURSE_ID, lesson.id);
       return completion.error ? <p role="alert">{completion.error.message}</p> : <p>Lesson not completed</p>;
     }
     const { router } = mountSession([{ path: "/lesson", element: <Probe /> }], { path: "/lesson", client: cache.client });
     await act(async () => {
-      await expect(completion.handleComplete(COURSE_ID, lesson.id, 10)).rejects.toMatchObject({ status: 500 });
+      expect(completion.handleComplete(10)).toBeUndefined();
     });
-    expect(await screen.findByRole("alert")).toHaveTextContent("HTTP failure");
+    expect(await screen.findByRole("alert")).toHaveTextContent("You do not have permission to complete this lesson.");
+    expect(completion.error).toMatchObject({ status: 403 });
+    expect(console.log).not.toHaveBeenCalled();
     expect(screen.queryByText("Lesson completed")).not.toBeInTheDocument();
     expectCourseState(cache);
     expect(router.state.location.pathname).toBe("/lesson");

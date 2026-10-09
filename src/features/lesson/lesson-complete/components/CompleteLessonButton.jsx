@@ -13,17 +13,9 @@ export default function CompleteLessonButton({
 }) {
   const { id, completed, estimatedMinutes } = lesson;
 
-  const { loading, error, handleComplete } = useCompleteLesson();
+  const { loading, error, handleComplete, checkCompletion, phase, uncertain } = useCompleteLesson(courseId, id, onCompleted);
 
-  const handleClick = async () => {
-    const success = await handleComplete(courseId, id, estimatedMinutes);
-
-    if (success) {
-      onCompleted();
-    }
-  };
-
-  if (completed) {
+  if (phase === "confirmed" || (phase === "idle" && completed)) {
     return (
       <div className={cx("completed")}>
         <span className={cx("icon")} aria-hidden="true">
@@ -41,14 +33,19 @@ export default function CompleteLessonButton({
 
   return (
     <div className={cx("wrapper")}>
-      <Button fullWidth loading={loading} onClick={handleClick}>
-        Complete lesson
+      <Button fullWidth loading={loading} disabled={uncertain} onClick={() => handleComplete(estimatedMinutes)}>
+        {phase === "checking" ? "Checking completion…" : loading ? "Completing lesson…" : "Complete lesson"}
       </Button>
 
       {error && (
         <p className={cx("error")} role="alert">
-          Failed to complete lesson. Please try again.
+          {error.message}
         </p>
+      )}
+      {uncertain && (
+        <Button fullWidth variant="outline" onClick={checkCompletion}>
+          Check completion status
+        </Button>
       )}
     </div>
   );
