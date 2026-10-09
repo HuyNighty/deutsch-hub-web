@@ -12,8 +12,8 @@ const coursePath = `/my-learning/courses/${COURSE_ID}`;
 const enrollUrl = `/courses/${COURSE_ID}/enroll`;
 
 function Enroll() {
-  const { handleEnroll } = useEnrollAction(COURSE_ID);
-  return <button onClick={handleEnroll}>Enroll</button>;
+  const { handleEnroll, loading, error } = useEnrollAction(COURSE_ID);
+  return <><button disabled={loading} onClick={handleEnroll}>Enroll</button>{error && <p role="alert">{error.message}</p>}</>;
 }
 const routes = [
   { path: publicPath, element: <Enroll /> },
@@ -43,16 +43,19 @@ describe("Enroll Course cache coherence", () => {
     expect(http.mock.calls.map(([config]) => [config.method, config.url])).toEqual([["post", enrollUrl]]);
   });
 
-  it("keeps Journey and Course caches fresh on failure and preserves the enrollment alert without navigating", async () => {
+  it("keeps Journey and Course caches fresh on an authorization failure and shows a safe inline message", async () => {
     seedSession();
     const cache = seedCourseState();
     const alert = vi.spyOn(window, "alert").mockImplementation(() => {});
     vi.spyOn(console, "log").mockImplementation(() => {});
-    const http = vi.fn((config) => fail(config, 500));
+    const http = vi.fn((config) => fail(config, 403));
     setHttpHandler(http);
     const { router } = mountSession(routes, { path: publicPath, client: cache.client });
     await userEvent.setup().click(screen.getByRole("button", { name: "Enroll" }));
-    await waitFor(() => expect(alert).toHaveBeenCalledWith("Enroll failed"));
+    expect(await screen.findByRole("alert")).toHaveTextContent("You do not have permission to enroll in this course.");
+    await waitFor(() => expect(screen.getByRole("button", { name: "Enroll" })).toBeEnabled());
+    expect(alert).not.toHaveBeenCalled();
+    expect(console.log).not.toHaveBeenCalled();
     expectCourseState(cache);
     expect(router.state.location.pathname).toBe(publicPath);
     expect(http.mock.calls.map(([config]) => [config.method, config.url])).toEqual([["post", enrollUrl]]);

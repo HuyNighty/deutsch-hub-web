@@ -11,11 +11,11 @@ const cx = classNames.bind(styles);
 export default function CourseAction({ courseId, enrollmentStatus }) {
   const navigate = useNavigate();
 
-  const { handleEnroll } = useEnrollAction(courseId);
+  const { handleEnroll, checkEnrollment, loading, error, phase, canCheckEnrollment } = useEnrollAction(courseId);
 
   let button;
 
-  switch (enrollmentStatus) {
+  switch (loading || canCheckEnrollment ? null : enrollmentStatus) {
     case "ENROLLED":
     case "IN_PROGRESS":
       button = (
@@ -43,8 +43,8 @@ export default function CourseAction({ courseId, enrollmentStatus }) {
 
     default:
       button = (
-        <Button size="lg" fullWidth onClick={handleEnroll}>
-          Enroll course
+        <Button size="lg" fullWidth onClick={handleEnroll} loading={loading} disabled={canCheckEnrollment}>
+          {phase === "checking" ? "Checking enrollment…" : phase === "confirmed" ? "Opening course…" : loading ? "Enrolling…" : "Enroll course"}
         </Button>
       );
   }
@@ -55,19 +55,30 @@ export default function CourseAction({ courseId, enrollmentStatus }) {
         <span className={cx("label")}>COURSE ACCESS</span>
 
         <span className={cx("status")}>
-          {enrollmentStatus === "COMPLETED"
-            ? "Completed"
-            : enrollmentStatus === "IN_PROGRESS"
-              ? "In progress"
-              : enrollmentStatus === "ENROLLED"
-                ? "Enrolled"
-                : "Available"}
+          {phase === "unavailable"
+            ? "Unavailable"
+            : phase === "uncertain"
+              ? "Unconfirmed"
+              : enrollmentStatus === "COMPLETED"
+                ? "Completed"
+                : enrollmentStatus === "IN_PROGRESS"
+                  ? "In progress"
+                  : enrollmentStatus === "ENROLLED"
+                    ? "Enrolled"
+                    : "Available"}
         </span>
       </div>
 
       <div className={cx("divider")} />
 
       <div className={cx("button")}>{button}</div>
+
+      {error && <p role="alert">{error.message}</p>}
+      {canCheckEnrollment && (
+        <Button variant="outline" fullWidth onClick={checkEnrollment}>
+          Check enrollment status
+        </Button>
+      )}
     </aside>
   );
 }
