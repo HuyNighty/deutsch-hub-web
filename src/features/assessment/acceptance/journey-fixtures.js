@@ -189,7 +189,7 @@ export async function expectOfficialResult(server, client) {
     .toEqual(["Viết", "Nghe", "Đọc", "Nói"]);
   expect(server.result.componentResults.map((item) => item.skillDimension)).toEqual(["SPEAKING", "READING", "LISTENING", "WRITING"]);
   for (const card of within(evidence).getAllByRole("article")) {
-    expect(within(card).getByText("Tỷ lệ thực hiện: 80%")).toBeInTheDocument();
+    expect(within(card).getByText("Tỷ lệ điểm đạt được: 80%")).toBeInTheDocument();
     expect(within(card).getByText("Kết quả: Đạt")).toBeInTheDocument();
     expect(card.textContent).not.toMatch(/B1|B2|CEFR/);
   }

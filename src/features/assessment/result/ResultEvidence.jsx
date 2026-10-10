@@ -24,7 +24,7 @@ export default function ResultEvidence({ query, definition }) {
               return (
                 <article className={cx("card")} key={component.componentId} aria-label={`Kết quả kỹ năng ${resultSkillLabels[component.skillDimension]}`}>
                   <h3 className={cx("cardTitle")}>{resultSkillLabels[component.skillDimension]}</h3>
-                  <p>Tỷ lệ thực hiện: {result.performance}%</p>
+                  <p>Tỷ lệ điểm đạt được: {result.performance}%</p>
                   <p>Kết quả: {resultOutcome(result.passed)}</p>
                   <SkillGuidance targetLevel={query.data.targetLevel} skillDimension={result.skillDimension} passed={result.passed} />
                 </article>

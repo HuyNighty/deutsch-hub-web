@@ -49,7 +49,7 @@ describe("Independent Result and Competency failures", () => {
     await screen.findByText("Kết quả tổng thể: Chưa đạt");
     const state = screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" });
     expect(await within(state).findByRole("alert")).toHaveTextContent("Không thể tải trình độ tiếng Đức hiện tại");
-    expect(screen.getByText("Tỷ lệ thực hiện: 37.5%")).toBeInTheDocument();
+    expect(screen.getByText("Tỷ lệ điểm đạt được: 37.5%")).toBeInTheDocument();
     failed = false;
     await user.click(within(state).getByRole("button", { name: "Thử tải lại trình độ hiện tại" }));
     await within(state).findByText("B2");
@@ -95,7 +95,7 @@ describe("Independent Result and Competency failures", () => {
     const evidence = await screen.findByRole("region", { name: "Kết quả đánh giá chính thức" });
     expect(await within(evidence).findByRole("alert")).toHaveTextContent("Không thể tải kết quả đánh giá. Vui lòng thử lại.");
     expect(evidence.textContent).not.toContain("final submit");
-    expect(screen.queryByText(/Kết quả tổng thể:|Tỷ lệ thực hiện:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Kết quả tổng thể:|Tỷ lệ điểm đạt được:/)).not.toBeInTheDocument();
     expect(client.getQueryData(RESULT_KEY)).toBeUndefined();
     expect(client.getQueryState(RESULT_KEY).error.message).toContain("invalid assessment result response");
     expect(screen.queryByRole("region", { name: /^Gợi ý học tập/ })).not.toBeInTheDocument();

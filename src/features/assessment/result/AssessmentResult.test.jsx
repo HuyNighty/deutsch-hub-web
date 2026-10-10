@@ -24,7 +24,7 @@ describe("Learner Result and current German level", () => {
     const values = [["Viết", "37.5%", "Đạt"], ["Nghe", "100%", "Đạt"], ["Đọc", "0%", "Chưa đạt"], ["Nói", "80%", "Đạt"]];
     for (const [skill, performance, outcome] of values) {
       const card = screen.getByRole("article", { name: `Kết quả kỹ năng ${skill}` });
-      expect(within(card).getByText(`Tỷ lệ thực hiện: ${performance}`)).toBeInTheDocument();
+      expect(within(card).getByText(`Tỷ lệ điểm đạt được: ${performance}`)).toBeInTheDocument();
       expect(within(card).getByText(`Kết quả: ${outcome}`)).toBeInTheDocument();
     }
     expect(await within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).findByText("A2")).toBeInTheDocument();

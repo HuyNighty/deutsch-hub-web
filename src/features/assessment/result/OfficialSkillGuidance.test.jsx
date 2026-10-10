@@ -30,7 +30,7 @@ describe("Official Result with Vietnamese curated skill guidance", () => {
     for (const component of definition.components) {
       const official = result.componentResults.find((item) => item.componentId === component.componentId);
       const card = within(evidence).getByRole("article", { name: `Kết quả kỹ năng ${labels[component.skillDimension]}` });
-      expect(within(card).getByText(`Tỷ lệ thực hiện: ${official.performance}%`)).toBeInTheDocument();
+      expect(within(card).getByText(`Tỷ lệ điểm đạt được: ${official.performance}%`)).toBeInTheDocument();
       expect(within(card).getByText(`Kết quả: ${official.passed ? "Đạt" : "Chưa đạt"}`)).toBeInTheDocument();
       const id = `${official.skillDimension.toLowerCase()}.${targetLevel === "B1" ? "generic" : targetLevel.toLowerCase()}.${official.passed ? "passed" : "not_passed"}`;
       const entry = catalog.guidanceEntries.find((item) => item.id === id);
@@ -49,7 +49,7 @@ describe("Official Result with Vietnamese curated skill guidance", () => {
     const http = resultHttp();
     mountAssessmentApp(RESULT_PATH);
     await screen.findByText("Kết quả tổng thể: Chưa đạt");
-    expect(screen.getByText("Tỷ lệ thực hiện: 37.5%")).toBeInTheDocument();
+    expect(screen.getByText("Tỷ lệ điểm đạt được: 37.5%")).toBeInTheDocument();
     expect(screen.getAllByRole("article")).toHaveLength(4);
     expect(guidanceRegions()).toHaveLength(0);
     expect(screen.queryByText(/Gợi ý học tập|không có gợi ý/i)).not.toBeInTheDocument();
