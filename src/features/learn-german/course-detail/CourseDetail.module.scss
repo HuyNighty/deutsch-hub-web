@@ -2,6 +2,7 @@
   @include container;
 
   padding-block: var(--space-10) var(--space-16);
+  padding-block-start: calc(72px + var(--space-10));
 }
 
 .top {
@@ -33,6 +34,7 @@
 @include md {
   .page {
     padding-block: var(--space-8) var(--space-12);
+    padding-block-start: calc(64px + var(--space-8));
   }
 
   .top {
@@ -45,6 +47,7 @@
 @include sm {
   .page {
     padding-block: var(--space-6) var(--space-10);
+    padding-block-start: calc(64px + var(--space-6));
   }
 
   .top {
