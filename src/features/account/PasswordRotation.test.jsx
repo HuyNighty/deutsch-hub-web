@@ -19,9 +19,9 @@ const routes = [
   { element: <GuestRoute />, children: [{ path: "/login", element: <LoginForm /> }] },
 ];
 const passwords = { currentPassword: "CurrentPassword123", newPassword: "NewPassword456", verifyNewPassword: "NewPassword456" };
-const labels = { currentPassword: "Current password", newPassword: "New password", verifyNewPassword: "Confirm new password" };
+const labels = { currentPassword: "Mật khẩu hiện tại", newPassword: "Mật khẩu mới", verifyNewPassword: "Xác nhận mật khẩu mới" };
 const changedMessage = "Đã đổi mật khẩu thành công. Vui lòng đăng nhập lại.";
-const uncertaintyMessage = "We couldn't confirm whether your password changed. The safest recovery is to use Logout to end this local session, then sign in again.";
+const uncertaintyMessage = "Không thể xác nhận mật khẩu của bạn đã được thay đổi hay chưa. Cách khôi phục an toàn là đăng xuất khỏi phiên hiện tại, sau đó đăng nhập lại.";
 
 function reject(config, { status = 400, code = 400, message = "Validation failed", errors = [] } = {}) {
   throw new AxiosError(message, AxiosError.ERR_BAD_REQUEST, config, null, {
@@ -40,12 +40,12 @@ async function setup({ put = (config) => ok(config), read = () => account, login
   });
   setHttpHandler(http);
   const view = mountSession(routes, { path: "/account", client });
-  await screen.findByRole("button", { name: "Change Password" });
+  await screen.findByRole("button", { name: "Đổi mật khẩu" });
   view.client.setQueryData(["sentinel"], "private learner data");
   return { ...view, http, user: userEvent.setup() };
 }
 async function open(user) {
-  await user.click(screen.getByRole("button", { name: "Change Password" }));
+  await user.click(screen.getByRole("button", { name: "Đổi mật khẩu" }));
 }
 function fill(values = passwords) {
   Object.entries(values).forEach(([name, value]) => {
@@ -58,10 +58,10 @@ const logouts = (http) => http.mock.calls.filter(([config]) => config.url === "/
 describe("Learner password rotation", () => {
   it("keeps Security separate from Profile and exposes exactly three password inputs with Logout reachable", async () => {
     const { user } = await setup();
-    expect(screen.getByRole("region", { name: "Security" })).toBeVisible();
-    await user.click(screen.getByRole("button", { name: "Edit Profile" }));
+    expect(screen.getByRole("region", { name: "Bảo mật" })).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Chỉnh sửa hồ sơ" }));
     await open(user);
-    const passwordForm = screen.getByRole("form", { name: "Change password" });
+    const passwordForm = screen.getByRole("form", { name: "Đổi mật khẩu" });
     expect(passwordForm.querySelectorAll("input")).toHaveLength(3);
     for (const [name, label] of Object.entries(labels)) {
       const input = within(passwordForm).getByLabelText(label);
@@ -70,23 +70,23 @@ describe("Learner password rotation", () => {
       expect(input).toHaveAttribute("autocomplete", name === "currentPassword" ? "current-password" : "new-password");
       expect(input).toHaveValue("");
     }
-    expect(screen.getByRole("form", { name: "Edit profile" }).querySelectorAll('input[type="password"]')).toHaveLength(0);
-    expect(screen.getByRole("button", { name: "Logout" })).toBeEnabled();
+    expect(screen.getByRole("form", { name: "Chỉnh sửa hồ sơ" }).querySelectorAll('input[type="password"]')).toHaveLength(0);
+    expect(screen.getByRole("button", { name: "Đăng xuất" })).toBeEnabled();
   });
 
   it.each([
-    ["blank current password", { currentPassword: "" }, "currentPassword", "must not be blank"],
-    ["whitespace current password", { currentPassword: "   " }, "currentPassword", "must not be blank"],
-    ["blank new password", { newPassword: " ", verifyNewPassword: " " }, "newPassword", "must not be blank"],
-    ["short new password", { newPassword: "Short1", verifyNewPassword: "Short1" }, "newPassword", "between 8 and 100"],
-    ["long new password", { newPassword: "a".repeat(101), verifyNewPassword: "a".repeat(101) }, "newPassword", "between 8 and 100"],
-    ["blank confirmation", { verifyNewPassword: "" }, "verifyNewPassword", "must not be blank"],
-    ["mismatched confirmation", { verifyNewPassword: "Different123" }, "verifyNewPassword", "must match"],
+    ["blank current password", { currentPassword: "" }, "currentPassword", "không được để trống"],
+    ["whitespace current password", { currentPassword: "   " }, "currentPassword", "không được để trống"],
+    ["blank new password", { newPassword: " ", verifyNewPassword: " " }, "newPassword", "không được để trống"],
+    ["short new password", { newPassword: "Short1", verifyNewPassword: "Short1" }, "newPassword", "từ 8 đến 100"],
+    ["long new password", { newPassword: "a".repeat(101), verifyNewPassword: "a".repeat(101) }, "newPassword", "từ 8 đến 100"],
+    ["blank confirmation", { verifyNewPassword: "" }, "verifyNewPassword", "không được để trống"],
+    ["mismatched confirmation", { verifyNewPassword: "Different123" }, "verifyNewPassword", "phải khớp"],
   ])("blocks %s before PUT", async (_, changes, field, message) => {
     const { user, http, auth, router } = await setup();
     await open(user);
     fill({ ...passwords, ...changes });
-    await user.click(screen.getByRole("button", { name: "Change Password" }));
+    await user.click(screen.getByRole("button", { name: "Đổi mật khẩu" }));
     expect(screen.getByLabelText(labels[field])).toHaveAccessibleDescription(expect.stringContaining(message));
     expect(puts(http)).toHaveLength(0);
     expect(auth.current.status).toBe("AUTHENTICATED");
@@ -98,8 +98,8 @@ describe("Learner password rotation", () => {
     await open(user);
     fill();
     const before = http.mock.calls.length;
-    await user.click(screen.getByRole("button", { name: "Cancel" }));
-    expect(screen.queryByRole("form", { name: "Change password" })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Hủy" }));
+    expect(screen.queryByRole("form", { name: "Đổi mật khẩu" })).not.toBeInTheDocument();
     await open(user);
     Object.values(labels).forEach((label) => expect(screen.getByLabelText(label)).toHaveValue(""));
     expect(http).toHaveBeenCalledTimes(before);
@@ -112,8 +112,8 @@ describe("Learner password rotation", () => {
     const { user, client, auth } = await setup({ put: (config) => reject(config, { errors }) });
     await open(user);
     fill();
-    await user.click(screen.getByRole("button", { name: "Change Password" }));
-    expect(await screen.findByRole("alert")).toHaveTextContent("Validation failed");
+    await user.click(screen.getByRole("button", { name: "Đổi mật khẩu" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Không thể đổi mật khẩu. Vui lòng kiểm tra thông tin và thử lại.");
     for (const { field, message } of errors) {
       expect(screen.getByLabelText(labels[field])).toHaveAttribute("aria-invalid", "true");
       expect(screen.getByLabelText(labels[field])).toHaveAccessibleDescription(message);
@@ -124,12 +124,12 @@ describe("Learner password rotation", () => {
   });
 
   it.each([
-    ["incorrect current password", 400, 4019, "Current password is incorrect.", passwords],
-    ["same password", 400, 4020, "New password must be different.", passwords],
-    ["canonical strength", 400, 3004, "Password strength is invalid.", { ...passwords, newPassword: "lowercaseonly", verifyNewPassword: "lowercaseonly" }],
-    ["unauthorized response", 401, 401, "Password request was unauthorized.", passwords],
-    ["server failure", 500, 500, "Unable to change password.", passwords],
-  ])("keeps %s at form level, preserving auth, tokens, values, cache and /account with no retry/logout", async (_, status, code, message, values) => {
+    ["incorrect current password", 400, 4019, "Current password is incorrect.", passwords, "Mật khẩu hiện tại không chính xác."],
+    ["same password", 400, 4020, "New password must be different.", passwords, "Mật khẩu mới phải khác mật khẩu hiện tại."],
+    ["canonical strength", 400, 3004, "Password strength is invalid.", { ...passwords, newPassword: "lowercaseonly", verifyNewPassword: "lowercaseonly" }, "Mật khẩu mới không đáp ứng yêu cầu bảo mật."],
+    ["unauthorized response", 401, 401, "Password request was unauthorized.", passwords, "Không thể đổi mật khẩu. Vui lòng kiểm tra thông tin và thử lại."],
+    ["server failure", 500, 500, "Unable to change password.", passwords, "Không thể đổi mật khẩu. Vui lòng kiểm tra thông tin và thử lại."],
+  ])("keeps %s at form level, preserving auth, tokens, values, cache and /account with no retry/logout", async (_, status, code, message, values, expected) => {
     const client = new QueryClient({ defaultOptions: {
       queries: { retry: false, gcTime: Infinity }, mutations: { retry: 3, retryDelay: 0 },
     } });
@@ -141,8 +141,9 @@ describe("Learner password rotation", () => {
     const updatedAt = client.getQueryState(["account"]).dataUpdatedAt;
     await open(user);
     fill(values);
-    await user.click(screen.getByRole("button", { name: "Change Password" }));
-    expect(await screen.findByRole("alert")).toHaveTextContent(message);
+    await user.click(screen.getByRole("button", { name: "Đổi mật khẩu" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(expected);
+    expect(screen.queryByText(message)).not.toBeInTheDocument();
     expect(auth.current.status).toBe("AUTHENTICATED");
     expect(getSessionGeneration()).toBe(generation);
     expect(getAccessToken()).toBe(originalAccess);
@@ -174,7 +175,7 @@ describe("Learner password rotation", () => {
       started.resolve(config);
       return response.promise;
     } });
-    await screen.findByText("No login sessions found.");
+    await screen.findByText("Không tìm thấy phiên đăng nhập nào.");
     const identity = auth.current.user;
     const generation = getSessionGeneration();
     const access = getAccessToken();
@@ -183,19 +184,19 @@ describe("Learner password rotation", () => {
       .map((key) => ({ key, state: client.getQueryState(key) }));
     await open(user);
     fill();
-    const form = screen.getByRole("form", { name: "Change password" });
+    const form = screen.getByRole("form", { name: "Đổi mật khẩu" });
     act(() => { fireEvent.submit(form); fireEvent.submit(form); fireEvent.submit(form); });
     let config;
     await act(async () => { config = await started.promise; });
-    expect(await screen.findByRole("button", { name: "Changing password…" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Logout", exact: true })).toBeEnabled();
+    expect(await screen.findByRole("button", { name: "Đang đổi mật khẩu…" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Đăng xuất", exact: true })).toBeEnabled();
     expect(puts(http)).toHaveLength(1);
     // Even a transport diagnostic containing a password must not reach the UI or logs.
     await act(async () => { response.reject(new AxiosError(`Disconnected: ${passwords.currentPassword}`, code, config)); });
     expect(await screen.findByRole("alert")).toHaveTextContent(uncertaintyMessage);
     expect(screen.queryByText(changedMessage)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Please try again|Unable to reach the server/)).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Change Password" })).toBeEnabled();
+    expect(screen.queryByText(/Please try again|Unable to reach the server|Không thể đổi mật khẩu\./)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Đổi mật khẩu" })).toBeEnabled();
     expect(auth.current.status).toBe("AUTHENTICATED");
     expect(auth.current.user).toBe(identity);
     expect(getSessionGeneration()).toBe(generation);
@@ -221,7 +222,7 @@ describe("Learner password rotation", () => {
       expect(screen.getByRole("alert")).not.toHaveTextContent(value);
       expect(logs.flatMap((spy) => spy.mock.calls).flat().map(String).join(" ")).not.toContain(value);
     }
-    await user.click(screen.getByRole("button", { name: "Logout", exact: true }));
+    await user.click(screen.getByRole("button", { name: "Đăng xuất", exact: true }));
     await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(auth.current.status).toBe("ANONYMOUS");
     expect(getSessionGeneration()).toBe(generation + 1);
@@ -241,7 +242,7 @@ describe("Learner password rotation", () => {
     client.setQueryData(["learner-private-progress"], { private: true });
     await open(user);
     fill();
-    await user.click(screen.getByRole("button", { name: "Change Password" }));
+    await user.click(screen.getByRole("button", { name: "Đổi mật khẩu" }));
     expect(await screen.findByText(changedMessage)).toHaveAttribute("role", "status");
     expect(auth.current.status).toBe("ANONYMOUS");
     expect(getSessionGeneration()).toBe(generation + 1);
@@ -262,13 +263,13 @@ describe("Learner password rotation", () => {
     const { user, http, auth, client, router } = await setup({ login: (config) => ok(config, session) });
     await open(user);
     fill();
-    await user.click(screen.getByRole("button", { name: "Change Password" }));
+    await user.click(screen.getByRole("button", { name: "Đổi mật khẩu" }));
     await screen.findByText(changedMessage);
     expect(client.getQueryData(["account"])).toBeUndefined();
     await user.type(screen.getByLabelText("Tên đăng nhập hoặc email"), "learner");
     await user.type(screen.getByLabelText("Mật khẩu"), passwords.newPassword);
     await user.click(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ }));
-    await screen.findByRole("button", { name: "Change Password" });
+    await screen.findByRole("button", { name: "Đổi mật khẩu" });
     expect(router.state.location.pathname).toBe("/account");
     expect(router.state.historyAction).toBe("REPLACE");
     expect(auth.current.status).toBe("AUTHENTICATED");
@@ -289,14 +290,14 @@ describe("Learner password rotation", () => {
     } });
     await open(user);
     fill();
-    const form = screen.getByRole("form", { name: "Change password" });
+    const form = screen.getByRole("form", { name: "Đổi mật khẩu" });
     act(() => { fireEvent.submit(form); fireEvent.submit(form); fireEvent.submit(form); });
     await act(async () => { await started.promise; });
-    const saving = await screen.findByRole("button", { name: "Changing password…" });
+    const saving = await screen.findByRole("button", { name: "Đang đổi mật khẩu…" });
     expect(saving).toBeDisabled();
     expect(saving).toHaveAttribute("aria-busy", "true");
-    expect(screen.getByRole("button", { name: "Cancel" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Logout" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Hủy" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Đăng xuất" })).toBeEnabled();
     await user.click(saving);
     fireEvent.submit(form);
     expect(puts(http)).toHaveLength(1);
@@ -322,14 +323,14 @@ describe("Learner password rotation", () => {
     } });
     await open(user);
     fill();
-    await user.click(screen.getByRole("button", { name: "Change Password" }));
+    await user.click(screen.getByRole("button", { name: "Đổi mật khẩu" }));
     await act(async () => { await started.promise; });
-    await user.click(screen.getByRole("button", { name: "Logout" }));
+    await user.click(screen.getByRole("button", { name: "Đăng xuất" }));
     await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     const sessionB = loginResult(id);
     canonical = { ...account, id, username: "new-session" };
     await act(async () => { auth.current.setSession(sessionB); });
-    await screen.findByRole("button", { name: "Change Password" });
+    await screen.findByRole("button", { name: "Đổi mật khẩu" });
     client.setQueryData(["sentinel"], "new session private data");
     const generationB = getSessionGeneration();
     await act(async () => { response.resolve(); await finished.promise; });
@@ -356,19 +357,19 @@ describe("Learner password rotation", () => {
     setHttpHandler(http);
     const { auth, client, router } = mountSession([{ path: "/account", element: <PasswordForm /> }], { path: "/account" });
     fill();
-    fireEvent.submit(screen.getByRole("form", { name: "Change password" }));
+    fireEvent.submit(screen.getByRole("form", { name: "Đổi mật khẩu" }));
     let config;
     await act(async () => { config = await started.promise; });
-    await screen.findByRole("button", { name: "Changing password…" });
+    await screen.findByRole("button", { name: "Đang đổi mật khẩu…" });
     const mutation = client.getMutationCache().find({ mutationKey: ["account", "change-password"], exact: true });
-    const form = screen.getByRole("form", { name: "Change password" });
+    const form = screen.getByRole("form", { name: "Đổi mật khẩu" });
     const sessionB = loginResult("learner-a");
     await act(async () => { auth.current.setSession(sessionB); });
     client.setQueryData(["sentinel"], "new private data");
     const generationB = getSessionGeneration();
     await act(async () => { response.reject(new AxiosError("Old network failure", AxiosError.ERR_NETWORK, config)); });
     await waitFor(() => expect(mutation.state.status).toBe("error"));
-    expect(screen.getByRole("form", { name: "Change password" })).toBe(form);
+    expect(screen.getByRole("form", { name: "Đổi mật khẩu" })).toBe(form);
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(auth.current.status).toBe("AUTHENTICATED");
     expect(auth.current.user.id).toBe("learner-a");

@@ -3,13 +3,14 @@ import classNames from "classnames/bind";
 import { ApiError, getFieldMessage } from "@/shared/api/api-error";
 import { Button } from "@/shared/ui/components/button";
 import useChangePassword from "../hooks/useChangePassword";
+import { accountErrorMessage } from "../account-error-presentation";
 import styles from "../Account.module.scss";
 
 const cx = classNames.bind(styles);
 const fields = [
-  { name: "currentPassword", label: "Current password", autoComplete: "current-password" },
-  { name: "newPassword", label: "New password", autoComplete: "new-password" },
-  { name: "verifyNewPassword", label: "Confirm new password", autoComplete: "new-password" },
+  { name: "currentPassword", label: "Mật khẩu hiện tại", autoComplete: "current-password" },
+  { name: "newPassword", label: "Mật khẩu mới", autoComplete: "new-password" },
+  { name: "verifyNewPassword", label: "Xác nhận mật khẩu mới", autoComplete: "new-password" },
 ];
 
 export default function PasswordForm({ onCancel, disabled = false }) {
@@ -23,15 +24,15 @@ export default function PasswordForm({ onCancel, disabled = false }) {
     event.preventDefault();
     if (isPending || disabled) return;
     const errors = fields.filter(({ name }) => !form[name].trim())
-      .map(({ name, label }) => ({ field: name, message: `${label} must not be blank.` }));
+      .map(({ name, label }) => ({ field: name, message: `${label} không được để trống.` }));
     if (form.newPassword.trim() && (form.newPassword.length < 8 || form.newPassword.length > 100)) {
-      errors.push({ field: "newPassword", message: "New password must be between 8 and 100 characters." });
+      errors.push({ field: "newPassword", message: "Mật khẩu mới phải có từ 8 đến 100 ký tự." });
     }
     if (form.verifyNewPassword.trim() && form.verifyNewPassword !== form.newPassword) {
-      errors.push({ field: "verifyNewPassword", message: "Password confirmation must match the new password." });
+      errors.push({ field: "verifyNewPassword", message: "Mật khẩu xác nhận phải khớp với mật khẩu mới." });
     }
     if (errors.length) {
-      setValidationError(new ApiError({ message: "Please check your password information.", errors }));
+      setValidationError(new ApiError({ message: "Vui lòng kiểm tra thông tin mật khẩu.", errors }));
       return;
     }
     setValidationError(null);
@@ -39,9 +40,9 @@ export default function PasswordForm({ onCancel, disabled = false }) {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate aria-label="Change password" className={cx("password-form")}>
+    <form lang="vi" onSubmit={onSubmit} noValidate aria-label="Đổi mật khẩu" className={cx("password-form")}>
       {error && <p role="alert" className={cx("field-error")}>
-        {uncertain ? "We couldn't confirm whether your password changed. The safest recovery is to use Logout to end this local session, then sign in again." : error.message}
+        {uncertain ? "Không thể xác nhận mật khẩu của bạn đã được thay đổi hay chưa. Cách khôi phục an toàn là đăng xuất khỏi phiên hiện tại, sau đó đăng nhập lại." : validationError ? validationError.message : accountErrorMessage(error, "password")}
       </p>}
       {fields.map(({ name, label, autoComplete }) => {
         const fieldError = getFieldMessage(error, name);
@@ -63,8 +64,8 @@ export default function PasswordForm({ onCancel, disabled = false }) {
         );
       })}
       <div className={cx("actions")}>
-        <Button type="submit" loading={isPending} disabled={disabled}>{isPending ? "Changing password…" : "Change Password"}</Button>
-        <Button variant="outline" disabled={isPending || disabled} onClick={onCancel}>Cancel</Button>
+        <Button type="submit" loading={isPending} disabled={disabled}>{isPending ? "Đang đổi mật khẩu…" : "Đổi mật khẩu"}</Button>
+        <Button variant="outline" disabled={isPending || disabled} onClick={onCancel}>Hủy</Button>
       </div>
     </form>
   );

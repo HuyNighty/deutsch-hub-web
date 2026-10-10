@@ -31,30 +31,30 @@ function Account() {
 
   return (
     <ResourceState loading={loading} error={error} onRetry={refetch}>
-      <main className={cx("page")}>
+      <main lang="vi" className={cx("page")}>
         <header className={cx("header")}>
-          <h1 className={cx("title")}>My Account</h1>
+          <h1 className={cx("title")}>Tài khoản của tôi</h1>
 
-          <p className={cx("description")}>Manage your account information.</p>
+          <p className={cx("description")}>Quản lý thông tin tài khoản của bạn.</p>
           <LogoutButton />
         </header>
 
         <section className={cx("content")}>
           <div className={cx("card")}>
             <div className={cx("item")}>
-              <span className={cx("label")}>Username (read-only)</span>
+              <span className={cx("label")}>Tên đăng nhập (chỉ đọc)</span>
 
               <span className={cx("value")}>{username}</span>
             </div>
 
             <div className={cx("item")}>
-              <span className={cx("label")}>Full Name</span>
+              <span className={cx("label")}>Họ và tên</span>
 
               <span className={cx("value")}>{fullName}</span>
             </div>
 
             <div className={cx("item")}>
-              <span className={cx("label")}>Email (read-only)</span>
+              <span className={cx("label")}>Email (chỉ đọc)</span>
 
               <span className={cx("value")}>{email}</span>
             </div>
@@ -67,20 +67,20 @@ function Account() {
             ) : (
               <>
                 <div className={cx("item")}>
-                  <span className={cx("label")}>First name</span>
+                  <span className={cx("label")}>Tên</span>
                   <span className={cx("value")}>{firstName}</span>
                 </div>
                 <div className={cx("item")}>
-                  <span className={cx("label")}>Last name</span>
+                  <span className={cx("label")}>Họ</span>
                   <span className={cx("value")}>{lastName}</span>
                 </div>
                 <div className={cx("item")}>
-                  <span className={cx("label")}>Phone number</span>
+                  <span className={cx("label")}>Số điện thoại</span>
                   <span className={cx("value")}>{phoneNumber || "-"}</span>
                 </div>
                 <div className={cx("item")}>
-                  {saved && <p role="status">Profile saved.</p>}
-                  <Button disabled={deactivationPending} onClick={() => { setSaved(false); setEditing(true); }}>Edit Profile</Button>
+                  {saved && <p role="status">Đã lưu hồ sơ.</p>}
+                  <Button disabled={deactivationPending} onClick={() => { setSaved(false); setEditing(true); }}>Chỉnh sửa hồ sơ</Button>
                 </div>
               </>
             )}
@@ -89,14 +89,14 @@ function Account() {
         <section className={cx("content")} aria-labelledby="account-security-heading">
           <div className={cx("card")}>
             <div className={cx("item")}>
-              <h2 id="account-security-heading" className={cx("security-title")}>Security</h2>
-              <p>Manage your password.</p>
+              <h2 id="account-security-heading" className={cx("security-title")}>Bảo mật</h2>
+              <p>Quản lý mật khẩu của bạn.</p>
             </div>
             {changingPassword ? (
               <PasswordForm disabled={securityDisabled} onCancel={() => setChangingPassword(false)} />
             ) : (
               <div className={cx("item")}>
-                <Button disabled={securityDisabled} onClick={() => setChangingPassword(true)}>Change Password</Button>
+                <Button disabled={securityDisabled} onClick={() => setChangingPassword(true)}>Đổi mật khẩu</Button>
               </div>
             )}
             <GlobalLogout />

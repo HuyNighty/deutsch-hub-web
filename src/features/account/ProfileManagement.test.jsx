@@ -31,13 +31,13 @@ async function setup(update = (config) => ok(config, account)) {
   setHttpHandler(http);
   const view = mountSession(routes, { path: "/account" });
   const user = userEvent.setup();
-  await screen.findByRole("button", { name: "Edit Profile" });
+  await screen.findByRole("button", { name: "Chỉnh sửa hồ sơ" });
   return { ...view, user, http };
 }
 
 const patches = (http) => http.mock.calls.filter(([config]) => config.method === "patch");
 async function edit(user) {
-  await user.click(screen.getByRole("button", { name: "Edit Profile" }));
+  await user.click(screen.getByRole("button", { name: "Chỉnh sửa hồ sơ" }));
 }
 async function change(user, label, value) {
   const input = screen.getByRole("textbox", { name: label });
@@ -53,31 +53,31 @@ describe("Learner profile management on Account", () => {
     expect(screen.getByText(account.firstName)).toBeVisible();
     expect(screen.getByText(account.lastName)).toBeVisible();
     await edit(user);
-    expect(screen.getByText("Username (read-only)")).toBeVisible();
-    expect(screen.getByText("Email (read-only)")).toBeVisible();
+    expect(screen.getByText("Tên đăng nhập (chỉ đọc)")).toBeVisible();
+    expect(screen.getByText("Email (chỉ đọc)")).toBeVisible();
     expect(screen.getByText(account.username)).toBeVisible();
     expect(screen.getByText(account.email)).toBeVisible();
     expect(screen.getAllByRole("textbox")).toHaveLength(3);
-    expect(screen.getByRole("textbox", { name: "First name" })).toHaveValue(account.firstName);
-    expect(screen.getByRole("textbox", { name: "Last name" })).toHaveValue(account.lastName);
-    expect(screen.getByRole("textbox", { name: "Phone number" })).toHaveValue(account.phoneNumber);
-    expect(screen.getByRole("button", { name: "Logout" })).toBeEnabled();
+    expect(screen.getByRole("textbox", { name: "Tên" })).toHaveValue(account.firstName);
+    expect(screen.getByRole("textbox", { name: "Họ" })).toHaveValue(account.lastName);
+    expect(screen.getByRole("textbox", { name: "Số điện thoại" })).toHaveValue(account.phoneNumber);
+    expect(screen.getByRole("button", { name: "Đăng xuất" })).toBeEnabled();
   });
 
   it("Cancel discards changes and reopening uses the current canonical cache without any request", async () => {
     const { user, client, http } = await setup();
     await edit(user);
-    await change(user, "First name", "Unsaved");
-    await change(user, "Phone number", "");
+    await change(user, "Tên", "Unsaved");
+    await change(user, "Số điện thoại", "");
     const fresh = { ...account, firstName: "Fresh", fullName: "Fresh Name", phoneNumber: null };
     await act(async () => { client.setQueryData(["account"], fresh); });
     const requestCount = http.mock.calls.length;
-    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    await user.click(screen.getByRole("button", { name: "Hủy" }));
     expect(screen.getByText(fresh.fullName)).toBeVisible();
     await edit(user);
-    expect(screen.getByRole("textbox", { name: "First name" })).toHaveValue("Fresh");
-    expect(screen.getByRole("textbox", { name: "Last name" })).toHaveValue(account.lastName);
-    expect(screen.getByRole("textbox", { name: "Phone number" })).toHaveValue("");
+    expect(screen.getByRole("textbox", { name: "Tên" })).toHaveValue("Fresh");
+    expect(screen.getByRole("textbox", { name: "Họ" })).toHaveValue(account.lastName);
+    expect(screen.getByRole("textbox", { name: "Số điện thoại" })).toHaveValue("");
     expect(http).toHaveBeenCalledTimes(requestCount);
     expect(patches(http)).toHaveLength(0);
   });
@@ -88,11 +88,11 @@ describe("Learner profile management on Account", () => {
     client.setQueryData(["sentinel"], "unrelated");
     const authBefore = auth.current.user;
     await edit(user);
-    await change(user, "First name", " Anna ");
-    await change(user, "Last name", " Schmidt ");
-    await change(user, "Phone number", "");
-    await user.click(screen.getByRole("button", { name: "Save" }));
-    await screen.findByText("Profile saved.");
+    await change(user, "Tên", " Anna ");
+    await change(user, "Họ", " Schmidt ");
+    await change(user, "Số điện thoại", "");
+    await user.click(screen.getByRole("button", { name: "Lưu" }));
+    await screen.findByText("Đã lưu hồ sơ.");
     expect(JSON.parse(patches(http)[0][0].data)).toEqual({ firstName: " Anna ", lastName: " Schmidt ", phoneNumber: "" });
     expect(client.getQueryData(["account"])).toEqual(canonical);
     expect(screen.getByText(canonical.fullName)).toBeVisible();
@@ -104,8 +104,8 @@ describe("Learner profile management on Account", () => {
     expect(client.getQueryState(["sentinel"]).isInvalidated).toBe(false);
     expect(auth.current.user).toBe(authBefore);
     await edit(user);
-    expect(screen.getByRole("textbox", { name: "First name" })).toHaveValue("Anna");
-    expect(screen.getByRole("textbox", { name: "Phone number" })).toHaveValue("");
+    expect(screen.getByRole("textbox", { name: "Tên" })).toHaveValue("Anna");
+    expect(screen.getByRole("textbox", { name: "Số điện thoại" })).toHaveValue("");
   });
 
   it("shows Backend validation errors beside matching inputs and preserves the canonical cache", async () => {
@@ -116,9 +116,10 @@ describe("Learner profile management on Account", () => {
     ];
     const { user, client } = await setup((config) => rejectProfile(config, { message: "Validation failed", errors }));
     await edit(user);
-    await user.click(screen.getByRole("button", { name: "Save" }));
-    await screen.findByRole("alert");
-    for (const [index, label] of ["First name", "Last name", "Phone number"].entries()) {
+    await user.click(screen.getByRole("button", { name: "Lưu" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Không thể lưu hồ sơ. Vui lòng kiểm tra thông tin và thử lại.");
+    expect(screen.queryByText("Validation failed")).not.toBeInTheDocument();
+    for (const [index, label] of ["Tên", "Họ", "Số điện thoại"].entries()) {
       expect(screen.getByRole("textbox", { name: label })).toHaveAttribute("aria-invalid", "true");
       expect(screen.getByRole("textbox", { name: label })).toHaveAccessibleDescription(errors[index].message);
     }
@@ -136,7 +137,7 @@ describe("Learner profile management on Account", () => {
       return patchResponse.promise.then(() => ok(config, canonical));
     });
     await edit(user);
-    await user.click(screen.getByRole("button", { name: "Save" }));
+    await user.click(screen.getByRole("button", { name: "Lưu" }));
     await act(async () => { await patchStarted.promise; });
     setHttpHandler((config) => {
       expect(config.url).toBe("/auth/me");
@@ -145,19 +146,19 @@ describe("Learner profile management on Account", () => {
     });
     const backgroundRead = client.refetchQueries({ queryKey: ["account"], exact: true });
     await act(async () => { await readStarted.promise; patchResponse.resolve(); });
-    await screen.findByText("Profile saved.");
+    await screen.findByText("Đã lưu hồ sơ.");
     await act(async () => { readResponse.resolve(); await backgroundRead; });
     expect(client.getQueryData(["account"])).toEqual(canonical);
     expect(screen.getByText(canonical.fullName)).toBeVisible();
   });
 
-  it("keeps INVALID_FULL_NAME at form level with edits and canonical cache intact", async () => {
+  it("uses a safe form-level fallback for an unconfirmed string code with edits and canonical cache intact", async () => {
     const { user, client, http } = await setup((config) => rejectProfile(config, { message: "Invalid full name", code: "INVALID_FULL_NAME" }));
     await edit(user);
-    await change(user, "First name", "Retry name");
-    await user.click(screen.getByRole("button", { name: "Save" }));
-    expect(await screen.findByRole("alert")).toHaveTextContent("Invalid full name");
-    expect(screen.getByRole("textbox", { name: "First name" })).toHaveValue("Retry name");
+    await change(user, "Tên", "Retry name");
+    await user.click(screen.getByRole("button", { name: "Lưu" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Không thể lưu hồ sơ. Vui lòng kiểm tra thông tin và thử lại.");
+    expect(screen.getByRole("textbox", { name: "Tên" })).toHaveValue("Retry name");
     screen.getAllByRole("textbox").forEach((input) => expect(input).toHaveAttribute("aria-invalid", "false"));
     expect(client.getQueryData(["account"])).toEqual(account);
     expect(patches(http)).toHaveLength(1);
@@ -166,8 +167,8 @@ describe("Learner profile management on Account", () => {
   it("rejects a malformed successful PATCH without replacing canonical cache", async () => {
     const { user, client } = await setup((config) => ok(config, { ...account, lastName: undefined }));
     await edit(user);
-    await user.click(screen.getByRole("button", { name: "Save" }));
-    expect(await screen.findByRole("alert")).toHaveTextContent("invalid account response");
+    await user.click(screen.getByRole("button", { name: "Lưu" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Không thể xác nhận hồ sơ đã được lưu hay chưa. Hãy kiểm tra lại thông tin tài khoản trước khi thử lại.");
     expect(client.getQueryData(["account"])).toEqual(account);
   });
 
@@ -179,34 +180,34 @@ describe("Learner profile management on Account", () => {
       return response.promise.then(() => ok(config, account));
     });
     await edit(user);
-    const form = screen.getByRole("form", { name: "Edit profile" });
+    const form = screen.getByRole("form", { name: "Chỉnh sửa hồ sơ" });
     act(() => { fireEvent.submit(form); fireEvent.submit(form); fireEvent.submit(form); });
     await act(async () => { await started.promise; });
-    const saving = await screen.findByRole("button", { name: "Saving…" });
+    const saving = await screen.findByRole("button", { name: "Đang lưu…" });
     expect(saving).toBeDisabled();
     expect(saving).toHaveAttribute("aria-busy", "true");
-    expect(screen.getByRole("button", { name: "Cancel" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Logout" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Hủy" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Đăng xuất" })).toBeEnabled();
     await user.click(saving);
     fireEvent.submit(form);
     expect(patches(http)).toHaveLength(1);
     expect(client.getQueryData(["account"])).toEqual(account);
     await act(async () => { response.resolve(); });
-    await screen.findByText("Profile saved.");
+    await screen.findByText("Đã lưu hồ sơ.");
   });
 
   it.each([
-    ["First name", " ", "must not be blank"],
-    ["Last name", "", "must not be blank"],
-    ["First name", "a".repeat(51), "must not exceed 50"],
-    ["Last name", "b".repeat(51), "must not exceed 50"],
-    ["Phone number", "c".repeat(21), "must not exceed 20"],
+    ["Tên", " ", "không được để trống"],
+    ["Họ", "", "không được để trống"],
+    ["Tên", "a".repeat(51), "không được vượt quá 50"],
+    ["Họ", "b".repeat(51), "không được vượt quá 50"],
+    ["Số điện thoại", "c".repeat(21), "không được vượt quá 20"],
   ])("blocks invalid %s before PATCH", async (label, value, message) => {
     const { user, http } = await setup();
     await edit(user);
     const input = screen.getByRole("textbox", { name: label });
     fireEvent.change(input, { target: { value } });
-    await user.click(screen.getByRole("button", { name: "Save" }));
+    await user.click(screen.getByRole("button", { name: "Lưu" }));
     expect(input).toHaveAccessibleDescription(expect.stringContaining(message));
     expect(patches(http)).toHaveLength(0);
   });
@@ -214,9 +215,9 @@ describe("Learner profile management on Account", () => {
   it("allows arbitrary phone text within the Backend size limit", async () => {
     const { user, http } = await setup();
     await edit(user);
-    await change(user, "Phone number", "extension abc");
-    await user.click(screen.getByRole("button", { name: "Save" }));
-    await screen.findByText("Profile saved.");
+    await change(user, "Số điện thoại", "extension abc");
+    await user.click(screen.getByRole("button", { name: "Lưu" }));
+    await screen.findByText("Đã lưu hồ sơ.");
     expect(JSON.parse(patches(http)[0][0].data).phoneNumber).toBe("extension abc");
   });
 
@@ -229,9 +230,9 @@ describe("Learner profile management on Account", () => {
       return response.promise.then(() => { finished.resolve(); return ok(config, { ...account, firstName: "Old" }); });
     });
     await edit(user);
-    await user.click(screen.getByRole("button", { name: "Save" }));
+    await user.click(screen.getByRole("button", { name: "Lưu" }));
     await act(async () => { await started.promise; });
-    await user.click(screen.getByRole("button", { name: "Logout" }));
+    await user.click(screen.getByRole("button", { name: "Đăng xuất" }));
     await screen.findByText("Login surface");
     const nextAccount = { ...account, id: "learner-b", username: "new-learner" };
     if (newLogin) {

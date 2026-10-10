@@ -35,7 +35,7 @@ describe("Account logout reachability", () => {
     const user = userEvent.setup();
     const { auth, client } = mountSession(routes, { path: "/account" });
     client.setQueryData(["sentinel"], "private learner data");
-    const button = await screen.findByRole("button", { name: "Logout" });
+    const button = await screen.findByRole("button", { name: "Đăng xuất" });
     await user.click(button);
     await act(async () => { await logoutStarted.promise; });
     await screen.findByText("Login surface");
@@ -67,11 +67,11 @@ describe("Account logout reachability", () => {
     });
     const user = userEvent.setup();
     const { auth, client } = mountSession(routes, { path: "/account" });
-    await screen.findByRole("button", { name: "Logout" });
+    await screen.findByRole("button", { name: "Đăng xuất" });
     client.setQueryData(["sentinel"], "old viewer");
     const oldRequest = api.get("/private").catch((error) => error);
     await act(async () => { await refreshStarted.promise; });
-    await user.click(screen.getByRole("button", { name: "Logout" }));
+    await user.click(screen.getByRole("button", { name: "Đăng xuất" }));
     await screen.findByText("Login surface");
     expect(JSON.parse(logoutConfig.data).refreshToken).toBe("original-learner-a");
     await act(async () => { refreshResponse.resolve(); await oldRequest; serverLogout.resolve(); });
@@ -96,7 +96,7 @@ describe("Account logout reachability", () => {
     vi.spyOn(console, "log").mockImplementation(() => {});
     const user = userEvent.setup();
     const { auth, client } = mountSession(routes, { path: "/account" });
-    await user.click(await screen.findByRole("button", { name: "Logout" }));
+    await user.click(await screen.findByRole("button", { name: "Đăng xuất" }));
     const sessionB = loginResult();
     await act(async () => { auth.current.setSession(sessionB); });
     client.setQueryData(["sentinel"], "new learner");

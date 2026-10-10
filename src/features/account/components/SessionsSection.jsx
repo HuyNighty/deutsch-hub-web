@@ -3,6 +3,7 @@ import classNames from "classnames/bind";
 import { Button } from "@/shared/ui/components/button";
 import useSessions from "../hooks/useSessions";
 import useRevokeSession from "../hooks/useRevokeSession";
+import { accountErrorMessage } from "../account-error-presentation";
 import styles from "../Account.module.scss";
 
 const cx = classNames.bind(styles);
@@ -14,43 +15,43 @@ export default function SessionsSection({ actionsDisabled = false }) {
   const [selected, setSelected] = useState(null);
 
   return (
-    <section className={cx("content")} aria-labelledby="account-sessions-heading">
+    <section lang="vi" className={cx("content")} aria-labelledby="account-sessions-heading">
       <div className={cx("card")}>
         <div className={cx("item")}>
-          <h2 id="account-sessions-heading" className={cx("security-title")}>Login sessions</h2>
-          <p>Revoking a session prevents future refreshes. Existing access tokens may remain valid until they expire.</p>
+          <h2 id="account-sessions-heading" className={cx("security-title")}>Phiên đăng nhập</h2>
+          <p>Việc thu hồi phiên đăng nhập ngăn phiên đó tiếp tục làm mới token. Token truy cập đã cấp có thể vẫn còn hiệu lực cho đến khi hết hạn.</p>
           {success && <p role="status">{success}</p>}
-          {revokeError && <p role="alert" className={cx("field-error")}>{revokeError.message}</p>}
+          {revokeError && <p role="alert" className={cx("field-error")}>{accountErrorMessage(revokeError, "revoke")}</p>}
         </div>
-        {loading ? <p className={cx("item")} role="status">Loading login sessions…</p> : error ? (
+        {loading ? <p className={cx("item")} role="status">Đang tải phiên đăng nhập…</p> : error ? (
           <div className={cx("item")}>
-            <p role="alert" className={cx("field-error")}>{error.message}</p>
-            <Button variant="outline" disabled={isPending} onClick={() => refetch()}>Retry sessions</Button>
+            <p role="alert" className={cx("field-error")}>{accountErrorMessage(error, "sessions")}</p>
+            <Button variant="outline" disabled={isPending} onClick={() => refetch()}>Tải lại phiên đăng nhập</Button>
           </div>
-        ) : sessions.length === 0 ? <p className={cx("item")}>No login sessions found.</p> : (
+        ) : sessions.length === 0 ? <p className={cx("item")}>Không tìm thấy phiên đăng nhập nào.</p> : (
           <ol className={cx("session-list")}>
             {sessions.map((session) => (
-              <li key={session.id} className={cx("item")} aria-label={`Session ${session.id}`}>
-                <h3 className={cx("session-id")}>Session {session.id}</h3>
-                <p>{session.active ? "Active" : "Inactive"}</p>
-                {session.current && <p>Current session</p>}
+              <li key={session.id} className={cx("item")} aria-label={`Phiên đăng nhập ${session.id}`}>
+                <h3 className={cx("session-id")}>Phiên đăng nhập {session.id}</h3>
+                <p>{session.active ? "Đang hoạt động" : "Không hoạt động"}</p>
+                {session.current && <p>Phiên hiện tại</p>}
                 <dl className={cx("session-times")}>
-                  <dt>Created</dt><dd>{localTime(session.createdAt)}</dd>
-                  <dt>Expires</dt><dd>{localTime(session.expiresAt)}</dd>
-                  {session.revokedAt !== null && <><dt>Revoked</dt><dd>{localTime(session.revokedAt)}</dd></>}
+                  <dt>Tạo lúc</dt><dd>{localTime(session.createdAt)}</dd>
+                  <dt>Hết hạn lúc</dt><dd>{localTime(session.expiresAt)}</dd>
+                  {session.revokedAt !== null && <><dt>Thu hồi lúc</dt><dd>{localTime(session.revokedAt)}</dd></>}
                 </dl>
                 {session.active && (selected === session.id ? (
-                  <form aria-label="Revoke session" onSubmit={(event) => {
+                  <form lang="vi" aria-label="Thu hồi phiên đăng nhập" onSubmit={(event) => {
                     event.preventDefault();
                     if (!isPending && !actionsDisabled) revoke(session, () => setSelected(null));
                   }}>
-                    <p>{session.current ? "Revoke your current login session? You will need to sign in again." : "Revoke this login session?"}</p>
+                    <p>{session.current ? "Thu hồi phiên đăng nhập hiện tại của bạn? Bạn sẽ cần đăng nhập lại." : "Thu hồi phiên đăng nhập này?"}</p>
                     <div className={cx("actions")}>
-                      <Button type="submit" loading={isPending} disabled={actionsDisabled}>{isPending ? "Revoking…" : "Confirm revoke"}</Button>
-                      <Button variant="outline" disabled={isPending || actionsDisabled} onClick={() => { setSelected(null); reset(); }}>Cancel revoke</Button>
+                      <Button type="submit" loading={isPending} disabled={actionsDisabled}>{isPending ? "Đang thu hồi…" : "Xác nhận thu hồi"}</Button>
+                      <Button variant="outline" disabled={isPending || actionsDisabled} onClick={() => { setSelected(null); reset(); }}>Hủy thu hồi</Button>
                     </div>
                   </form>
-                ) : <Button variant="outline" disabled={isPending || actionsDisabled} onClick={() => { reset(); setSelected(session.id); }}>Revoke session</Button>)}
+                ) : <Button variant="outline" disabled={isPending || actionsDisabled} onClick={() => { reset(); setSelected(session.id); }}>Thu hồi phiên đăng nhập</Button>)}
               </li>
             ))}
           </ol>

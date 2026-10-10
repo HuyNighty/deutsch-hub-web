@@ -16,7 +16,7 @@ import { currentSession, otherSession, revokedSession, expiredSession, sessionRo
 
 const sessionsKey = ["account", "sessions"];
 const endedMessage = "Phiên đăng nhập của bạn đã kết thúc. Vui lòng đăng nhập lại.";
-const revokedMessage = "Login session revoked.";
+const revokedMessage = "Đã thu hồi phiên đăng nhập.";
 const routes = [
   { element: <ProtectedRoute />, children: [{ path: "/account", element: <AccountPage /> }] },
   { element: <GuestRoute />, children: [{ path: "/login", element: <LoginForm /> }] },
@@ -45,21 +45,21 @@ async function setup({ read = (config) => ok(config, sessionRows), remove = (con
   });
   setHttpHandler(http);
   const view = mountSession(routes, { path: "/account", client });
-  await screen.findByRole("region", { name: "Login sessions" });
+  await screen.findByRole("region", { name: "Phiên đăng nhập" });
   view.client.setQueryData(["sentinel"], "private learner data");
   return { ...view, http, sessionReads, user: userEvent.setup() };
 }
-const section = () => screen.getByRole("region", { name: "Login sessions" });
-const row = (session) => screen.getByRole("listitem", { name: `Session ${session.id}` });
+const section = () => screen.getByRole("region", { name: "Phiên đăng nhập" });
+const row = (session) => screen.getByRole("listitem", { name: `Phiên đăng nhập ${session.id}` });
 const deletes = (http) => http.mock.calls.filter(([config]) => config.method === "delete");
 const logouts = (http) => http.mock.calls.filter(([config]) => config.url === "/auth/logout");
 async function select(user, session = otherSession) {
   await within(section()).findByRole("list");
-  await user.click(within(row(session)).getByRole("button", { name: "Revoke session" }));
+  await user.click(within(row(session)).getByRole("button", { name: "Thu hồi phiên đăng nhập" }));
 }
 async function confirm(user, session = otherSession) {
   await select(user, session);
-  await user.click(screen.getByRole("button", { name: "Confirm revoke" }));
+  await user.click(screen.getByRole("button", { name: "Xác nhận thu hồi" }));
 }
 const revokeOther = () => sessionRows.map((session) => session.id === otherSession.id ? {
   ...session, active: false, revokedAt: "2026-10-08T11:22:33.123456",
@@ -70,29 +70,29 @@ describe("Learner login sessions on Account", () => {
     const { client } = await setup();
     const list = await within(section()).findByRole("list");
     expect(within(list).getAllByRole("listitem").map((item) => item.getAttribute("aria-label")))
-      .toEqual(sessionRows.map(({ id }) => `Session ${id}`));
-    expect(within(row(currentSession)).getByText("Current session")).toBeVisible();
-    expect(within(row(currentSession)).getByText("Active", { exact: true })).toBeVisible();
+      .toEqual(sessionRows.map(({ id }) => `Phiên đăng nhập ${id}`));
+    expect(within(row(currentSession)).getByText("Phiên hiện tại")).toBeVisible();
+    expect(within(row(currentSession)).getByText("Đang hoạt động", { exact: true })).toBeVisible();
     expect(within(row(currentSession)).getByText("2026-10-07 09:30:00.123456789")).toHaveAttribute("datetime", currentSession.createdAt);
     expect(within(row(otherSession)).getByText("2026-10-15 10:00:00")).toHaveAttribute("datetime", otherSession.expiresAt);
     expect(within(row(revokedSession)).getByText("2026-09-26 12:30:00")).toHaveAttribute("datetime", revokedSession.revokedAt);
     for (const session of [revokedSession, expiredSession]) {
-      expect(within(row(session)).getByText("Inactive", { exact: true })).toBeVisible();
+      expect(within(row(session)).getByText("Không hoạt động", { exact: true })).toBeVisible();
       expect(within(row(session)).queryByRole("button")).not.toBeInTheDocument();
     }
-    expect(within(section()).getAllByRole("button", { name: "Revoke session" })).toHaveLength(2);
+    expect(within(section()).getAllByRole("button", { name: "Thu hồi phiên đăng nhập" })).toHaveLength(2);
     expect(section()).not.toHaveTextContent(/device|browser|IP address|location|last active|UTC|GMT/i);
     expect(client.getQueryData(sessionsKey)).toEqual(sessionRows);
     expect(client.getQueryData(["account"])).toEqual(account);
-    expect(screen.getByRole("region", { name: "Security" }).compareDocumentPosition(section()) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.getByRole("region", { name: "Bảo mật" }).compareDocumentPosition(section()) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("shows current and inactive together without ending auth or exposing a revoke action", async () => {
     const inactiveCurrent = { ...currentSession, active: false, revokedAt: revokedSession.revokedAt };
     const { auth, client, router } = await setup({ read: (config) => ok(config, [inactiveCurrent]) });
     await within(section()).findByRole("list");
-    expect(within(row(inactiveCurrent)).getByText("Current session")).toBeVisible();
-    expect(within(row(inactiveCurrent)).getByText("Inactive")).toBeVisible();
+    expect(within(row(inactiveCurrent)).getByText("Phiên hiện tại")).toBeVisible();
+    expect(within(row(inactiveCurrent)).getByText("Không hoạt động")).toBeVisible();
     expect(within(row(inactiveCurrent)).queryByRole("button")).not.toBeInTheDocument();
     expect(auth.current.status).toBe("AUTHENTICATED");
     expect(getAccessToken()).not.toBeNull();
@@ -103,42 +103,42 @@ describe("Learner login sessions on Account", () => {
   it("accepts a list with no current row without guessing", async () => {
     const { auth } = await setup({ read: (config) => ok(config, [otherSession, expiredSession]) });
     await within(section()).findByRole("list");
-    expect(within(section()).queryByText("Current session")).not.toBeInTheDocument();
-    expect(within(row(otherSession)).getByText("Active")).toBeVisible();
+    expect(within(section()).queryByText("Phiên hiện tại")).not.toBeInTheDocument();
+    expect(within(row(otherSession)).getByText("Đang hoạt động")).toBeVisible();
     expect(auth.current.status).toBe("AUTHENTICATED");
   });
 
   it("isolates GET loading from Profile, Password and reachable Logout", async () => {
     const response = deferred();
     const { user } = await setup({ read: (config) => response.promise.then(() => ok(config, sessionRows)) });
-    expect(within(section()).getByRole("status")).toHaveTextContent("Loading login sessions…");
-    expect(screen.getByRole("button", { name: "Logout" })).toBeEnabled();
-    await user.click(screen.getByRole("button", { name: "Edit Profile" }));
-    await user.click(screen.getByRole("button", { name: "Change Password" }));
-    expect(screen.getByRole("form", { name: "Edit profile" })).toBeVisible();
-    expect(screen.getByRole("form", { name: "Change password" })).toBeVisible();
+    expect(within(section()).getByRole("status")).toHaveTextContent("Đang tải phiên đăng nhập…");
+    expect(screen.getByRole("button", { name: "Đăng xuất" })).toBeEnabled();
+    await user.click(screen.getByRole("button", { name: "Chỉnh sửa hồ sơ" }));
+    await user.click(screen.getByRole("button", { name: "Đổi mật khẩu" }));
+    expect(screen.getByRole("form", { name: "Chỉnh sửa hồ sơ" })).toBeVisible();
+    expect(screen.getByRole("form", { name: "Đổi mật khẩu" })).toBeVisible();
     await act(async () => { response.resolve(); });
     await within(section()).findByRole("list");
   });
 
-  it("isolates a GET error, renders the Backend message, and supports Retry sessions", async () => {
+  it("isolates a GET error, hides diagnostics behind Vietnamese fallback, and supports read retry", async () => {
     let failed = true;
     const { user, sessionReads } = await setup({ read: (config) => failed ?
       reject(config, { status: 500, code: 500, message: "Cannot read login sessions" }) : ok(config, []) });
-    expect(await within(section()).findByRole("alert")).toHaveTextContent("Cannot read login sessions");
-    expect(screen.getByRole("button", { name: "Edit Profile" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Change Password" })).toBeEnabled();
+    expect(await within(section()).findByRole("alert")).toHaveTextContent("Không thể tải danh sách phiên đăng nhập. Vui lòng thử lại.");
+    expect(screen.getByRole("button", { name: "Chỉnh sửa hồ sơ" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Đổi mật khẩu" })).toBeEnabled();
     failed = false;
-    await user.click(screen.getByRole("button", { name: "Retry sessions" }));
-    await within(section()).findByText("No login sessions found.");
+    await user.click(screen.getByRole("button", { name: "Tải lại phiên đăng nhập" }));
+    await within(section()).findByText("Không tìm thấy phiên đăng nhập nào.");
     expect(sessionReads).toHaveBeenCalledTimes(2);
   });
 
   it("shows an honest empty state with auth and Account cache intact", async () => {
     const { auth, client } = await setup({ read: (config) => ok(config, []) });
-    expect(await within(section()).findByText("No login sessions found.")).toBeVisible();
+    expect(await within(section()).findByText("Không tìm thấy phiên đăng nhập nào.")).toBeVisible();
     expect(within(section()).queryByRole("list")).not.toBeInTheDocument();
-    expect(within(section()).queryByText("Current session")).not.toBeInTheDocument();
+    expect(within(section()).queryByText("Phiên hiện tại")).not.toBeInTheDocument();
     expect(client.getQueryData(sessionsKey)).toEqual([]);
     expect(client.getQueryData(["account"])).toEqual(account);
     expect(auth.current.status).toBe("AUTHENTICATED");
@@ -146,20 +146,20 @@ describe("Learner login sessions on Account", () => {
 
   it("rejects a malformed successful GET rather than inventing missing current flags", async () => {
     const { client, auth } = await setup({ read: (config) => ok(config, [{ ...otherSession, current: undefined }]) });
-    expect(await within(section()).findByRole("alert")).toHaveTextContent("invalid login sessions response");
+    expect(await within(section()).findByRole("alert")).toHaveTextContent("Không thể tải danh sách phiên đăng nhập. Vui lòng thử lại.");
     expect(client.getQueryData(sessionsKey)).toBeUndefined();
     expect(within(section()).queryByRole("list")).not.toBeInTheDocument();
     expect(auth.current.status).toBe("AUTHENTICATED");
-    expect(screen.getByRole("button", { name: "Change Password" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Đổi mật khẩu" })).toBeEnabled();
   });
 
   it("requires explicit confirmation and Cancel leaves sessions unchanged without DELETE", async () => {
     const { user, http, client } = await setup();
     await select(user, currentSession);
-    expect(screen.getByRole("form", { name: "Revoke session" })).toHaveTextContent("You will need to sign in again.");
+    expect(screen.getByRole("form", { name: "Thu hồi phiên đăng nhập" })).toHaveTextContent("Bạn sẽ cần đăng nhập lại.");
     expect(deletes(http)).toHaveLength(0);
-    await user.click(screen.getByRole("button", { name: "Cancel revoke" }));
-    expect(screen.queryByRole("form", { name: "Revoke session" })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Hủy thu hồi" }));
+    expect(screen.queryByRole("form", { name: "Thu hồi phiên đăng nhập" })).not.toBeInTheDocument();
     expect(client.getQueryData(sessionsKey)).toEqual(sessionRows);
     expect(deletes(http)).toHaveLength(0);
   });
@@ -185,7 +185,7 @@ describe("Learner login sessions on Account", () => {
     expect(deletes(http)[0][0].params).toBeUndefined();
     expect(sessionReads).toHaveBeenCalledTimes(2);
     expect(client.getQueryData(sessionsKey)).toEqual(canonical);
-    expect(within(row(otherSession)).getByText("Inactive")).toBeVisible();
+    expect(within(row(otherSession)).getByText("Không hoạt động")).toBeVisible();
     expect(within(row(otherSession)).getByText("2026-10-08 11:22:33.123456")).toBeVisible();
     expect(within(row(otherSession)).queryByRole("button")).not.toBeInTheDocument();
     expect(auth.current.status).toBe("AUTHENTICATED");
@@ -232,7 +232,7 @@ describe("Learner login sessions on Account", () => {
     fireEvent.change(screen.getByLabelText("Tên đăng nhập hoặc email"), { target: { value: "learner" } });
     fireEvent.change(screen.getByLabelText("Mật khẩu"), { target: { value: "Password123" } });
     await user.click(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ }));
-    await screen.findByRole("region", { name: "Login sessions" });
+    await screen.findByRole("region", { name: "Phiên đăng nhập" });
     await within(section()).findByRole("list");
     expect(router.state.location.pathname).toBe("/account");
     expect(router.state.historyAction).toBe("REPLACE");
@@ -246,7 +246,7 @@ describe("Learner login sessions on Account", () => {
   });
 
   it.each([[400, 400, "Cannot revoke session"], [404, 4022, "Session not found"], [500, 500, "Revoke unavailable"]])(
-    "definite failure %s/%s preserves auth/caches and shows Backend error with retry available",
+    "definite failure %s/%s preserves auth/caches and shows localized error with retry available",
     async (status, code, message) => {
       const client = new QueryClient({ defaultOptions: {
         queries: { retry: false, gcTime: Infinity }, mutations: { retry: 3, retryDelay: 0 },
@@ -261,7 +261,8 @@ describe("Learner login sessions on Account", () => {
       const refresh = getRefreshToken();
       const generation = getSessionGeneration();
       await confirm(user);
-      expect(await within(section()).findByRole("alert")).toHaveTextContent(message);
+      expect(await within(section()).findByRole("alert")).toHaveTextContent(status === 404 && code === 4022 ? "Không tìm thấy phiên đăng nhập." : "Không thể thu hồi phiên đăng nhập. Vui lòng thử lại.");
+      expect(screen.queryByText(message)).not.toBeInTheDocument();
       expect(auth.current.status).toBe("AUTHENTICATED");
       expect(auth.current.user).toBe(identity);
       expect(getSessionGeneration()).toBe(generation);
@@ -276,13 +277,35 @@ describe("Learner login sessions on Account", () => {
       expect(sessionReads).toHaveBeenCalledTimes(1);
       expect(deletes(http)).toHaveLength(1);
       expect(client.getMutationCache().find({ mutationKey: ["account", "sessions", "revoke"], exact: true }).options.retry).toBe(false);
-      expect(screen.getByRole("button", { name: "Confirm revoke" })).toBeEnabled();
+      expect(screen.getByRole("button", { name: "Xác nhận thu hồi" })).toBeEnabled();
       fail = false;
-      await user.click(screen.getByRole("button", { name: "Confirm revoke" }));
+      await user.click(screen.getByRole("button", { name: "Xác nhận thu hồi" }));
       await within(section()).findByText(revokedMessage);
       expect(deletes(http)).toHaveLength(2);
     },
   );
+
+  it.each([AxiosError.ERR_NETWORK, "ECONNABORTED"])("keeps %s revocation uncertainty distinct from confirmed failure or success without replay", async (code) => {
+    const { user, http, auth, client, router, sessionReads } = await setup({ remove: (config) => {
+      throw new AxiosError("INTERNAL revocation diagnostic", code, config);
+    } });
+    await within(section()).findByRole("list");
+    const cached = client.getQueryData(sessionsKey);
+    const generation = getSessionGeneration();
+    const access = getAccessToken();
+    await confirm(user);
+    expect(await within(section()).findByRole("alert")).toHaveTextContent("Không thể xác nhận phiên đăng nhập đã được thu hồi hay chưa. Hãy tải lại danh sách phiên đăng nhập để kiểm tra.");
+    expect(screen.queryByText(/INTERNAL revocation diagnostic|Không thể thu hồi phiên đăng nhập\./)).not.toBeInTheDocument();
+    expect(screen.queryByText(revokedMessage)).not.toBeInTheDocument();
+    expect(auth.current.status).toBe("AUTHENTICATED");
+    expect(getSessionGeneration()).toBe(generation);
+    expect(getAccessToken()).toBe(access);
+    expect(client.getQueryData(sessionsKey)).toBe(cached);
+    expect(router.state.location.pathname).toBe("/account");
+    expect(deletes(http)).toHaveLength(1);
+    expect(sessionReads).toHaveBeenCalledTimes(1);
+    expect(logouts(http)).toHaveLength(0);
+  });
 
   it("fences synchronous repeated confirms and disables competing actions and Cancel while keeping Logout available", async () => {
     const response = deferred();
@@ -293,15 +316,15 @@ describe("Learner login sessions on Account", () => {
       return response.promise.then(() => { canonical = revokeOther(); return ok(config); });
     } });
     await select(user);
-    const form = screen.getByRole("form", { name: "Revoke session" });
+    const form = screen.getByRole("form", { name: "Thu hồi phiên đăng nhập" });
     act(() => { fireEvent.submit(form); fireEvent.submit(form); fireEvent.submit(form); });
     await act(async () => { await started.promise; });
-    const pending = await screen.findByRole("button", { name: "Revoking…" });
+    const pending = await screen.findByRole("button", { name: "Đang thu hồi…" });
     expect(pending).toBeDisabled();
     expect(pending).toHaveAttribute("aria-busy", "true");
-    expect(screen.getByRole("button", { name: "Cancel revoke" })).toBeDisabled();
-    expect(within(row(currentSession)).getByRole("button", { name: "Revoke session" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Logout" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Hủy thu hồi" })).toBeDisabled();
+    expect(within(row(currentSession)).getByRole("button", { name: "Thu hồi phiên đăng nhập" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Đăng xuất" })).toBeEnabled();
     fireEvent.submit(form);
     await user.click(pending);
     expect(deletes(http)).toHaveLength(1);
@@ -325,13 +348,13 @@ describe("Learner login sessions on Account", () => {
         } });
       await confirm(user, current ? currentSession : otherSession);
       await act(async () => { await started.promise; });
-      await user.click(screen.getByRole("button", { name: "Logout" }));
+      await user.click(screen.getByRole("button", { name: "Đăng xuất" }));
       await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
       const sessionB = loginResult(id);
       canonical = [{ ...otherSession, id: "77777777-7777-4777-8777-777777777777", current: true }];
       canonicalAccount = { ...account, id, username: "new-session" };
       await act(async () => { auth.current.setSession(sessionB); });
-      await screen.findByRole("region", { name: "Login sessions" });
+      await screen.findByRole("region", { name: "Phiên đăng nhập" });
       await within(section()).findByRole("list");
       client.setQueryData(["sentinel"], "new session private data");
       const generationB = getSessionGeneration();
@@ -378,7 +401,7 @@ describe("Learner login sessions on Account", () => {
     expect(client.getQueryData(sessionsKey)).toEqual(canonical);
     await act(async () => { stale.resolve(); await finished.promise; await background; });
     expect(client.getQueryData(sessionsKey)).toEqual(canonical);
-    expect(within(row(otherSession)).getByText("Inactive")).toBeVisible();
+    expect(within(row(otherSession)).getByText("Không hoạt động")).toBeVisible();
     expect(sessionReads).toHaveBeenCalledTimes(3);
   });
 
@@ -398,11 +421,11 @@ describe("Learner login sessions on Account", () => {
     } });
     await confirm(user);
     await act(async () => { await started.promise; });
-    await user.click(screen.getByRole("button", { name: "Logout" }));
+    await user.click(screen.getByRole("button", { name: "Đăng xuất" }));
     await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     const sessionB = loginResult();
     await act(async () => { auth.current.setSession(sessionB); });
-    await screen.findByRole("region", { name: "Login sessions" });
+    await screen.findByRole("region", { name: "Phiên đăng nhập" });
     await within(section()).findByRole("list");
     client.setQueryData(["sentinel"], "B");
     const generationB = getSessionGeneration();
@@ -427,12 +450,12 @@ describe("Learner login sessions on Account", () => {
     } });
     await confirm(user);
     await within(section()).findByText(revokedMessage);
-    expect(within(section()).getByRole("alert")).toHaveTextContent("Refresh sessions unavailable");
+    expect(within(section()).getByRole("alert")).toHaveTextContent("Không thể tải danh sách phiên đăng nhập. Vui lòng thử lại.");
     expect(auth.current.status).toBe("AUTHENTICATED");
     expect(client.getQueryData(["sentinel"])).toBe("private learner data");
-    await user.click(screen.getByRole("button", { name: "Retry sessions" }));
+    await user.click(screen.getByRole("button", { name: "Tải lại phiên đăng nhập" }));
     await within(section()).findByRole("list");
-    expect(within(row(otherSession)).getByText("Inactive")).toBeVisible();
+    expect(within(row(otherSession)).getByText("Không hoạt động")).toBeVisible();
     expect(deletes(http)).toHaveLength(1);
     expect(sessionReads).toHaveBeenCalledTimes(3);
   });
@@ -492,7 +515,7 @@ describe("Learner login sessions on Account", () => {
       expect(router.state.location.state).toEqual({ returnTo: "/account" });
       expect(screen.queryByText(endedMessage)).not.toBeInTheDocument();
     } else {
-      await screen.findByRole("region", { name: "Login sessions" });
+      await screen.findByRole("region", { name: "Phiên đăng nhập" });
       await within(section()).findByRole("list");
       expect(auth.current.status).toBe("AUTHENTICATED");
       expect(getAccessToken()).toBe(rotated.accessToken);

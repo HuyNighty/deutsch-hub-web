@@ -5,6 +5,7 @@ import { getFieldMessage } from "@/shared/api/api-error";
 import { getSessionGeneration } from "@/shared/auth/auth-session";
 import { useAuth } from "@/features/auth/context/AuthProvider";
 import useDeactivateAccount from "../hooks/useDeactivateAccount";
+import { accountErrorMessage } from "../account-error-presentation";
 import styles from "../Account.module.scss";
 
 const cx = classNames.bind(styles);
@@ -29,7 +30,7 @@ function DeactivationConfirmation() {
     event.preventDefault();
     if (isPending || competingPending) return;
     if (!password.trim() || !acknowledged) {
-      setValidation("Enter your current password and acknowledge the consequences.");
+      setValidation("Nhập mật khẩu hiện tại và xác nhận bạn hiểu hậu quả của việc vô hiệu hóa tài khoản.");
       return;
     }
     setValidation(null);
@@ -37,21 +38,21 @@ function DeactivationConfirmation() {
   }
 
   return (
-    <section className={cx("content")} aria-labelledby="account-deactivation-heading">
+    <section lang="vi" className={cx("content")} aria-labelledby="account-deactivation-heading">
       <div className={cx("card")}>
         <div className={cx("item")}>
-          <h2 id="account-deactivation-heading" className={cx("security-title")}>Account Deactivation</h2>
-          <p>Your account will be deactivated. You will no longer be able to sign in while it is inactive.</p>
-          <p>All login sessions will be revoked. Existing access tokens may remain valid until they expire.</p>
-          <p>This action does not delete your account data. You cannot reactivate your account through this screen.</p>
+          <h2 id="account-deactivation-heading" className={cx("security-title")}>Vô hiệu hóa tài khoản</h2>
+          <p>Tài khoản của bạn sẽ bị vô hiệu hóa. Bạn sẽ không thể đăng nhập khi tài khoản chưa được kích hoạt lại.</p>
+          <p>Tất cả phiên đăng nhập sẽ bị thu hồi. Token truy cập đã cấp có thể vẫn còn hiệu lực cho đến khi hết hạn.</p>
+          <p>Thao tác này không xóa dữ liệu tài khoản của bạn. Bạn không thể kích hoạt lại tài khoản qua màn hình này.</p>
           {validation && <p role="alert" className={cx("field-error")}>{validation}</p>}
           {error && <p role="alert" className={cx("field-error")}>
-            {error.status == null ? "We couldn't confirm whether your account was deactivated. Use Logout to end this local session. Signing in again may be unavailable if the account is inactive." : error.message}
+            {error.status == null ? "Không thể xác nhận tài khoản của bạn đã được vô hiệu hóa hay chưa. Hãy đăng xuất khỏi phiên hiện tại. Bạn có thể không đăng nhập lại được nếu tài khoản đã bị vô hiệu hóa." : accountErrorMessage(error, "deactivation")}
           </p>}
           {confirming ? (
-            <form aria-label="Deactivate account" onSubmit={submit} noValidate>
+            <form lang="vi" aria-label="Vô hiệu hóa tài khoản" onSubmit={submit} noValidate>
               <div className={cx("field")}>
-                <label htmlFor="deactivation-password">Current password</label>
+                <label htmlFor="deactivation-password">Mật khẩu hiện tại</label>
                 <input id="deactivation-password" name="password" type="password" autoComplete="current-password"
                   value={password} disabled={isPending || competingPending} aria-invalid={!!passwordError}
                   aria-describedby={passwordError ? "deactivation-password-error" : undefined}
@@ -61,16 +62,16 @@ function DeactivationConfirmation() {
               <label>
                 <input type="checkbox" checked={acknowledged} disabled={isPending || competingPending}
                   onChange={(event) => { setAcknowledged(event.target.checked); setValidation(null); }} />
-                I understand the consequences of deactivating my account.
+                Tôi hiểu hậu quả của việc vô hiệu hóa tài khoản của mình.
               </label>
               <div className={cx("actions")}>
                 <Button type="submit" loading={isPending} disabled={competingPending || !password.trim() || !acknowledged}>
-                  {isPending ? "Deactivating…" : "Confirm deactivation"}
+                  {isPending ? "Đang vô hiệu hóa…" : "Xác nhận vô hiệu hóa"}
                 </Button>
-                <Button variant="outline" disabled={isPending} onClick={close}>Cancel deactivation</Button>
+                <Button variant="outline" disabled={isPending} onClick={close}>Hủy vô hiệu hóa</Button>
               </div>
             </form>
-          ) : <Button variant="outline" disabled={isPending || competingPending} onClick={() => { reset(); setConfirming(true); }}>Deactivate account</Button>}
+          ) : <Button variant="outline" disabled={isPending || competingPending} onClick={() => { reset(); setConfirming(true); }}>Vô hiệu hóa tài khoản</Button>}
         </div>
       </div>
     </section>

@@ -35,7 +35,7 @@ export default function useRevokeSession() {
       await client.cancelQueries({ queryKey: sessionsQueryKey, exact: true });
       if (!isCurrentSession(generation)) return;
       await client.invalidateQueries({ queryKey: sessionsQueryKey, exact: true });
-      if (isCurrentSession(generation)) setSuccess("Login session revoked.");
+      if (isCurrentSession(generation)) setSuccess("Đã thu hồi phiên đăng nhập.");
     },
     onSettled: () => { pending.current = false; },
   });

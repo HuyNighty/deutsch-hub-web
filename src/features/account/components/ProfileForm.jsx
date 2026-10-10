@@ -3,13 +3,14 @@ import classNames from "classnames/bind";
 import { ApiError, getFieldMessage } from "@/shared/api/api-error";
 import { Button } from "@/shared/ui/components/button";
 import useUpdateProfile from "../hooks/useUpdateProfile";
+import { accountErrorMessage } from "../account-error-presentation";
 import styles from "../Account.module.scss";
 
 const cx = classNames.bind(styles);
 const fields = [
-  { name: "firstName", label: "First name", max: 50, autoComplete: "given-name" },
-  { name: "lastName", label: "Last name", max: 50, autoComplete: "family-name" },
-  { name: "phoneNumber", label: "Phone number", max: 20, autoComplete: "tel" },
+  { name: "firstName", label: "Tên", max: 50, autoComplete: "given-name" },
+  { name: "lastName", label: "Họ", max: 50, autoComplete: "family-name" },
+  { name: "phoneNumber", label: "Số điện thoại", max: 20, autoComplete: "tel" },
 ];
 
 export default function ProfileForm({ account, onCancel, onSaved, disabled = false }) {
@@ -27,12 +28,12 @@ export default function ProfileForm({ account, onCancel, onSaved, disabled = fal
     if (isPending || disabled) return;
     const errors = fields.flatMap(({ name, label, max }) => {
       if (name !== "phoneNumber" && !form[name].trim()) {
-        return [{ field: name, message: `${label} must not be blank.` }];
+        return [{ field: name, message: `${label} không được để trống.` }];
       }
-      return form[name].length > max ? [{ field: name, message: `${label} must not exceed ${max} characters.` }] : [];
+      return form[name].length > max ? [{ field: name, message: `${label} không được vượt quá ${max} ký tự.` }] : [];
     });
     if (errors.length) {
-      setValidationError(new ApiError({ message: "Please check your profile information.", errors }));
+      setValidationError(new ApiError({ message: "Vui lòng kiểm tra thông tin hồ sơ.", errors }));
       return;
     }
     setValidationError(null);
@@ -40,8 +41,8 @@ export default function ProfileForm({ account, onCancel, onSaved, disabled = fal
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate aria-label="Edit profile" className={cx("profile-form")}>
-      {error && <p role="alert" className={cx("field-error")}>{error.message}</p>}
+    <form lang="vi" onSubmit={onSubmit} noValidate aria-label="Chỉnh sửa hồ sơ" className={cx("profile-form")}>
+      {error && <p role="alert" className={cx("field-error")}>{validationError ? validationError.message : accountErrorMessage(error, "profile")}</p>}
       {fields.map(({ name, label, max, autoComplete }) => {
         const fieldError = getFieldMessage(error, name);
         return (
@@ -62,8 +63,8 @@ export default function ProfileForm({ account, onCancel, onSaved, disabled = fal
         );
       })}
       <div className={cx("actions")}>
-        <Button type="submit" loading={isPending} disabled={disabled}>{isPending ? "Saving…" : "Save"}</Button>
-        <Button variant="outline" disabled={isPending || disabled} onClick={onCancel}>Cancel</Button>
+        <Button type="submit" loading={isPending} disabled={disabled}>{isPending ? "Đang lưu…" : "Lưu"}</Button>
+        <Button variant="outline" disabled={isPending || disabled} onClick={onCancel}>Hủy</Button>
       </div>
     </form>
   );

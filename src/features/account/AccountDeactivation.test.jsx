@@ -40,69 +40,69 @@ async function setup({ patch = (config) => ({ ...ok(config), data: { code: 200 }
   });
   setHttpHandler(http);
   const view = mountSession(routes, { path: "/account" });
-  await screen.findByRole("button", { name: "Deactivate account", exact: true });
-  await within(screen.getByRole("region", { name: "Login sessions" })).findByRole("list");
+  await screen.findByRole("button", { name: "Vô hiệu hóa tài khoản", exact: true });
+  await within(screen.getByRole("region", { name: "Phiên đăng nhập" })).findByRole("list");
   view.client.setQueryData(["sentinel"], "private learner data");
   return { ...view, http, user: userEvent.setup() };
 }
 const patches = (http) => http.mock.calls.filter(([c]) => c.url === "/users/me/deactivate");
 const otherMutations = (http) => http.mock.calls.filter(([c]) => c.url !== "/users/me/deactivate" && ["patch", "put", "post", "delete"].includes(c.method));
-const form = () => screen.getByRole("form", { name: "Deactivate account" });
+const form = () => screen.getByRole("form", { name: "Vô hiệu hóa tài khoản" });
 function fill(password = "CurrentPassword123", acknowledged = true) {
-  fireEvent.change(within(form()).getByLabelText("Current password"), { target: { value: password } });
+  fireEvent.change(within(form()).getByLabelText("Mật khẩu hiện tại"), { target: { value: password } });
   const checkbox = within(form()).getByRole("checkbox");
   if (checkbox.checked !== acknowledged) fireEvent.click(checkbox);
 }
 async function open(user) {
-  await user.click(screen.getByRole("button", { name: "Deactivate account", exact: true }));
+  await user.click(screen.getByRole("button", { name: "Vô hiệu hóa tài khoản", exact: true }));
 }
 async function submit(user) {
   await open(user); fill();
-  await user.click(within(form()).getByRole("button", { name: "Confirm deactivation" }));
+  await user.click(within(form()).getByRole("button", { name: "Xác nhận vô hiệu hóa" }));
 }
 async function openCompeting(user, kind) {
   if (kind === "profile") {
-    await user.click(screen.getByRole("button", { name: "Edit Profile" }));
-    return screen.getByRole("form", { name: "Edit profile" });
+    await user.click(screen.getByRole("button", { name: "Chỉnh sửa hồ sơ" }));
+    return screen.getByRole("form", { name: "Chỉnh sửa hồ sơ" });
   }
   if (kind === "password") {
-    await user.click(screen.getByRole("button", { name: "Change Password" }));
-    const passwordForm = screen.getByRole("form", { name: "Change password" });
-    for (const [label, value] of [["Current password", "CurrentPassword123"], ["New password", "NewPassword456"], ["Confirm new password", "NewPassword456"]]) {
+    await user.click(screen.getByRole("button", { name: "Đổi mật khẩu" }));
+    const passwordForm = screen.getByRole("form", { name: "Đổi mật khẩu" });
+    for (const [label, value] of [["Mật khẩu hiện tại", "CurrentPassword123"], ["Mật khẩu mới", "NewPassword456"], ["Xác nhận mật khẩu mới", "NewPassword456"]]) {
       fireEvent.change(within(passwordForm).getByLabelText(label), { target: { value } });
     }
     return passwordForm;
   }
   if (kind === "global") {
-    await user.click(screen.getByRole("button", { name: "Sign out everywhere" }));
-    return screen.getByRole("form", { name: "Sign out everywhere" });
+    await user.click(screen.getByRole("button", { name: "Đăng xuất trên tất cả thiết bị" }));
+    return screen.getByRole("form", { name: "Đăng xuất trên tất cả thiết bị" });
   }
-  await user.click(within(screen.getByRole("listitem", { name: `Session ${otherSession.id}` })).getByRole("button", { name: "Revoke session" }));
-  return screen.getByRole("form", { name: "Revoke session" });
+  await user.click(within(screen.getByRole("listitem", { name: `Phiên đăng nhập ${otherSession.id}` })).getByRole("button", { name: "Thu hồi phiên đăng nhập" }));
+  return screen.getByRole("form", { name: "Thu hồi phiên đăng nhập" });
 }
 
 describe("Learner Account Deactivation", () => {
   it("is distinct and explains inactivity, revocation, retained data and unavailable screen reactivation", async () => {
     const { http } = await setup();
-    const section = screen.getByRole("region", { name: "Account Deactivation" });
-    expect(section).toHaveTextContent("no longer be able to sign in while it is inactive");
-    expect(section).toHaveTextContent("All login sessions will be revoked");
-    expect(section).toHaveTextContent("does not delete your account data");
-    expect(section).toHaveTextContent("cannot reactivate your account through this screen");
-    expect(section).toHaveTextContent("Existing access tokens may remain valid until they expire");
-    for (const name of ["Logout", "Change Password", "Sign out everywhere", "Edit Profile"]) expect(screen.getByRole("button", { name, exact: true })).toBeEnabled();
-    expect(screen.getAllByRole("button", { name: "Revoke session" }).length).toBeGreaterThan(0);
+    const section = screen.getByRole("region", { name: "Vô hiệu hóa tài khoản" });
+    expect(section).toHaveTextContent("không thể đăng nhập khi tài khoản chưa được kích hoạt lại");
+    expect(section).toHaveTextContent("Tất cả phiên đăng nhập sẽ bị thu hồi");
+    expect(section).toHaveTextContent("không xóa dữ liệu tài khoản của bạn");
+    expect(section).toHaveTextContent("không thể kích hoạt lại tài khoản qua màn hình này");
+    expect(section).toHaveTextContent("Token truy cập đã cấp có thể vẫn còn hiệu lực cho đến khi hết hạn");
+    for (const name of ["Đăng xuất", "Đổi mật khẩu", "Đăng xuất trên tất cả thiết bị", "Chỉnh sửa hồ sơ"]) expect(screen.getByRole("button", { name, exact: true })).toBeEnabled();
+    expect(screen.getAllByRole("button", { name: "Thu hồi phiên đăng nhập" }).length).toBeGreaterThan(0);
     expect(patches(http)).toHaveLength(0);
   });
 
   it("Cancel sends no request and reopening retains neither password nor acknowledgment", async () => {
     const { user, http, client } = await setup();
     await open(user); fill();
-    expect(within(form()).getByLabelText("Current password")).toHaveAttribute("type", "password");
-    expect(within(form()).getByLabelText("Current password")).toHaveAttribute("autocomplete", "current-password");
-    await user.click(within(form()).getByRole("button", { name: "Cancel deactivation" }));
+    expect(within(form()).getByLabelText("Mật khẩu hiện tại")).toHaveAttribute("type", "password");
+    expect(within(form()).getByLabelText("Mật khẩu hiện tại")).toHaveAttribute("autocomplete", "current-password");
+    await user.click(within(form()).getByRole("button", { name: "Hủy vô hiệu hóa" }));
     await open(user);
-    expect(within(form()).getByLabelText("Current password")).toHaveValue("");
+    expect(within(form()).getByLabelText("Mật khẩu hiện tại")).toHaveValue("");
     expect(within(form()).getByRole("checkbox")).not.toBeChecked();
     expect(patches(http)).toHaveLength(0);
     expect(client.getQueryData(["sentinel"])).toBe("private learner data");
@@ -111,9 +111,9 @@ describe("Learner Account Deactivation", () => {
   it.each([["", true], ["   ", true], ["CurrentPassword123", false]])("rejects password %j / acknowledgment %s even on direct form submission", async (password, acknowledgment) => {
     const { user, http } = await setup();
     await open(user); fill(password, acknowledgment);
-    expect(within(form()).getByRole("button", { name: "Confirm deactivation" })).toBeDisabled();
+    expect(within(form()).getByRole("button", { name: "Xác nhận vô hiệu hóa" })).toBeDisabled();
     fireEvent.submit(form());
-    expect(await screen.findByRole("alert")).toHaveTextContent("Enter your current password and acknowledge");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Nhập mật khẩu hiện tại và xác nhận bạn hiểu hậu quả");
     expect(patches(http)).toHaveLength(0);
   });
 
@@ -135,12 +135,17 @@ describe("Learner Account Deactivation", () => {
     expect(otherMutations(http)).toHaveLength(0);
   });
 
-  it.each([[400, 4019], [403, 4005], [404, 4010], [400, 400], [401, 401], [500, 500]])("HTTP %s / code %s preserves identity and caches, displays Backend refusal and allows deliberate correction", async (status, code) => {
+  it.each([[400, 4019], [403, 4005], [404, 4010], [400, 400], [401, 401], [500, 500]])("HTTP %s / code %s preserves identity and caches, displays localized refusal and allows deliberate correction", async (status, code) => {
     let failed = true;
     const { user, http, auth, client, router } = await setup({ patch: (config) => failed ? reject(config, status, code) : ok(config) });
     const access = getAccessToken(), refresh = getRefreshToken(), generation = getSessionGeneration();
     await submit(user);
-    expect(await screen.findByRole("alert")).toHaveTextContent("Backend refused deactivation");
+    const expected = status === 400 && code === 4019 ? "Mật khẩu hiện tại không chính xác."
+      : status === 403 && code === 4005 ? "Tài khoản của bạn đã bị vô hiệu hóa."
+      : status === 404 && code === 4010 ? "Không tìm thấy tài khoản."
+      : "Không thể vô hiệu hóa tài khoản. Vui lòng kiểm tra thông tin và thử lại.";
+    expect(await screen.findByRole("alert")).toHaveTextContent(expected);
+    expect(screen.queryByText("Backend refused deactivation")).not.toBeInTheDocument();
     expect(auth.current.status).toBe("AUTHENTICATED");
     expect(getAccessToken()).toBe(access); expect(getRefreshToken()).toBe(refresh);
     expect(getSessionGeneration()).toBe(generation);
@@ -150,10 +155,10 @@ describe("Learner Account Deactivation", () => {
     expect(router.state.location.pathname).toBe("/account");
     expect(patches(http)).toHaveLength(1); expect(otherMutations(http)).toHaveLength(0);
     expect(http.mock.calls.some(([c]) => c.url === "/auth/refresh")).toBe(false);
-    expect(within(form()).getByLabelText("Current password")).toHaveValue("");
+    expect(within(form()).getByLabelText("Mật khẩu hiện tại")).toHaveValue("");
     expect(client.getMutationCache().find({ mutationKey: deactivationMutationKey, exact: true }).options.retry).toBe(false);
     failed = false; fill();
-    await user.click(within(form()).getByRole("button", { name: "Confirm deactivation" }));
+    await user.click(within(form()).getByRole("button", { name: "Xác nhận vô hiệu hóa" }));
     await screen.findByText(statusMessage);
     expect(patches(http)).toHaveLength(2);
   });
@@ -162,19 +167,19 @@ describe("Learner Account Deactivation", () => {
     const { user } = await setup({ patch: (config) => reject(config, 400, 400, "Validation failed", [{ field: "password", message: "Password is required" }]) });
     await submit(user);
     await screen.findByText("Password is required");
-    expect(within(form()).getByLabelText("Current password")).toHaveAttribute("aria-invalid", "true");
-    expect(within(form()).getByLabelText("Current password")).toHaveAccessibleDescription("Password is required");
+    expect(within(form()).getByLabelText("Mật khẩu hiện tại")).toHaveAttribute("aria-invalid", "true");
+    expect(within(form()).getByLabelText("Mật khẩu hiện tại")).toHaveAccessibleDescription("Password is required");
   });
 
   it.each([AxiosError.ERR_NETWORK, "ECONNABORTED"])("%s is an unconfirmed outcome with no replay or false success and ordinary Logout recovery", async (code) => {
     const { user, http, auth, client } = await setup({ patch: (config) => { throw new AxiosError("Ambiguous outcome", code, config); } });
     await submit(user);
-    expect(await screen.findByRole("alert")).toHaveTextContent("couldn't confirm whether your account was deactivated");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Không thể xác nhận tài khoản của bạn đã được vô hiệu hóa hay chưa. Hãy đăng xuất khỏi phiên hiện tại. Bạn có thể không đăng nhập lại được nếu tài khoản đã bị vô hiệu hóa.");
     expect(screen.queryByText(statusMessage)).not.toBeInTheDocument();
     expect(auth.current.status).toBe("AUTHENTICATED");
     expect(client.getQueryData(["sentinel"])).toBe("private learner data");
     expect(patches(http)).toHaveLength(1); expect(otherMutations(http)).toHaveLength(0);
-    await user.click(screen.getByRole("button", { name: "Logout", exact: true }));
+    await user.click(screen.getByRole("button", { name: "Đăng xuất", exact: true }));
     await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(auth.current.status).toBe("ANONYMOUS");
     expect(client.getQueryCache().getAll()).toHaveLength(0);
@@ -190,10 +195,10 @@ describe("Learner Account Deactivation", () => {
     await act(async () => { await started.promise; });
     try {
       expect(patches(http)).toHaveLength(1);
-      expect(within(form()).getByLabelText("Current password")).toHaveValue("");
-      expect(await within(form()).findByRole("button", { name: "Deactivating…" })).toBeDisabled();
-      expect(within(form()).getByRole("button", { name: "Cancel deactivation" })).toBeDisabled();
-      expect(screen.getByRole("button", { name: "Logout", exact: true })).toBeEnabled();
+      expect(within(form()).getByLabelText("Mật khẩu hiện tại")).toHaveValue("");
+      expect(await within(form()).findByRole("button", { name: "Đang vô hiệu hóa…" })).toBeDisabled();
+      expect(within(form()).getByRole("button", { name: "Hủy vô hiệu hóa" })).toBeDisabled();
+      expect(screen.getByRole("button", { name: "Đăng xuất", exact: true })).toBeEnabled();
       expect(client.getMutationCache().find({ mutationKey: deactivationMutationKey, exact: true }).state.variables).toEqual({ generation: getSessionGeneration() });
     } finally { await act(async () => { response.resolve(); }); }
     await screen.findByRole("alert");
@@ -209,10 +214,10 @@ describe("Learner Account Deactivation", () => {
     try {
       expect(patches(http)).toHaveLength(0);
       expect(otherMutations(http)).toHaveLength(1);
-      await waitFor(() => expect(within(form()).getByRole("button", { name: "Confirm deactivation" })).toBeDisabled());
+      await waitFor(() => expect(within(form()).getByRole("button", { name: "Xác nhận vô hiệu hóa" })).toBeDisabled());
     } finally { await act(async () => { response.resolve(); }); }
     await screen.findByRole("alert");
-    await waitFor(() => expect(within(form()).getByRole("button", { name: "Confirm deactivation" })).toBeEnabled());
+    await waitFor(() => expect(within(form()).getByRole("button", { name: "Xác nhận vô hiệu hóa" })).toBeEnabled());
   });
 
   it.each(["profile", "password", "global", "revoke"])("blocks %s when deactivation submits first before the pending render", async (kind) => {
@@ -224,8 +229,8 @@ describe("Learner Account Deactivation", () => {
     await act(async () => { await started.promise; });
     try {
       expect(patches(http)).toHaveLength(1); expect(otherMutations(http)).toHaveLength(0);
-      await waitFor(() => expect(within(other).getByRole("button", { name: kind === "profile" ? "Save" : kind === "password" ? "Change Password" : kind === "global" ? "Confirm" : "Confirm revoke", exact: true })).toBeDisabled());
-      expect(screen.getByRole("button", { name: "Logout", exact: true })).toBeEnabled();
+      await waitFor(() => expect(within(other).getByRole("button", { name: kind === "profile" ? "Lưu" : kind === "password" ? "Đổi mật khẩu" : kind === "global" ? "Xác nhận" : "Xác nhận thu hồi", exact: true })).toBeDisabled());
+      expect(screen.getByRole("button", { name: "Đăng xuất", exact: true })).toBeEnabled();
     } finally { await act(async () => { response.resolve(); }); }
     await screen.findByRole("alert");
   });
@@ -248,10 +253,10 @@ describe("Learner Account Deactivation", () => {
     let generationB;
     try {
       await act(async () => { auth.current.setSession(sessionB); });
-      await screen.findByRole("button", { name: "Deactivate account", exact: true });
+      await screen.findByRole("button", { name: "Vô hiệu hóa tài khoản", exact: true });
       // The old button can resolve before the cache-clear loading render; wait for B's profile.
       await screen.findByText(canonical.username);
-      await within(await screen.findByRole("region", { name: "Login sessions" })).findByRole("list");
+      await within(await screen.findByRole("region", { name: "Phiên đăng nhập" })).findByRole("list");
       client.setQueryData(["sentinel"], "B private data");
       generationB = getSessionGeneration();
     } finally { await act(async () => { response.resolve(); await finished.promise; }); }
@@ -263,10 +268,10 @@ describe("Learner Account Deactivation", () => {
     expect(router.state.location.pathname).toBe("/account");
     expect(screen.queryByText(statusMessage)).not.toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-    expect(screen.queryByRole("form", { name: "Deactivate account" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("form", { name: "Vô hiệu hóa tài khoản" })).not.toBeInTheDocument();
     expect(patches(http)).toHaveLength(1); expect(otherMutations(http)).toHaveLength(0);
     await open(user);
-    expect(within(form()).getByLabelText("Current password")).toHaveValue("");
+    expect(within(form()).getByLabelText("Mật khẩu hiện tại")).toHaveValue("");
     expect(within(form()).getByRole("checkbox")).not.toBeChecked();
   });
 
@@ -277,7 +282,7 @@ describe("Learner Account Deactivation", () => {
     const sessionB = loginResult();
     canonical = { ...account, id: "learner-b" };
     act(() => { fireEvent.submit(form()); auth.current.setSession(sessionB); });
-    await screen.findByRole("button", { name: "Deactivate account", exact: true });
+    await screen.findByRole("button", { name: "Vô hiệu hóa tài khoản", exact: true });
     expect(patches(http)).toHaveLength(0);
     expect(getAccessToken()).toBe(sessionB.accessToken);
     expect(client.getQueryData(["account"])).toEqual(canonical);

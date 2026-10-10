@@ -15,7 +15,7 @@ import { account } from "./test/account-fixtures";
 import { currentSession, otherSession, sessionRows } from "./test/session-rows";
 
 const statusMessage = "Tất cả phiên đăng nhập đã bị thu hồi. Vui lòng đăng nhập lại.";
-const ambiguityMessage = "We couldn't confirm whether all login sessions were revoked. Use Logout to end this local session, then sign in again.";
+const ambiguityMessage = "Không thể xác nhận tất cả phiên đăng nhập đã được thu hồi hay chưa. Hãy đăng xuất khỏi phiên hiện tại rồi đăng nhập lại.";
 const routes = [
   { element: <ProtectedRoute />, children: [{ path: "/account", element: <AccountPage /> }] },
   { element: <GuestRoute />, children: [{ path: "/login", element: <LoginForm /> }] },
@@ -44,8 +44,8 @@ async function setup({ post = (config) => ({ ...ok(config), data: { code: 200 } 
   });
   setHttpHandler(http);
   const view = mountSession(routes, { path: "/account", client });
-  await screen.findByRole("button", { name: "Sign out everywhere" });
-  await within(screen.getByRole("region", { name: "Login sessions" })).findByRole("list");
+  await screen.findByRole("button", { name: "Đăng xuất trên tất cả thiết bị" });
+  await within(screen.getByRole("region", { name: "Phiên đăng nhập" })).findByRole("list");
   view.client.setQueryData(["sentinel"], "private learner data");
   return { ...view, http, user: userEvent.setup() };
 }
@@ -57,33 +57,33 @@ function assertNoOtherSecurityRequests(http) {
   expect(http.mock.calls.some(([config]) => config.url.includes("deactivate"))).toBe(false);
 }
 async function open(user) {
-  await user.click(screen.getByRole("button", { name: "Sign out everywhere" }));
+  await user.click(screen.getByRole("button", { name: "Đăng xuất trên tất cả thiết bị" }));
 }
 async function confirm(user) {
   await open(user);
-  await user.click(screen.getByRole("button", { name: "Confirm", exact: true }));
+  await user.click(screen.getByRole("button", { name: "Xác nhận", exact: true }));
 }
 async function openPassword(user) {
-  await user.click(screen.getByRole("button", { name: "Change Password" }));
-  for (const [label, value] of [["Current password", "CurrentPassword123"], ["New password", "NewPassword456"], ["Confirm new password", "NewPassword456"]]) {
+  await user.click(screen.getByRole("button", { name: "Đổi mật khẩu" }));
+  for (const [label, value] of [["Mật khẩu hiện tại", "CurrentPassword123"], ["Mật khẩu mới", "NewPassword456"], ["Xác nhận mật khẩu mới", "NewPassword456"]]) {
     fireEvent.change(screen.getByLabelText(label), { target: { value } });
   }
 }
 async function openRevoke(user) {
-  await user.click(within(screen.getByRole("listitem", { name: `Session ${otherSession.id}` })).getByRole("button", { name: "Revoke session" }));
+  await user.click(within(screen.getByRole("listitem", { name: `Phiên đăng nhập ${otherSession.id}` })).getByRole("button", { name: "Thu hồi phiên đăng nhập" }));
 }
 
 describe("Learner Sign out everywhere", () => {
   it("places a distinct action and honest explanation in Security while preserving ordinary Logout and session revoke", async () => {
     const { http } = await setup();
-    const security = screen.getByRole("region", { name: "Security" });
-    expect(within(security).getByRole("button", { name: "Sign out everywhere" })).toBeEnabled();
-    expect(security).toHaveTextContent("Revoke all login sessions, including this one. You will need to sign in again.");
-    expect(security).toHaveTextContent("Existing access tokens may remain valid until they expire.");
-    expect(screen.getByRole("button", { name: "Logout", exact: true })).toBeEnabled();
-    expect(within(screen.getByRole("listitem", { name: `Session ${currentSession.id}` })).getByRole("button", { name: "Revoke session" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Edit Profile" })).toBeEnabled();
-    expect(within(security).getByRole("button", { name: "Change Password" })).toBeEnabled();
+    const security = screen.getByRole("region", { name: "Bảo mật" });
+    expect(within(security).getByRole("button", { name: "Đăng xuất trên tất cả thiết bị" })).toBeEnabled();
+    expect(security).toHaveTextContent("Thu hồi tất cả phiên đăng nhập, bao gồm phiên hiện tại. Bạn sẽ cần đăng nhập lại.");
+    expect(security).toHaveTextContent("Token truy cập đã cấp có thể vẫn còn hiệu lực cho đến khi hết hạn.");
+    expect(screen.getByRole("button", { name: "Đăng xuất", exact: true })).toBeEnabled();
+    expect(within(screen.getByRole("listitem", { name: `Phiên đăng nhập ${currentSession.id}` })).getByRole("button", { name: "Thu hồi phiên đăng nhập" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Chỉnh sửa hồ sơ" })).toBeEnabled();
+    expect(within(security).getByRole("button", { name: "Đổi mật khẩu" })).toBeEnabled();
     expect(posts(http)).toHaveLength(0);
   });
 
@@ -92,15 +92,15 @@ describe("Learner Sign out everywhere", () => {
     const cached = client.getQueryData(["account", "sessions"]);
     const before = http.mock.calls.length;
     await open(user);
-    const form = screen.getByRole("form", { name: "Sign out everywhere" });
-    expect(form).toHaveTextContent("Confirm signing out everywhere?");
+    const form = screen.getByRole("form", { name: "Đăng xuất trên tất cả thiết bị" });
+    expect(form).toHaveTextContent("Xác nhận đăng xuất trên tất cả thiết bị?");
     expect(posts(http)).toHaveLength(0);
-    await user.click(within(form).getByRole("button", { name: "Cancel" }));
-    expect(screen.queryByRole("form", { name: "Sign out everywhere" })).not.toBeInTheDocument();
+    await user.click(within(form).getByRole("button", { name: "Hủy" }));
+    expect(screen.queryByRole("form", { name: "Đăng xuất trên tất cả thiết bị" })).not.toBeInTheDocument();
     expect(http).toHaveBeenCalledTimes(before);
     expect(client.getQueryData(["account", "sessions"])).toBe(cached);
     expect(client.getQueryData(["sentinel"])).toBe("private learner data");
-    expect(screen.getByRole("button", { name: "Sign out everywhere" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Đăng xuất trên tất cả thiết bị" })).toBeEnabled();
   });
 
   it("HTTP 200 terminates the initiating generation, clears every private cache/token, and replaces navigation with explained Login", async () => {
@@ -134,8 +134,8 @@ describe("Learner Sign out everywhere", () => {
     fireEvent.change(screen.getByLabelText("Tên đăng nhập hoặc email"), { target: { value: "learner" } });
     fireEvent.change(screen.getByLabelText("Mật khẩu"), { target: { value: "Password123" } });
     await user.click(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ }));
-    await screen.findByRole("button", { name: "Sign out everywhere" });
-    await within(screen.getByRole("region", { name: "Login sessions" })).findByRole("list");
+    await screen.findByRole("button", { name: "Đăng xuất trên tất cả thiết bị" });
+    await within(screen.getByRole("region", { name: "Phiên đăng nhập" })).findByRole("list");
     expect(router.state.location.pathname).toBe("/account");
     expect(router.state.historyAction).toBe("REPLACE");
     expect(auth.current.status).toBe("AUTHENTICATED");
@@ -166,7 +166,8 @@ describe("Learner Sign out everywhere", () => {
       const updatedAt = client.getQueryState(["account"]).dataUpdatedAt;
       const requestsBefore = http.mock.calls.length;
       await confirm(user);
-      expect(await screen.findByRole("alert")).toHaveTextContent(message);
+      expect(await screen.findByRole("alert")).toHaveTextContent("Không thể đăng xuất trên tất cả thiết bị. Vui lòng thử lại.");
+      expect(screen.queryByText(message)).not.toBeInTheDocument();
       expect(auth.current.status).toBe("AUTHENTICATED");
       expect(auth.current.user).toBe(identity);
       expect(getSessionGeneration()).toBe(generation);
@@ -183,9 +184,9 @@ describe("Learner Sign out everywhere", () => {
       expect(http.mock.calls.some(([config]) => config.url === "/auth/refresh")).toBe(false);
       assertNoOtherSecurityRequests(http);
       expect(client.getMutationCache().find({ mutationKey: ["account", "logout-all"], exact: true }).options.retry).toBe(false);
-      expect(screen.getByRole("button", { name: "Confirm", exact: true })).toBeEnabled();
+      expect(screen.getByRole("button", { name: "Xác nhận", exact: true })).toBeEnabled();
       failed = false;
-      await user.click(screen.getByRole("button", { name: "Confirm", exact: true }));
+      await user.click(screen.getByRole("button", { name: "Xác nhận", exact: true }));
       await screen.findByText(statusMessage);
       expect(posts(http)).toHaveLength(2);
       assertNoOtherSecurityRequests(http);
@@ -209,7 +210,7 @@ describe("Learner Sign out everywhere", () => {
     expect(router.state.location.pathname).toBe("/account");
     expect(posts(http)).toHaveLength(1);
     assertNoOtherSecurityRequests(http);
-    await user.click(screen.getByRole("button", { name: "Logout", exact: true }));
+    await user.click(screen.getByRole("button", { name: "Đăng xuất", exact: true }));
     await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(auth.current.status).toBe("ANONYMOUS");
     expect(getAccessToken()).toBeNull();
@@ -230,33 +231,33 @@ describe("Learner Sign out everywhere", () => {
     await openPassword(user);
     await openRevoke(user);
     await open(user);
-    const form = screen.getByRole("form", { name: "Sign out everywhere" });
-    const passwordForm = screen.getByRole("form", { name: "Change password" });
-    const revokeForm = screen.getByRole("form", { name: "Revoke session" });
+    const form = screen.getByRole("form", { name: "Đăng xuất trên tất cả thiết bị" });
+    const passwordForm = screen.getByRole("form", { name: "Đổi mật khẩu" });
+    const revokeForm = screen.getByRole("form", { name: "Thu hồi phiên đăng nhập" });
     act(() => {
       fireEvent.submit(form); fireEvent.submit(form); fireEvent.submit(form);
       fireEvent.submit(passwordForm); fireEvent.submit(revokeForm);
     });
     await act(async () => { await started.promise; });
-    const pending = await within(form).findByRole("button", { name: "Signing out…" });
+    const pending = await within(form).findByRole("button", { name: "Đang đăng xuất…" });
     expect(pending).toBeDisabled();
     expect(pending).toHaveAttribute("aria-busy", "true");
-    expect(within(form).getByRole("button", { name: "Cancel" })).toBeDisabled();
-    expect(within(passwordForm).getByRole("button", { name: "Change Password" })).toBeDisabled();
-    expect(within(passwordForm).getByRole("button", { name: "Cancel" })).toBeDisabled();
-    expect(within(revokeForm).getByRole("button", { name: "Confirm revoke" })).toBeDisabled();
-    expect(within(revokeForm).getByRole("button", { name: "Cancel revoke" })).toBeDisabled();
-    expect(within(screen.getByRole("listitem", { name: `Session ${currentSession.id}` })).getByRole("button", { name: "Revoke session" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Logout", exact: true })).toBeEnabled();
+    expect(within(form).getByRole("button", { name: "Hủy" })).toBeDisabled();
+    expect(within(passwordForm).getByRole("button", { name: "Đổi mật khẩu" })).toBeDisabled();
+    expect(within(passwordForm).getByRole("button", { name: "Hủy" })).toBeDisabled();
+    expect(within(revokeForm).getByRole("button", { name: "Xác nhận thu hồi" })).toBeDisabled();
+    expect(within(revokeForm).getByRole("button", { name: "Hủy thu hồi" })).toBeDisabled();
+    expect(within(screen.getByRole("listitem", { name: `Phiên đăng nhập ${currentSession.id}` })).getByRole("button", { name: "Thu hồi phiên đăng nhập" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Đăng xuất", exact: true })).toBeEnabled();
     fireEvent.submit(form); fireEvent.submit(passwordForm); fireEvent.submit(revokeForm);
     expect(posts(http)).toHaveLength(1);
     expect(http.mock.calls.filter(([config]) => config.method === "put")).toHaveLength(0);
     assertNoOtherSecurityRequests(http);
     await act(async () => { response.resolve(); });
     await screen.findByRole("alert");
-    expect(within(form).getByRole("button", { name: "Confirm", exact: true })).toBeEnabled();
-    expect(within(passwordForm).getByRole("button", { name: "Change Password" })).toBeEnabled();
-    expect(within(revokeForm).getByRole("button", { name: "Confirm revoke" })).toBeEnabled();
+    expect(within(form).getByRole("button", { name: "Xác nhận", exact: true })).toBeEnabled();
+    expect(within(passwordForm).getByRole("button", { name: "Đổi mật khẩu" })).toBeEnabled();
+    expect(within(revokeForm).getByRole("button", { name: "Xác nhận thu hồi" })).toBeEnabled();
     expect(posts(http)).toHaveLength(1);
   });
 
@@ -267,16 +268,16 @@ describe("Learner Sign out everywhere", () => {
     const { user, http } = await setup({ password: competing, remove: competing });
     await open(user);
     if (kind === "password") await openPassword(user); else await openRevoke(user);
-    const form = screen.getByRole("form", { name: "Sign out everywhere" });
-    const other = screen.getByRole("form", { name: kind === "password" ? "Change password" : "Revoke session" });
+    const form = screen.getByRole("form", { name: "Đăng xuất trên tất cả thiết bị" });
+    const other = screen.getByRole("form", { name: kind === "password" ? "Đổi mật khẩu" : "Thu hồi phiên đăng nhập" });
     act(() => { fireEvent.submit(other); fireEvent.submit(form); });
     await act(async () => { await started.promise; });
-    await waitFor(() => expect(within(form).getByRole("button", { name: "Confirm", exact: true })).toBeDisabled());
+    await waitFor(() => expect(within(form).getByRole("button", { name: "Xác nhận", exact: true })).toBeDisabled());
     expect(posts(http)).toHaveLength(0);
     await act(async () => { response.resolve(); });
-    await within(screen.getByRole("region", { name: kind === "password" ? "Security" : "Login sessions" })).findByRole("alert");
-    await waitFor(() => expect(within(form).getByRole("button", { name: "Confirm", exact: true })).toBeEnabled());
-    await user.click(within(form).getByRole("button", { name: "Confirm", exact: true }));
+    await within(screen.getByRole("region", { name: kind === "password" ? "Bảo mật" : "Phiên đăng nhập" })).findByRole("alert");
+    await waitFor(() => expect(within(form).getByRole("button", { name: "Xác nhận", exact: true })).toBeEnabled());
+    await user.click(within(form).getByRole("button", { name: "Xác nhận", exact: true }));
     await screen.findByText(statusMessage);
     expect(posts(http)).toHaveLength(1);
   });
@@ -293,14 +294,14 @@ describe("Learner Sign out everywhere", () => {
     } });
     await confirm(user);
     await act(async () => { await started.promise; });
-    await user.click(screen.getByRole("button", { name: "Logout", exact: true }));
+    await user.click(screen.getByRole("button", { name: "Đăng xuất", exact: true }));
     await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     const sessionB = loginResult(id);
     canonical = { ...account, id, username: "new-session" };
     canonicalSessions = [{ ...currentSession, id: "77777777-7777-4777-8777-777777777777" }];
     await act(async () => { auth.current.setSession(sessionB); });
-    await screen.findByRole("button", { name: "Sign out everywhere" });
-    await within(screen.getByRole("region", { name: "Login sessions" })).findByRole("list");
+    await screen.findByRole("button", { name: "Đăng xuất trên tất cả thiết bị" });
+    await within(screen.getByRole("region", { name: "Phiên đăng nhập" })).findByRole("list");
     client.setQueryData(["sentinel"], "new private data");
     const generationB = getSessionGeneration();
     await act(async () => { response.resolve(); await finished.promise; });
@@ -326,11 +327,11 @@ describe("Learner Sign out everywhere", () => {
     const sessionB = loginResult();
     canonical = { ...account, id: "learner-b", username: "new-session" };
     act(() => {
-      fireEvent.submit(screen.getByRole("form", { name: "Sign out everywhere" }));
+      fireEvent.submit(screen.getByRole("form", { name: "Đăng xuất trên tất cả thiết bị" }));
       auth.current.setSession(sessionB);
     });
-    await screen.findByRole("button", { name: "Sign out everywhere" });
-    await within(screen.getByRole("region", { name: "Login sessions" })).findByRole("list");
+    await screen.findByRole("button", { name: "Đăng xuất trên tất cả thiết bị" });
+    await within(screen.getByRole("region", { name: "Phiên đăng nhập" })).findByRole("list");
     expect(posts(http)).toHaveLength(0);
     expect(auth.current.user.id).toBe("learner-b");
     expect(getAccessToken()).toBe(sessionB.accessToken);
