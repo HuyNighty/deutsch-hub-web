@@ -11,11 +11,11 @@ import {
   returnToDashboard, expectNoHiddenGuidance,
 } from "./guidance-fixtures";
 
-const guidanceLink = (label) => within(screen.getByRole("region", { name: "Learning guidance" }))
+const guidanceLink = (label) => within(screen.getByRole("region", { name: "Hướng dẫn học tập" }))
   .getByRole("link", { name: label, exact: true });
-const assessmentText = "Return to your assessment to continue.";
-const taskText = "Resume the assessment task already in progress.";
-const lessonText = "Continue with your next lesson.";
+const assessmentText = "Quay lại bài đánh giá để tiếp tục.";
+const taskText = "Tiếp tục bài tập đánh giá đang thực hiện.";
+const lessonText = "Tiếp tục với bài học tiếp theo của bạn.";
 
 function expectTriadEntries(server, count) {
   const actual = requestWindow(server.http).filter(([, url]) => TRIAD_URLS.includes(url));
@@ -28,7 +28,7 @@ function expectWrites(server, expected) {
 async function openParent(user, server, app) {
   const from = server.http.mock.calls.length;
   server.allowReads([attemptUrl, DEFINITION_URL]);
-  await user.click(guidanceLink("Open assessment"));
+  await user.click(guidanceLink("Xem bài đánh giá"));
   await screen.findByText("Status: In progress");
   expect(app.router.state.location.pathname).toBe(attemptPath);
   expect(app.client.getQueryData(["learner-assessment-attempt", ATTEMPT_ID])).toEqual(server.parent());
@@ -44,7 +44,7 @@ describe("Learner Guidance integrated acceptance", () => {
     const app = mountAssessmentApp("/my-learning");
     const originalClient = app.client;
     expect(server.parent().taskAttempts).toEqual([]);
-    await expectDashboard(server, app, 0, "Open assessment", assessmentText, attemptPath);
+    await expectDashboard(server, app, 0, "Xem bài đánh giá", assessmentText, attemptPath);
     const originalQueries = captureGuidance(app.client);
 
     await openParent(user, server, app);
@@ -66,15 +66,15 @@ describe("Learner Guidance integrated acceptance", () => {
     ].sort());
 
     const afterStartReturn = await returnToDashboard(user, server);
-    await expectDashboard(server, app, afterStartReturn, "Resume task", taskText, TASK_PATH, originalQueries);
+    await expectDashboard(server, app, afterStartReturn, "Tiếp tục bài tập", taskText, TASK_PATH, originalQueries);
     expect(app.client).toBe(originalClient);
     expect(app.client.getQueryData(TRIAD_KEYS[2]).target).toEqual({
       assessmentAttemptId: ATTEMPT_ID, taskId: TASK_ID, quizAttemptId: "quiz-owned-42",
     });
-    expect(guidanceLink("Resume task").getAttribute("href")).not.toContain("quiz-owned-42");
+    expect(guidanceLink("Tiếp tục bài tập").getAttribute("href")).not.toContain("quiz-owned-42");
     const resumeWindow = server.http.mock.calls.length;
     server.allowReads([TASK_URL, DEFINITION_URL]);
-    await user.click(guidanceLink("Resume task"));
+    await user.click(guidanceLink("Tiếp tục bài tập"));
     await screen.findByRole("button", { name: "Submit task" });
     await waitFor(() => expect(app.client.getQueryState(TASK_KEY).fetchStatus).toBe("idle"));
     expect(app.router.state.location.pathname).toBe(TASK_PATH);
@@ -95,7 +95,7 @@ describe("Learner Guidance integrated acceptance", () => {
     expect(requestWindow(server.http, submitWindow)).toEqual([["post", TASK_SUBMIT_URL, undefined]]);
 
     const afterSubmitReturn = await returnToDashboard(user, server);
-    await expectDashboard(server, app, afterSubmitReturn, "Open assessment", assessmentText, attemptPath, originalQueries);
+    await expectDashboard(server, app, afterSubmitReturn, "Xem bài đánh giá", assessmentText, attemptPath, originalQueries);
     expect(app.client).toBe(originalClient);
     expect(app.client.getQueryData(TRIAD_KEYS[0]).assessmentAttempts).toHaveLength(1);
     expect(app.client.getQueryData(TRIAD_KEYS[1]).type).toBe("RESUME_ASSESSMENT");
@@ -112,7 +112,7 @@ describe("Learner Guidance integrated acceptance", () => {
     await act(async () => {});
     expect(server.http).not.toHaveBeenCalled();
     const entry = await returnToDashboard(user, server);
-    await expectDashboard(server, app, entry, "Open assessment", assessmentText, attemptPath);
+    await expectDashboard(server, app, entry, "Xem bài đánh giá", assessmentText, attemptPath);
     const originalQueries = captureGuidance(app.client);
     const initialJourney = app.client.getQueryData(TRIAD_KEYS[0]);
     expect(initialJourney.assessmentAttempts).toHaveLength(1);
@@ -138,7 +138,7 @@ describe("Learner Guidance integrated acceptance", () => {
     ]);
 
     const handoffReturn = await returnToDashboard(user, server);
-    await expectDashboard(server, app, handoffReturn, "Open next lesson", lessonText, lessonPath(LESSON_IDS[0]), originalQueries);
+    await expectDashboard(server, app, handoffReturn, "Mở bài học tiếp theo", lessonText, lessonPath(LESSON_IDS[0]), originalQueries);
     expect(app.client).toBe(originalClient);
     const freshJourney = app.client.getQueryData(TRIAD_KEYS[0]);
     expect(freshJourney.assessmentAttempts).toEqual([]);
@@ -156,15 +156,15 @@ describe("Learner Guidance integrated acceptance", () => {
     const server = guidanceServer("course-progression");
     const app = mountAssessmentApp("/my-learning");
     const originalClient = app.client;
-    await expectDashboard(server, app, 0, "Open next lesson", lessonText, lessonPath(LESSON_IDS[0]));
+    await expectDashboard(server, app, 0, "Mở bài học tiếp theo", lessonText, lessonPath(LESSON_IDS[0]));
     const originalQueries = captureGuidance(app.client);
-    expect(screen.getByText("0 / 2 lessons")).toBeVisible();
+    expect(screen.getByText("0 / 2 bài học")).toBeVisible();
 
     for (const [index, id] of LESSON_IDS.entries()) {
-      expect(guidanceLink("Open next lesson")).toHaveAttribute("href", lessonPath(id));
+      expect(guidanceLink("Mở bài học tiếp theo")).toHaveAttribute("href", lessonPath(id));
       const lessonWindow = server.http.mock.calls.length;
       server.allowReads([lessonUrl(id)]);
-      await user.click(guidanceLink("Open next lesson"));
+      await user.click(guidanceLink("Mở bài học tiếp theo"));
       await screen.findByRole("heading", { name: server.lessons[index].title, level: 1 });
       expect(screen.getByText("Read the dialogue aloud and practice with a partner.")).toBeVisible();
       expect(app.router.state.location.pathname).toBe(lessonPath(id));
@@ -186,21 +186,21 @@ describe("Learner Guidance integrated acceptance", () => {
       expect(requestWindow(server.http, completeWindow)).toEqual([["post", `${lessonUrl(id)}/complete`, body]]);
       const dashboardReturn = await returnToDashboard(user, server);
       if (index === 0) {
-        await expectDashboard(server, app, dashboardReturn, "Open next lesson", lessonText, lessonPath(LESSON_IDS[1]), originalQueries);
-        expect(screen.getByText("1 / 2 lessons")).toBeVisible();
+        await expectDashboard(server, app, dashboardReturn, "Mở bài học tiếp theo", lessonText, lessonPath(LESSON_IDS[1]), originalQueries);
+        expect(screen.getByText("1 / 2 bài học")).toBeVisible();
         expect(screen.getByRole("progressbar")).toHaveAttribute("value", "50");
         expect(app.client.getQueryData(TRIAD_KEYS[0]).courses[0].progress).toEqual(server.state.progress);
         expect(app.client.getQueryData(TRIAD_KEYS[1])).toEqual({ type: "CONTINUE_COURSE", target: { courseId: COURSE_ID } });
       } else {
-        await expectDashboard(server, app, dashboardReturn, "Explore courses",
-          "Choose a course to begin or continue your German learning.", "/learn-german", originalQueries);
+        await expectDashboard(server, app, dashboardReturn, "Khám phá khóa học",
+          "Chọn một khóa học để bắt đầu hoặc tiếp tục học tiếng Đức.", "/learn-german", originalQueries);
         expect(app.client.getQueryData(TRIAD_KEYS[0]).courses).toEqual([]);
         expect(app.client.getQueryData(TRIAD_KEYS[1])).toEqual({ type: "DISCOVER_COURSE", target: null });
         expect(app.client.getQueryData(TRIAD_KEYS[2])).toEqual({ type: "NONE", target: null });
         expect(screen.queryByText("German Basics")).not.toBeInTheDocument();
-        expect(screen.getByText("No courses yet")).toBeVisible();
-        expect(screen.getByRole("heading", { name: "My Learning", level: 1 }).closest("main").textContent)
-          .not.toMatch(/learning complete|nothing left|no more learning|all learning finished|you are done/i);
+        expect(screen.getByText("Bạn chưa có khóa học nào")).toBeVisible();
+        expect(screen.getByRole("heading", { name: "Học tập của tôi", level: 1 }).closest("main").textContent)
+          .not.toMatch(/learning complete|nothing left|no more learning|all learning finished|you are done|học xong|không còn|hoàn thành toàn bộ|đã xong/i);
       }
       expect(app.client).toBe(originalClient);
     }

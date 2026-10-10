@@ -16,13 +16,13 @@ function expectSnapshotReads(http, count = 1) {
 }
 
 function expectNoPartialSnapshot() {
-  expect(screen.queryByRole("region", { name: "Current German level" })).not.toBeInTheDocument();
-  expect(screen.queryByRole("region", { name: "Your courses" })).not.toBeInTheDocument();
-  expect(screen.queryByRole("region", { name: "Active assessments" })).not.toBeInTheDocument();
+  expect(screen.queryByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).not.toBeInTheDocument();
+  expect(screen.queryByRole("region", { name: "Khóa học của bạn" })).not.toBeInTheDocument();
+  expect(screen.queryByRole("region", { name: "Bài đánh giá đang thực hiện" })).not.toBeInTheDocument();
   expect(screen.queryByText("German Basics")).not.toBeInTheDocument();
-  expect(screen.queryByRole("link", { name: "Continue assessment" })).not.toBeInTheDocument();
-  expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
-  expect(screen.getByRole("link", { name: "Assessment History" })).toHaveAttribute("href", "/my-learning/assessment-history");
+  expect(screen.queryByRole("link", { name: "Tiếp tục đánh giá" })).not.toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Khám phá bài đánh giá" })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Lịch sử đánh giá" })).toHaveAttribute("href", "/my-learning/assessment-history");
 }
 
 describe("My Learning canonical Journey snapshot", () => {
@@ -33,15 +33,15 @@ describe("My Learning canonical Journey snapshot", () => {
     const http = assessmentHttp((config) => ok(config, snapshot));
     const { client } = mountAssessmentApp("/my-learning");
     await screen.findByRole("heading", { name: "German Basics" });
-    expect(within(screen.getByRole("region", { name: "Current German level" })).getByText("B1")).toBeInTheDocument();
-    expect(screen.getByText("Course level: A1")).toBeInTheDocument();
-    expect(screen.getByText("3 / 8 lessons")).toBeInTheDocument();
+    expect(within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).getByText("B1")).toBeInTheDocument();
+    expect(screen.getByText("Trình độ khóa học: A1")).toBeInTheDocument();
+    expect(screen.getByText("3 / 8 bài học")).toBeInTheDocument();
     expect(screen.getByText("73.25%")).toBeInTheDocument();
     expect(screen.getByRole("progressbar")).toHaveAttribute("value", "73.25");
-    expect(screen.getByText("Continue your German learning journey.")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Continue assessment" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Assessment History" })).toHaveAttribute("href", "/my-learning/assessment-history");
+    expect(screen.getByText("Tiếp tục hành trình học tiếng Đức của bạn.")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Tiếp tục đánh giá" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Khám phá bài đánh giá" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Lịch sử đánh giá" })).toHaveAttribute("href", "/my-learning/assessment-history");
     expect(client.getQueryData(["learner-learning-journey"])).toEqual(snapshot);
     expect(client.getQueryData(["my-courses"])).toBeUndefined();
     expect(client.getQueryData(["learner-competency"])).toBeUndefined();
@@ -53,14 +53,14 @@ describe("My Learning canonical Journey snapshot", () => {
   it.each(["UNKNOWN", "B2"])("keeps current level %s independent of A1 Courses and no active Attempts", async (currentLevel) => {
     const http = assessmentHttp((config) => ok(config, journey([], { currentLevel, courses: [courseSnapshot()] })));
     mountAssessmentApp("/my-learning");
-    await screen.findByRole("button", { name: "Continue Learning" });
-    const region = screen.getByRole("region", { name: "Current German level" });
-    expect(within(region).getByText(currentLevel === "UNKNOWN" ? "Not established yet" : "B2")).toBeInTheDocument();
+    await screen.findByRole("button", { name: "Tiếp tục học" });
+    const region = screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" });
+    expect(within(region).getByText(currentLevel === "UNKNOWN" ? "Chưa xác định" : "B2")).toBeInTheDocument();
     expect(region.textContent).not.toContain("UNKNOWN");
-    expect(screen.getByText("Course level: A1")).toBeInTheDocument();
-    expect(screen.queryByRole("region", { name: "Active assessments" })).not.toBeInTheDocument();
-    const page = screen.getByRole("heading", { name: "My Learning", level: 1 }).closest("main");
-    expect(page.textContent).not.toMatch(/new level|achieved|promot|earned|mismatch|recommend|next activity/i);
+    expect(screen.getByText("Trình độ khóa học: A1")).toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Bài đánh giá đang thực hiện" })).not.toBeInTheDocument();
+    const page = screen.getByRole("heading", { name: "Học tập của tôi", level: 1 }).closest("main");
+    expect(page.textContent).not.toMatch(/new level|achieved|promot|earned|mismatch|recommend|next activity|đạt trình độ|nâng trình độ|thành thạo|khuyến nghị|hoạt động tiếp theo/i);
     expectSnapshotReads(http);
   });
 
@@ -74,10 +74,10 @@ describe("My Learning canonical Journey snapshot", () => {
       throw new Error("Unexpected Course navigation request: " + config.url);
     }, { allowCourseDetailReads: true });
     const { router } = mountAssessmentApp("/my-learning");
-    await screen.findByRole("button", { name: "Continue Learning" });
+    await screen.findByRole("button", { name: "Tiếp tục học" });
     expectSnapshotReads(http);
     expect(screen.queryByText("Existing Course detail")).not.toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Continue Learning" }));
+    await user.click(screen.getByRole("button", { name: "Tiếp tục học" }));
     await screen.findByRole("heading", { name: "German Basics", level: 1 });
     expect(router.state.location.pathname).toBe("/my-learning/courses/course-canonical");
     expect(screen.getByText("Existing Course detail")).toBeInTheDocument();
@@ -93,11 +93,11 @@ describe("My Learning canonical Journey snapshot", () => {
       throw new Error("Unexpected dashboard request: " + config.url);
     });
     const { router } = mountAssessmentApp("/my-learning");
-    await screen.findByText(empty ? "No courses yet" : "German Basics");
-    expect(screen.getByRole("heading", { name: "Assessments" })).toBeInTheDocument();
-    const entry = screen.getByRole("link", { name: "Explore available assessments" });
+    await screen.findByText(empty ? "Bạn chưa có khóa học nào" : "German Basics");
+    expect(screen.getByRole("heading", { name: "Bài đánh giá" })).toBeInTheDocument();
+    const entry = screen.getByRole("link", { name: "Khám phá bài đánh giá" });
     expect(entry).toHaveAttribute("href", "/my-learning/assessments");
-    if (empty) expect(screen.getByText("Start learning your first course.")).toBeInTheDocument();
+    if (empty) expect(screen.getByText("Bắt đầu học khóa học đầu tiên của bạn.")).toBeInTheDocument();
     expectSnapshotReads(http);
     await user.click(entry);
     await screen.findByRole("link", { name: "View assessment" });
@@ -115,7 +115,7 @@ describe("My Learning canonical Journey snapshot", () => {
     });
     const { router } = mountAssessmentApp("/my-learning");
     expect(screen.getByText("Đang tải...")).toBeInTheDocument();
-    await user.click(screen.getByRole("link", { name: "Explore available assessments" }));
+    await user.click(screen.getByRole("link", { name: "Khám phá bài đánh giá" }));
     await screen.findByRole("link", { name: "View assessment" });
     expect(router.state.location.pathname).toBe("/my-learning/assessments");
     expect(http.mock.calls.map(([config]) => config.url).sort()).toEqual([journeyUrl, directionUrl, nextActivityUrl, "/me/assessments"].sort());
@@ -134,7 +134,7 @@ describe("My Learning canonical Journey snapshot", () => {
     failed = false;
     await user.click(screen.getByRole("button", { name: "Thử lại" }));
     await screen.findByText("German Basics");
-    expect(within(screen.getByRole("region", { name: "Current German level" })).getByText("B1")).toBeInTheDocument();
+    expect(within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).getByText("B1")).toBeInTheDocument();
     expectSnapshotReads(http, 2);
   });
 

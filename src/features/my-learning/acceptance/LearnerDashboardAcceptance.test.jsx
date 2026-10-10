@@ -38,25 +38,25 @@ function requests(http) {
 }
 
 async function expectDashboard(http) {
-  const level = await screen.findByRole("region", { name: "Current German level" });
-  const courses = screen.getByRole("region", { name: "Your courses" });
-  const assessments = screen.getByRole("region", { name: "Active assessments" });
+  const level = await screen.findByRole("region", { name: "Trình độ tiếng Đức hiện tại" });
+  const courses = screen.getByRole("region", { name: "Khóa học của bạn" });
+  const assessments = screen.getByRole("region", { name: "Bài đánh giá đang thực hiện" });
 
   expect(within(level).getByText("B2")).toBeVisible();
   expect(within(courses).getByRole("heading", { name: "German Basics" })).toBeVisible();
-  expect(within(courses).getByText("Course level: A1")).toBeVisible();
-  expect(within(courses).getByText("3 / 8 lessons")).toBeVisible();
+  expect(within(courses).getByText("Trình độ khóa học: A1")).toBeVisible();
+  expect(within(courses).getByText("3 / 8 bài học")).toBeVisible();
   expect(within(courses).getByText("73.25%")).toBeVisible();
   expect(within(courses).getByRole("progressbar")).toHaveAttribute("value", "73.25");
   expect(within(courses).getByRole("progressbar")).toHaveAttribute("max", "100");
-  expect(within(assessments).getByRole("heading", { name: "Assessment in progress" })).toBeVisible();
-  expect(within(assessments).getByText("Target level: B1")).toBeVisible();
-  expect(within(assessments).getByRole("link", { name: "Continue assessment" }))
+  expect(within(assessments).getByRole("heading", { name: "Bài đánh giá đang thực hiện", level: 3 })).toBeVisible();
+  expect(within(assessments).getByText("Trình độ mục tiêu: B1")).toBeVisible();
+  expect(within(assessments).getByRole("link", { name: "Tiếp tục đánh giá" }))
     .toHaveAttribute("href", attemptPath);
-  expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeVisible();
+  expect(screen.getByRole("link", { name: "Khám phá bài đánh giá" })).toBeVisible();
 
-  const page = screen.getByRole("heading", { name: "My Learning", level: 1 }).closest("main");
-  expect(page.textContent).not.toMatch(/new level|achieved|promot|earned|mismatch|downgrade|recommend|next activity/i);
+  const page = screen.getByRole("heading", { name: "Học tập của tôi", level: 1 }).closest("main");
+  expect(page.textContent).not.toMatch(/new level|achieved|promot|earned|mismatch|downgrade|recommend|next activity|đạt trình độ|nâng trình độ|thành thạo|hạ trình độ|khuyến nghị|hoạt động tiếp theo/i);
   expect(requests(http).sort()).toEqual([["get", journeyUrl, undefined], ["get", directionUrl, undefined], ["get", nextActivityUrl, undefined]].sort());
 }
 
@@ -94,7 +94,7 @@ describe("Learner dashboard integrated acceptance", () => {
     expect(screen.queryByText(detail.description)).not.toBeInTheDocument();
 
     allowDestinationReads();
-    await user.click(screen.getByRole("button", { name: "Continue Learning" }));
+    await user.click(screen.getByRole("button", { name: "Tiếp tục học" }));
     await screen.findByRole("heading", { name: course.title, level: 1 });
     expect(screen.getByText(detail.description)).toBeVisible();
     expect(router.state.location.pathname).toBe(`/my-learning/courses/${course.courseId}`);
@@ -114,7 +114,7 @@ describe("Learner dashboard integrated acceptance", () => {
     expect(screen.queryByRole("heading", { name: definition.title })).not.toBeInTheDocument();
 
     allowDestinationReads();
-    await user.click(screen.getByRole("link", { name: "Continue assessment" }));
+    await user.click(screen.getByRole("link", { name: "Tiếp tục đánh giá" }));
     const region = await screen.findByRole("region", { name: "Assessment attempt" });
     expect(await within(region).findByText("Status: In progress")).toBeVisible();
     expect(within(region).getByRole("heading", { name: definition.title })).toBeVisible();
@@ -136,7 +136,7 @@ describe("Learner dashboard integrated acceptance", () => {
     expect(screen.queryByRole("link", { name: "View assessment" })).not.toBeInTheDocument();
 
     allowDestinationReads();
-    await user.click(screen.getByRole("link", { name: "Explore available assessments" }));
+    await user.click(screen.getByRole("link", { name: "Khám phá bài đánh giá" }));
     const view = await screen.findByRole("link", { name: "View assessment" });
     expect(view).toBeVisible();
     expect(view).toHaveAttribute("href", `/my-learning/assessments/${page.items[0].assessmentId}`);

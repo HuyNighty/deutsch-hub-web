@@ -9,26 +9,26 @@ function Direction({ direction }) {
     case "RESUME_ASSESSMENT":
       return (
         <>
-          <p>You have an assessment in progress.</p>
+          <p>Bạn đang thực hiện một bài đánh giá.</p>
           <AppLink to={`/my-learning/assessment-attempts/${encodeURIComponent(direction.target.assessmentAttemptId)}`} variant="outline">
-            Continue assessment
+            Tiếp tục đánh giá
           </AppLink>
         </>
       );
     case "CONTINUE_COURSE":
       return (
         <>
-          <p>Continue the course you are currently working on.</p>
+          <p>Tiếp tục khóa học bạn đang học.</p>
           <AppLink to={`/my-learning/courses/${encodeURIComponent(direction.target.courseId)}`} variant="outline">
-            Continue course
+            Tiếp tục học
           </AppLink>
         </>
       );
     case "DISCOVER_COURSE":
       return (
         <>
-          <p>Choose a course to begin or continue your German learning.</p>
-          <AppLink to="/learn-german" variant="outline">Explore courses</AppLink>
+          <p>Chọn một khóa học để bắt đầu hoặc tiếp tục học tiếng Đức.</p>
+          <AppLink to="/learn-german" variant="outline">Khám phá khóa học</AppLink>
         </>
       );
   }
@@ -39,27 +39,27 @@ function Activity({ activity }) {
     case "OPEN_LESSON":
       return (
         <>
-          <p>Continue with your next lesson.</p>
+          <p>Tiếp tục với bài học tiếp theo của bạn.</p>
           <AppLink to={`/my-learning/courses/${encodeURIComponent(activity.target.courseId)}/lessons/${encodeURIComponent(activity.target.lessonId)}`} variant="outline">
-            Open next lesson
+            Mở bài học tiếp theo
           </AppLink>
         </>
       );
     case "RESUME_ASSESSMENT_TASK":
       return (
         <>
-          <p>Resume the assessment task already in progress.</p>
+          <p>Tiếp tục bài tập đánh giá đang thực hiện.</p>
           <AppLink to={taskRoute(activity.target.assessmentAttemptId, activity.target.taskId)} variant="outline">
-            Resume task
+            Tiếp tục bài tập
           </AppLink>
         </>
       );
     case "OPEN_ASSESSMENT":
       return (
         <>
-          <p>Return to your assessment to continue.</p>
+          <p>Quay lại bài đánh giá để tiếp tục.</p>
           <AppLink to={`/my-learning/assessment-attempts/${encodeURIComponent(activity.target.assessmentAttemptId)}`} variant="outline">
-            Open assessment
+            Xem bài đánh giá
           </AppLink>
         </>
       );
@@ -72,21 +72,21 @@ export default function LearningGuidance() {
   const concrete = !activity.error && activity.data?.type !== "NONE" && activity.data;
   const fallback = !direction.error && direction.data;
   return (
-    <section aria-label="Learning guidance">
-      <h2>Learning guidance</h2>
+    <section lang="vi" aria-label="Hướng dẫn học tập">
+      <h2>Hướng dẫn học tập</h2>
       <ResourceState
         loading={!concrete && !fallback && (direction.isPending || activity.isPending)}
-        loadingProps={{ children: <p>Loading learning guidance...</p> }}
+        loadingProps={{ children: <p>Đang tải hướng dẫn học tập...</p> }}
       >
         {concrete ? <Activity activity={concrete} /> : fallback && <Direction direction={fallback} />}
       </ResourceState>
       {!concrete && direction.error && (
-        <div role="region" aria-label="Learning direction">
+        <div role="region" aria-label="Hướng học tập">
           <ResourceState error={direction.error} errorProps={{ onRetry: direction.refetch }} />
         </div>
       )}
       {activity.error && (
-        <div role="region" aria-label="Next activity">
+        <div role="region" aria-label="Hoạt động tiếp theo">
           <ResourceState error={activity.error} errorProps={{ onRetry: activity.refetch }} />
         </div>
       )}

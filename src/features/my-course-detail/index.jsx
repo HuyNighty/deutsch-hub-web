@@ -26,7 +26,7 @@ function MyCourseDetail() {
     >
       {course && (
         <>
-          <main className={cx("page")}>
+          <main lang="vi" className={cx("page")}>
             <MyCourseHeader course={course} />
 
             <MyCourseProgress course={course} />

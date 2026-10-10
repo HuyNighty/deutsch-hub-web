@@ -94,9 +94,9 @@ describe("authenticated learning Header IA", () => {
     expect(client.getQueryData(["learner-learning-journey"])).toBeUndefined();
 
     await user.click(myLearning);
-    const level = await screen.findByRole("region", { name: "Current German level" });
+    const level = await screen.findByRole("region", { name: "Trình độ tiếng Đức hiện tại" });
     expect(within(level).getByText("B1")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "My Learning", level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Học tập của tôi", level: 1 })).toBeInTheDocument();
     expect(router.state.location.pathname).toBe("/my-learning");
     expect(http.mock.calls.map(([config]) => [config.method, config.url, config.data]).sort())
       .toEqual([["get", journeyUrl, undefined], ["get", directionUrl, undefined], ["get", nextActivityUrl, undefined]].sort());

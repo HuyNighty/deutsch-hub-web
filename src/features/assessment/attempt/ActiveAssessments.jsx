@@ -7,14 +7,14 @@ const cx = classNames.bind(styles);
 export default function ActiveAssessments({ assessmentAttempts }) {
   if (assessmentAttempts.length === 0) return null;
   return (
-    <section aria-label="Active assessments" className={cx("components")}>
-      <h2 className={cx("cardTitle")}>Active assessments</h2>
+    <section lang="vi" aria-label="Bài đánh giá đang thực hiện" className={cx("components")}>
+      <h2 className={cx("cardTitle")}>Bài đánh giá đang thực hiện</h2>
       {assessmentAttempts.map((attempt) => (
         <article key={attempt.assessmentAttemptId} className={cx("card")}>
-          <h3 className={cx("cardTitle")}>Assessment in progress</h3>
-          <p className={cx("metadata")}>Target level: {attempt.targetLevel}</p>
+          <h3 className={cx("cardTitle")}>Bài đánh giá đang thực hiện</h3>
+          <p className={cx("metadata")}>Trình độ mục tiêu: {attempt.targetLevel}</p>
           <AppLink to={`/my-learning/assessment-attempts/${encodeURIComponent(attempt.assessmentAttemptId)}`}>
-            Continue assessment
+            Tiếp tục đánh giá
           </AppLink>
         </article>
       ))}

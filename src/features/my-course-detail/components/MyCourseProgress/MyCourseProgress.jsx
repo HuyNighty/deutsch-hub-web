@@ -5,9 +5,9 @@ import styles from "./MyCourseProgress.module.scss";
 const cx = classNames.bind(styles);
 
 const statusMap = {
-  ENROLLED: "Enrolled",
-  IN_PROGRESS: "In Progress",
-  COMPLETED: "Completed",
+  ENROLLED: "Đã đăng ký",
+  IN_PROGRESS: "Đang học",
+  COMPLETED: "Đã hoàn thành khóa học",
 };
 
 export default function MyCourseProgress({ course }) {
@@ -15,11 +15,11 @@ export default function MyCourseProgress({ course }) {
 
   return (
     <section className={cx("progress")}>
-      <h2 className={cx("heading")}>Learning Progress</h2>
+      <h2 className={cx("heading")}>Tiến độ khóa học</h2>
 
       <div className={cx("stats")}>
         <div className={cx("stat")}>
-          <span className={cx("label")}>Progress</span>
+          <span className={cx("label")}>Tiến độ</span>
           <div className={cx("progress-bar")}>
             <div
               className={cx("progress-fill")}
@@ -32,21 +32,21 @@ export default function MyCourseProgress({ course }) {
         </div>
 
         <div className={cx("stat")}>
-          <span className={cx("label")}>Lessons</span>
+          <span className={cx("label")}>Bài học</span>
           <strong className={cx("value")}>
             {course.completedLessons}/{course.totalLessons}
           </strong>
         </div>
 
         <div className={cx("stat")}>
-          <span className={cx("label")}>Study Time</span>
+          <span className={cx("label")}>Thời gian học đã ghi nhận</span>
           <strong className={cx("value")}>
-            {course.totalStudyMinutes} min
+            {course.totalStudyMinutes} phút
           </strong>
         </div>
 
         <div className={cx("stat")}>
-          <span className={cx("label")}>Status</span>
+          <span className={cx("label")}>Trạng thái</span>
           <strong className={cx("value")}>{status}</strong>
         </div>
       </div>

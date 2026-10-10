@@ -8,7 +8,7 @@ const cx = classNames.bind(styles);
 export default function MyCourseSectionList({ courseId, sections }) {
   return (
     <section className={cx("section-list")}>
-      <h2 className={cx("heading")}>Course Content</h2>
+      <h2 className={cx("heading")}>Nội dung khóa học</h2>
 
       <div className={cx("list")}>
         {sections.map((section) => (

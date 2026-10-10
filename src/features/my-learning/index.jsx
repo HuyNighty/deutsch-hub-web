@@ -14,23 +14,23 @@ function MyLearning() {
   const { data: journey, isPending, error, refetch } = useLearningJourney();
 
   return (
-    <main className={cx("page")}>
+    <main lang="vi" className={cx("page")}>
       <header className={cx("header")}>
-        <h1 className={cx("title")}>My Learning</h1>
+        <h1 className={cx("title")}>Học tập của tôi</h1>
 
-        <p className={cx("description")}>Continue your German learning journey.</p>
+        <p className={cx("description")}>Tiếp tục hành trình học tiếng Đức của bạn.</p>
       </header>
 
       <LearningGuidance />
 
       <section aria-labelledby="assessment-entry-title">
-        <h2 id="assessment-entry-title">Assessments</h2>
+        <h2 id="assessment-entry-title">Bài đánh giá</h2>
         <div className={cx("assessment-links")}>
           <AppLink to="/my-learning/assessments" variant="outline">
-            Explore available assessments
+            Khám phá bài đánh giá
           </AppLink>
           <AppLink to="/my-learning/assessment-history" variant="outline">
-            Assessment History
+            Lịch sử đánh giá
           </AppLink>
         </div>
       </section>
@@ -44,16 +44,16 @@ function MyLearning() {
       >
         {journey && (
           <>
-            <section aria-label="Current German level">
-              <h2>Current German level</h2>
-              <p>{journey.currentLevel === "UNKNOWN" ? "Not established yet" : journey.currentLevel}</p>
+            <section aria-label="Trình độ tiếng Đức hiện tại">
+              <h2>Trình độ tiếng Đức hiện tại</h2>
+              <p>{journey.currentLevel === "UNKNOWN" ? "Chưa xác định" : journey.currentLevel}</p>
             </section>
             <ActiveAssessments assessmentAttempts={journey.assessmentAttempts} />
             <ResourceState
               empty={journey.courses.length === 0}
-              emptyProps={{ title: "No courses yet", description: "Start learning your first course." }}
+              emptyProps={{ title: <span lang="vi">Bạn chưa có khóa học nào</span>, description: <span lang="vi">Bắt đầu học khóa học đầu tiên của bạn.</span> }}
             >
-              <section className={cx("courses")} aria-label="Your courses">
+              <section className={cx("courses")} aria-label="Khóa học của bạn">
                 {journey.courses.map((course) => (
                   <MyCourseCard key={course.courseId} course={course} />
                 ))}

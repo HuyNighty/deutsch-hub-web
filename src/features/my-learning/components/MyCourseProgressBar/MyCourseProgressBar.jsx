@@ -13,13 +13,13 @@ export default function MyCourseProgressBar({
     <section className={cx("progress")}>
       <div className={cx("header")}>
         <span>
-          {completedLessons} / {totalLessons} lessons
+          {completedLessons} / {totalLessons} bài học
         </span>
 
         <span>{completionPercentage}%</span>
       </div>
 
-      <progress className={cx("bar")} value={completionPercentage} max={100} />
+      <progress aria-label="Tiến độ khóa học" className={cx("bar")} value={completionPercentage} max={100} />
     </section>
   );
 }

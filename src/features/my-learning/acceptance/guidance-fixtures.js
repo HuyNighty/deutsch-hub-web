@@ -211,7 +211,7 @@ export function expectGuidanceStaleness(client, before, invalidated) {
 }
 
 export async function expectDashboard(server, app, from, label, text, href, originalQueries) {
-  const region = screen.getByRole("region", { name: "Learning guidance" });
+  const region = screen.getByRole("region", { name: "Hướng dẫn học tập" });
   const guidance = within(region);
   await guidance.findByRole("link", { name: label, exact: true });
   const canonical = server.currentModels();
@@ -224,7 +224,7 @@ export async function expectDashboard(server, app, from, label, text, href, orig
     });
   });
   expect(app.router.state.location.pathname).toBe("/my-learning");
-  expect(guidance.getByRole("heading", { name: "Learning guidance" })).toBeVisible();
+  expect(guidance.getByRole("heading", { name: "Hướng dẫn học tập" })).toBeVisible();
   expect(guidance.getByText(text)).toBeVisible();
   expect(guidance.getAllByRole("link")).toHaveLength(1);
   expect(guidance.getByRole("link", { name: label, exact: true })).toHaveAttribute("href", href);

@@ -115,7 +115,7 @@ describe("Course detail enrollment actions", () => {
     expect(requests(http)).toEqual([["get", viewerUrl]]);
 
     await user.click(button);
-    await screen.findByRole("heading", { name: "Learning Progress" });
+    await screen.findByRole("heading", { name: "Tiến độ khóa học" });
     expect(router.state.location.pathname).toBe(coursePath);
     expect(screen.getByRole("heading", { name: "Everyday German", level: 1 })).toBeVisible();
     expect(requests(http)).toEqual([["get", viewerUrl], ["get", courseUrl]]);
@@ -127,7 +127,7 @@ describe("Course detail enrollment actions", () => {
     await user.click(await screen.findByRole("button", { name: "Xem lại khóa học" }));
     const lessonLink = await screen.findByRole("link", { name: /Greetings/ });
     expect(lessonLink).toHaveAttribute("href", lessonPath("lesson-1"));
-    expect(screen.getByText("Completed", { exact: true })).toBeVisible();
+    expect(screen.getByText("Đã hoàn thành khóa học", { exact: true })).toBeVisible();
     expect(screen.getByText("100%")).toBeVisible();
 
     await user.click(lessonLink);
@@ -165,7 +165,7 @@ describe("Course detail enrollment actions", () => {
     // Anonymous bootstrap can clear/refetch the public query; no private read or mutation is allowed.
     expect(http).toHaveBeenCalled();
     expect(requests(http).every(([method, url]) => method === "get" && url === viewerUrl)).toBe(true);
-    expect(screen.queryByRole("heading", { name: "Learning Progress" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Tiến độ khóa học" })).not.toBeInTheDocument();
   });
 
   it("preserves the authenticated non-enrolled action and existing enrollment endpoint", async () => {
@@ -185,7 +185,7 @@ describe("Course detail enrollment actions", () => {
     expect(screen.getByText("Khả dụng")).toBeVisible();
     expect(screen.queryByRole("button", { name: "Xem lại khóa học" })).not.toBeInTheDocument();
     await user.click(button);
-    await screen.findByRole("heading", { name: "Learning Progress" });
+    await screen.findByRole("heading", { name: "Tiến độ khóa học" });
     expect(router.state.location.pathname).toBe(coursePath);
     expect(router.state.historyAction).toBe("REPLACE");
     expect(requests(http)).toEqual([["get", viewerUrl], ["post", enrollUrl], ["get", courseUrl]]);

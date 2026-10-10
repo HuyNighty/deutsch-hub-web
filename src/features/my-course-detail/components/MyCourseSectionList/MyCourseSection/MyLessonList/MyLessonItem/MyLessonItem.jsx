@@ -19,7 +19,7 @@ export default function MyLessonItem({ courseId, lesson }) {
         )}
 
         <span className={cx("duration")}>
-          {lesson.estimatedMinutes} minutes
+          {lesson.estimatedMinutes} phút
         </span>
       </AppLink>
     </li>

@@ -21,11 +21,11 @@ describe("My Learning active assessment boundary", () => {
       throw new Error("Unexpected request: " + config.url);
     });
     const { client, router } = mountAssessmentApp("/my-learning");
-    const region = await screen.findByRole("region", { name: "Active assessments" });
-    const links = within(region).getAllByRole("link", { name: "Continue assessment" });
-    expect(within(region).getAllByRole("heading", { name: "Assessment in progress" })).toHaveLength(2);
-    expect(within(region).getByText("Target level: B1")).toBeInTheDocument();
-    expect(within(region).getByText("Target level: C1")).toBeInTheDocument();
+    const region = await screen.findByRole("region", { name: "Bài đánh giá đang thực hiện" });
+    const links = within(region).getAllByRole("link", { name: "Tiếp tục đánh giá" });
+    expect(within(region).getAllByRole("heading", { name: "Bài đánh giá đang thực hiện", level: 3 })).toHaveLength(2);
+    expect(within(region).getByText("Trình độ mục tiêu: B1")).toBeInTheDocument();
+    expect(within(region).getByText("Trình độ mục tiêu: C1")).toBeInTheDocument();
     expect(region.textContent).not.toContain(ASSESSMENT_ID);
     expect(links.map((link) => link.getAttribute("href"))).toEqual([attemptPath, "/my-learning/assessment-attempts/second-attempt"]);
     expect(client.getQueryData(["learner-learning-journey"])).toEqual(snapshot);
@@ -40,12 +40,12 @@ describe("My Learning active assessment boundary", () => {
   it("renders no fake active card for an empty snapshot and preserves level and discovery", async () => {
     const http = assessmentHttp((config) => ok(config, journey()));
     const { client } = mountAssessmentApp("/my-learning");
-    await screen.findByText("No courses yet");
+    await screen.findByText("Bạn chưa có khóa học nào");
     expect(client.getQueryData(["learner-learning-journey"])).toEqual(journey());
-    expect(screen.queryByRole("heading", { name: "Assessment in progress" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Continue assessment" })).not.toBeInTheDocument();
-    expect(screen.getByRole("region", { name: "Current German level" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Bài đánh giá đang thực hiện" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Tiếp tục đánh giá" })).not.toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Khám phá bài đánh giá" })).toBeInTheDocument();
     expect(http).toHaveBeenCalledTimes(3);
   });
 
@@ -61,19 +61,19 @@ describe("My Learning active assessment boundary", () => {
     });
     mountAssessmentApp("/my-learning");
     expect(screen.getByText("Đang tải...")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Khám phá bài đánh giá" })).toBeInTheDocument();
     await act(async () => { read.resolve(); });
     await screen.findByText("Đã xảy ra lỗi");
     expect(screen.getAllByRole("heading", { name: "Đã xảy ra lỗi" })).toHaveLength(1);
     expect(screen.queryByText("German Basics")).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Continue assessment" })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Tiếp tục đánh giá" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Khám phá bài đánh giá" })).toBeInTheDocument();
     failed = false;
     await user.click(screen.getByRole("button", { name: "Thử lại" }));
-    await screen.findByRole("link", { name: "Continue assessment" });
-    expect(screen.getByRole("button", { name: "Continue Learning" })).toBeEnabled();
+    await screen.findByRole("link", { name: "Tiếp tục đánh giá" });
+    expect(screen.getByRole("button", { name: "Tiếp tục học" })).toBeEnabled();
     expect(http.mock.calls.map(([config]) => config.url).sort()).toEqual([journeyUrl, journeyUrl, directionUrl, nextActivityUrl].sort());
-    await user.click(screen.getByRole("link", { name: "Explore available assessments" }));
+    await user.click(screen.getByRole("link", { name: "Khám phá bài đánh giá" }));
     await screen.findByRole("link", { name: "View assessment" });
     expect(http.mock.calls.map(([config]) => config.url).sort()).toEqual([journeyUrl, journeyUrl, directionUrl, nextActivityUrl, "/me/assessments"].sort());
   });
@@ -81,10 +81,10 @@ describe("My Learning active assessment boundary", () => {
   it("keeps active resumes, current level and discovery visible with zero Courses", async () => {
     const http = assessmentHttp((config) => ok(config, journey([liveAttempt()], { currentLevel: "B1" })));
     mountAssessmentApp("/my-learning");
-    await screen.findByText("No courses yet");
-    expect(screen.getByRole("link", { name: "Continue assessment" })).toHaveAttribute("href", attemptPath);
-    expect(within(screen.getByRole("region", { name: "Current German level" })).getByText("B1")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
+    await screen.findByText("Bạn chưa có khóa học nào");
+    expect(screen.getByRole("link", { name: "Tiếp tục đánh giá" })).toHaveAttribute("href", attemptPath);
+    expect(within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).getByText("B1")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Khám phá bài đánh giá" })).toBeInTheDocument();
     expect(http).toHaveBeenCalledTimes(3);
   });
 
@@ -93,8 +93,8 @@ describe("My Learning active assessment boundary", () => {
     mountAssessmentApp("/my-learning");
     await screen.findByText("Đã xảy ra lỗi");
     expect(screen.queryByText("German Basics")).not.toBeInTheDocument();
-    expect(screen.queryByRole("region", { name: "Current German level" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Continue assessment" })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Tiếp tục đánh giá" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Khám phá bài đánh giá" })).toBeInTheDocument();
   });
 });

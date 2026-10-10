@@ -12,7 +12,7 @@ import { getLearningDirection } from "./direction.service";
 const snapshot = () => journey([liveAttempt()], { currentLevel: "B2", courses: [courseSnapshot()] });
 const requests = (http) => http.mock.calls.map(([config]) => [config.method, config.url, config.data]).sort();
 const expected = (...urls) => urls.map((url) => ["get", url, undefined]).sort();
-const guidance = () => within(screen.getByRole("region", { name: "Learning guidance" }));
+const guidance = () => within(screen.getByRole("region", { name: "Hướng dẫn học tập" }));
 function readHttp(direction, journeyHandler = (config) => ok(config, snapshot())) {
   return assessmentHttp((config) => {
     if (config.url === nextActivityUrl) return ok(config, noActivity);
@@ -23,16 +23,16 @@ function readHttp(direction, journeyHandler = (config) => ok(config, snapshot())
 }
 function expectJourney() {
   expect(screen.getByText("German Basics")).toBeVisible();
-  expect(within(screen.getByRole("region", { name: "Current German level" })).getByText("B2")).toBeVisible();
-  expect(screen.getByRole("region", { name: "Active assessments" })).toBeVisible();
-  expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeVisible();
+  expect(within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).getByText("B2")).toBeVisible();
+  expect(screen.getByRole("region", { name: "Bài đánh giá đang thực hiện" })).toBeVisible();
+  expect(screen.getByRole("link", { name: "Khám phá bài đánh giá" })).toBeVisible();
 }
 
 describe("Learning Guidance independent resource", () => {
   it.each([
-    [{ type: "RESUME_ASSESSMENT", target: { assessmentAttemptId: "absent /?#" } }, "You have an assessment in progress.", "Continue assessment", "/my-learning/assessment-attempts/absent%20%2F%3F%23"],
-    [{ type: "CONTINUE_COURSE", target: { courseId: "absent /?#" } }, "Continue the course you are currently working on.", "Continue course", "/my-learning/courses/absent%20%2F%3F%23"],
-    [discoverDirection, "Choose a course to begin or continue your German learning.", "Explore courses", "/learn-german"],
+    [{ type: "RESUME_ASSESSMENT", target: { assessmentAttemptId: "absent /?#" } }, "Bạn đang thực hiện một bài đánh giá.", "Tiếp tục đánh giá", "/my-learning/assessment-attempts/absent%20%2F%3F%23"],
+    [{ type: "CONTINUE_COURSE", target: { courseId: "absent /?#" } }, "Tiếp tục khóa học bạn đang học.", "Tiếp tục học", "/my-learning/courses/absent%20%2F%3F%23"],
+    [discoverDirection, "Chọn một khóa học để bắt đầu hoặc tiếp tục học tiếng Đức.", "Khám phá khóa học", "/learn-german"],
   ])("renders Backend-selected %j without inference, enrichment or navigation", async (direction, text, label, href) => {
     const http = readHttp(direction);
     const { router, client } = mountAssessmentApp("/my-learning");
@@ -45,11 +45,11 @@ describe("Learning Guidance independent resource", () => {
     expect(client.getQueryData(learningDirectionKey)).toEqual(direction);
     expect(learningDirectionOptions).toMatchObject({ queryKey: learningDirectionKey, queryFn: getLearningDirection, retry: false });
     expect(requests(http)).toEqual(expected(journeyUrl, nextActivityUrl, directionUrl));
-    const page = screen.getByRole("heading", { name: "My Learning", level: 1 }).closest("main");
+    const page = screen.getByRole("heading", { name: "Học tập của tôi", level: 1 }).closest("main");
     const sections = [...page.children];
-    expect(sections.indexOf(screen.getByRole("region", { name: "Learning guidance" })))
-      .toBeLessThan(sections.indexOf(screen.getByRole("region", { name: "Assessments" })));
-    expect(page.textContent).not.toMatch(/next activity|next step|recommended|do this now|AI recommendation/i);
+    expect(sections.indexOf(screen.getByRole("region", { name: "Hướng dẫn học tập" })))
+      .toBeLessThan(sections.indexOf(screen.getByRole("region", { name: "Bài đánh giá" })));
+    expect(page.textContent).not.toMatch(/next activity|next step|recommended|do this now|AI recommendation|hoạt động tiếp theo|bước tiếp theo|khuyến nghị|làm ngay|AI|tối ưu/i);
   });
 
   it("keeps Journey and discovery usable while Direction is pending", async () => {
@@ -57,11 +57,11 @@ describe("Learning Guidance independent resource", () => {
     const http = readHttp((config) => gate.promise.then(() => ok(config, discoverDirection)));
     mountAssessmentApp("/my-learning");
     await screen.findByText("German Basics");
-    expect(guidance().getByText("Loading learning guidance...")).toBeVisible();
+    expect(guidance().getByText("Đang tải hướng dẫn học tập...")).toBeVisible();
     expectJourney();
     expect(requests(http)).toEqual(expected(journeyUrl, nextActivityUrl, directionUrl));
     await act(async () => { gate.resolve(); });
-    expect(await guidance().findByRole("link", { name: "Explore courses" })).toBeVisible();
+    expect(await guidance().findByRole("link", { name: "Khám phá khóa học" })).toBeVisible();
   });
 
   it("isolates Direction failure and retries only Direction while retaining Journey", async () => {
@@ -74,7 +74,7 @@ describe("Learning Guidance independent resource", () => {
     expect(requests(http)).toEqual(expected(journeyUrl, nextActivityUrl, directionUrl));
     failed = false;
     await userEvent.setup().click(guidance().getByRole("button", { name: "Thử lại" }));
-    await guidance().findByRole("link", { name: "Explore courses" });
+    await guidance().findByRole("link", { name: "Khám phá khóa học" });
     expectJourney();
     expect(requests(http)).toEqual(expected(journeyUrl, nextActivityUrl, directionUrl, directionUrl));
   });
@@ -82,10 +82,10 @@ describe("Learning Guidance independent resource", () => {
   it("keeps Direction actionable when Journey fails", async () => {
     const http = readHttp(discoverDirection, (config) => fail(config, 500));
     mountAssessmentApp("/my-learning");
-    expect(await guidance().findByRole("link", { name: "Explore courses" })).toBeVisible();
+    expect(await guidance().findByRole("link", { name: "Khám phá khóa học" })).toBeVisible();
     await screen.findByRole("button", { name: "Thử lại" });
     expect(guidance().queryByRole("button", { name: "Thử lại" })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Khám phá bài đánh giá" })).toBeVisible();
     expect(requests(http)).toEqual(expected(journeyUrl, nextActivityUrl, directionUrl));
   });
 

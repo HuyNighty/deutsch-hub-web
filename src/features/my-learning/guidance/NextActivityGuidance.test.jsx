@@ -9,7 +9,7 @@ import { nextActivityUrl, noActivity } from "@/test/next-activity-fixtures";
 import { nextActivityKey, nextActivityOptions } from "./hooks/useNextActivity";
 import { getNextActivity } from "./next-activity.service";
 
-const guidance = () => within(screen.getByRole("region", { name: "Learning guidance" }));
+const guidance = () => within(screen.getByRole("region", { name: "Hướng dẫn học tập" }));
 const requests = (http) => http.mock.calls.map(([config]) => [config.method, config.url, config.data]).sort();
 const expected = (...urls) => urls.map((url) => ["get", url, undefined]).sort();
 const coldReads = [journeyUrl, directionUrl, nextActivityUrl];
@@ -34,29 +34,29 @@ function guidanceHttp(activity, direction = differentDirection, snapshot = journ
 
 function expectJourney() {
   expect(screen.getByText("German Basics")).toBeVisible();
-  expect(within(screen.getByRole("region", { name: "Current German level" })).getByText("B2")).toBeVisible();
-  expect(screen.getByRole("region", { name: "Active assessments" })).toBeVisible();
-  expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeVisible();
+  expect(within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).getByText("B2")).toBeVisible();
+  expect(screen.getByRole("region", { name: "Bài đánh giá đang thực hiện" })).toBeVisible();
+  expect(screen.getByRole("link", { name: "Khám phá bài đánh giá" })).toBeVisible();
 }
 
 describe("Learning Guidance concrete activity refinement", () => {
   it.each([
-    [lesson, "Continue with your next lesson.", "Open next lesson", "/my-learning/courses/course%20%2F%3F%23/lessons/lesson%20%2F%3F%23"],
-    [task, "Resume the assessment task already in progress.", "Resume task", "/my-learning/assessment-attempts/attempt%20%2F%3F%23/tasks/task%20%2F%3F%23"],
-    [assessment, "Return to your assessment to continue.", "Open assessment", "/my-learning/assessment-attempts/attempt%20%2F%3F%23"],
+    [lesson, "Tiếp tục với bài học tiếp theo của bạn.", "Mở bài học tiếp theo", "/my-learning/courses/course%20%2F%3F%23/lessons/lesson%20%2F%3F%23"],
+    [task, "Tiếp tục bài tập đánh giá đang thực hiện.", "Tiếp tục bài tập", "/my-learning/assessment-attempts/attempt%20%2F%3F%23/tasks/task%20%2F%3F%23"],
+    [assessment, "Quay lại bài đánh giá để tiếp tục.", "Xem bài đánh giá", "/my-learning/assessment-attempts/attempt%20%2F%3F%23"],
   ])("renders canonical %j despite different Direction/Journey, with one CTA and no enrichment", async (activity, text, label, href) => {
     const http = guidanceHttp(activity);
     const { client, router } = mountAssessmentApp("/my-learning");
     await guidance().findByRole("link", { name: label });
     await screen.findByText("German Basics");
-    expect(guidance().getByRole("heading", { name: "Learning guidance" })).toBeVisible();
+    expect(guidance().getByRole("heading", { name: "Hướng dẫn học tập" })).toBeVisible();
     expect(guidance().getByText(text)).toBeVisible();
     expect(guidance().getAllByRole("link")).toHaveLength(1);
     const link = guidance().getByRole("link", { name: label });
     expect(link).toHaveAttribute("href", href);
     expect(link.getAttribute("href")).not.toContain(task.target.quizAttemptId);
     expect(link.getAttribute("href")).not.toContain(differentDirection.target.courseId);
-    expect(guidance().queryByRole("link", { name: "Continue course" })).not.toBeInTheDocument();
+    expect(guidance().queryByRole("link", { name: "Tiếp tục học" })).not.toBeInTheDocument();
     expect(client.getQueryData(nextActivityKey)).toEqual(activity);
     expect(nextActivityOptions).toMatchObject({ queryKey: nextActivityKey, queryFn: getNextActivity, retry: false });
     expect(router.state.location.pathname).toBe("/my-learning");
@@ -65,16 +65,16 @@ describe("Learning Guidance concrete activity refinement", () => {
   });
 
   it.each([
-    [{ type: "RESUME_ASSESSMENT", target: { assessmentAttemptId: "coarse-attempt" } }, "Continue assessment"],
-    [differentDirection, "Continue course"],
-    [discoverDirection, "Explore courses"],
+    [{ type: "RESUME_ASSESSMENT", target: { assessmentAttemptId: "coarse-attempt" } }, "Tiếp tục đánh giá"],
+    [differentDirection, "Tiếp tục học"],
+    [discoverDirection, "Khám phá khóa học"],
   ])("uses Direction %j as NONE fallback without completion inference", async (direction, label) => {
     const http = guidanceHttp(noActivity, direction);
     mountAssessmentApp("/my-learning");
     await guidance().findByRole("link", { name: label });
     expect(guidance().getAllByRole("link")).toHaveLength(1);
-    expect(screen.getByRole("region", { name: "Learning guidance" }).textContent)
-      .not.toMatch(/NONE|complete|nothing left|no work|no recommendation/i);
+    expect(screen.getByRole("region", { name: "Hướng dẫn học tập" }).textContent)
+      .not.toMatch(/NONE|complete|nothing left|no work|no recommendation|hoàn thành|không còn|không có việc|không có khuyến nghị/i);
     expect(requests(http)).toEqual(expected(...coldReads));
   });
 
@@ -82,13 +82,13 @@ describe("Learning Guidance concrete activity refinement", () => {
     const gate = deferred();
     const http = guidanceHttp((config) => gate.promise.then(() => ok(config, lesson)));
     mountAssessmentApp("/my-learning");
-    expect(await guidance().findByRole("link", { name: "Continue course" })).toBeVisible();
-    expect(guidance().queryByText("Loading learning guidance...")).not.toBeInTheDocument();
+    expect(await guidance().findByRole("link", { name: "Tiếp tục học" })).toBeVisible();
+    expect(guidance().queryByText("Đang tải hướng dẫn học tập...")).not.toBeInTheDocument();
     expect(requests(http)).toEqual(expected(...coldReads));
     await act(async () => { gate.resolve(); });
-    await guidance().findByRole("link", { name: "Open next lesson" });
+    await guidance().findByRole("link", { name: "Mở bài học tiếp theo" });
     expect(guidance().getAllByRole("link")).toHaveLength(1);
-    expect(guidance().queryByRole("link", { name: "Continue course" })).not.toBeInTheDocument();
+    expect(guidance().queryByRole("link", { name: "Tiếp tục học" })).not.toBeInTheDocument();
   });
 
   it("reads all three resources independently while neither guidance resource has usable data", async () => {
@@ -100,11 +100,11 @@ describe("Learning Guidance concrete activity refinement", () => {
     );
     mountAssessmentApp("/my-learning");
     await screen.findByText("German Basics");
-    expect(guidance().getByText("Loading learning guidance...")).toBeVisible();
+    expect(guidance().getByText("Đang tải hướng dẫn học tập...")).toBeVisible();
     expectJourney();
     expect(requests(http)).toEqual(expected(...coldReads));
     await act(async () => { activityGate.resolve(); });
-    expect(await guidance().findByRole("link", { name: "Open next lesson" })).toBeVisible();
+    expect(await guidance().findByRole("link", { name: "Mở bài học tiếp theo" })).toBeVisible();
     await act(async () => { directionGate.resolve(); });
     expect(guidance().getAllByRole("link")).toHaveLength(1);
   });
@@ -113,23 +113,23 @@ describe("Learning Guidance concrete activity refinement", () => {
     let failed = true;
     const http = guidanceHttp((config) => failed ? fail(config, 500) : ok(config, lesson));
     mountAssessmentApp("/my-learning");
-    const recovery = await screen.findByRole("region", { name: "Next activity" });
-    expect(await guidance().findByRole("link", { name: "Continue course" })).toBeVisible();
+    const recovery = await screen.findByRole("region", { name: "Hoạt động tiếp theo" });
+    expect(await guidance().findByRole("link", { name: "Tiếp tục học" })).toBeVisible();
     await screen.findByText("German Basics");
     expectJourney();
     expect(requests(http)).toEqual(expected(...coldReads));
     failed = false;
     await userEvent.setup().click(within(recovery).getByRole("button", { name: "Thử lại" }));
-    await guidance().findByRole("link", { name: "Open next lesson" });
+    await guidance().findByRole("link", { name: "Mở bài học tiếp theo" });
     expect(guidance().getAllByRole("link")).toHaveLength(1);
-    expect(screen.queryByRole("region", { name: "Next activity" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Hoạt động tiếp theo" })).not.toBeInTheDocument();
     expect(requests(http)).toEqual(expected(...coldReads, nextActivityUrl));
   });
 
   it("keeps actionable Activity usable when Direction fails", async () => {
     const http = guidanceHttp(task, (config) => fail(config, 500));
     mountAssessmentApp("/my-learning");
-    expect(await guidance().findByRole("link", { name: "Resume task" })).toBeVisible();
+    expect(await guidance().findByRole("link", { name: "Tiếp tục bài tập" })).toBeVisible();
     await screen.findByText("German Basics");
     expect(guidance().getAllByRole("link")).toHaveLength(1);
     expectJourney();
@@ -139,7 +139,7 @@ describe("Learning Guidance concrete activity refinement", () => {
   it("keeps actionable Activity usable when Journey fails", async () => {
     const http = guidanceHttp(assessment, differentDirection, (config) => fail(config, 500));
     mountAssessmentApp("/my-learning");
-    expect(await guidance().findByRole("link", { name: "Open assessment" })).toBeVisible();
+    expect(await guidance().findByRole("link", { name: "Xem bài đánh giá" })).toBeVisible();
     await screen.findByRole("button", { name: "Thử lại" });
     expect(guidance().queryByRole("button", { name: "Thử lại" })).not.toBeInTheDocument();
     expect(requests(http)).toEqual(expected(...coldReads));
@@ -148,8 +148,8 @@ describe("Learning Guidance concrete activity refinement", () => {
   it("rejects malformed 2xx Activity with focused recovery, Direction fallback and no guessed navigation", async () => {
     const http = guidanceHttp({ type: "RESUME_ASSESSMENT_TASK", target: { assessmentAttemptId: "attempt", taskId: "task" } });
     const { client, router } = mountAssessmentApp("/my-learning");
-    await screen.findByRole("region", { name: "Next activity" });
-    expect(await guidance().findByRole("link", { name: "Continue course" })).toBeVisible();
+    await screen.findByRole("region", { name: "Hoạt động tiếp theo" });
+    expect(await guidance().findByRole("link", { name: "Tiếp tục học" })).toBeVisible();
     await screen.findByText("German Basics");
     expect(client.getQueryState(nextActivityKey).error.message).toBe("The server returned an invalid next activity response.");
     expect(guidance().getAllByRole("link")).toHaveLength(1);
@@ -166,16 +166,16 @@ describe("Learning Guidance concrete activity refinement", () => {
       (config) => directionFailed ? fail(config, 500) : ok(config, differentDirection),
     );
     mountAssessmentApp("/my-learning");
-    const coarseRecovery = await screen.findByRole("region", { name: "Learning direction" });
-    await screen.findByRole("region", { name: "Next activity" });
+    const coarseRecovery = await screen.findByRole("region", { name: "Hướng học tập" });
+    await screen.findByRole("region", { name: "Hoạt động tiếp theo" });
     expect(guidance().queryByRole("link")).not.toBeInTheDocument();
     directionFailed = false;
     await userEvent.setup().click(within(coarseRecovery).getByRole("button", { name: "Thử lại" }));
-    await guidance().findByRole("link", { name: "Continue course" });
+    await guidance().findByRole("link", { name: "Tiếp tục học" });
     expect(requests(http)).toEqual(expected(...coldReads, directionUrl));
     activityFailed = false;
-    await userEvent.setup().click(within(screen.getByRole("region", { name: "Next activity" })).getByRole("button", { name: "Thử lại" }));
-    await guidance().findByRole("link", { name: "Open next lesson" });
+    await userEvent.setup().click(within(screen.getByRole("region", { name: "Hoạt động tiếp theo" })).getByRole("button", { name: "Thử lại" }));
+    await guidance().findByRole("link", { name: "Mở bài học tiếp theo" });
     expect(requests(http)).toEqual(expected(...coldReads, directionUrl, nextActivityUrl));
   });
 });

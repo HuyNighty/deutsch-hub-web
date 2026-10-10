@@ -224,13 +224,13 @@ describe("Learner Assessment History production route", () => {
       throw new Error(`Unexpected dashboard request: ${config.url}`);
     })));
     const { router, client } = mountAssessmentApp("/my-learning");
-    if (state === "empty") await screen.findByText("No courses yet");
+    if (state === "empty") await screen.findByText("Bạn chưa có khóa học nào");
     if (state === "failed") await screen.findByText("Đã xảy ra lỗi");
     if (state === "active") {
-      expect(await screen.findByRole("link", { name: "Continue assessment" })).toHaveAttribute("href", attemptPath);
+      expect(await screen.findByRole("link", { name: "Tiếp tục đánh giá" })).toHaveAttribute("href", attemptPath);
     }
-    expect(screen.getByRole("link", { name: "Explore available assessments" })).toHaveAttribute("href", "/my-learning/assessments");
-    const entry = screen.getByRole("link", { name: "Assessment History" });
+    expect(screen.getByRole("link", { name: "Khám phá bài đánh giá" })).toHaveAttribute("href", "/my-learning/assessments");
+    const entry = screen.getByRole("link", { name: "Lịch sử đánh giá" });
     expect(entry).toHaveAttribute("href", HISTORY_PATH);
     await waitFor(() => expect(http).toHaveBeenCalledTimes(3));
     expect(http.mock.calls.map(([config]) => config.url).sort()).toEqual([journeyUrl, directionUrl, nextActivityUrl].sort());

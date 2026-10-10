@@ -20,7 +20,7 @@ export default function MyCourseCard({ course }) {
       <header className={cx("header")}>
         <h2 className={cx("title")}>{course.title}</h2>
 
-        <p className={cx("description")}>Course level: {course.level}</p>
+        <p className={cx("description")}>Trình độ khóa học: {course.level}</p>
       </header>
 
       <MyCourseProgressBar
@@ -31,7 +31,7 @@ export default function MyCourseCard({ course }) {
 
       <footer className={cx("footer")}>
         <Button variant="outline" onClick={handleContinue}>
-          Continue Learning
+          Tiếp tục học
         </Button>
       </footer>
     </article>
