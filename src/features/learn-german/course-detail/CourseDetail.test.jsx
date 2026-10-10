@@ -169,12 +169,12 @@ describe("Course detail enrollment actions", () => {
   it("keeps loading content until the viewer response confirms the enrollment state", async () => {
     const response = deferred();
     const { http } = mountCourse({ handler: () => response.promise });
-    expect(screen.getByText("Loading...")).toBeVisible();
+    expect(screen.getByText("Đang tải...")).toBeVisible();
     expect(screen.queryByRole("button", { name: "Review course" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Enroll course" })).not.toBeInTheDocument();
     await act(async () => response.resolve(ok(http.mock.calls[0][0], courseDetail())));
     expect(await screen.findByRole("button", { name: "Review course" })).toBeVisible();
-    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    expect(screen.queryByText("Đang tải...")).not.toBeInTheDocument();
     expect(requests(http)).toEqual([["get", viewerUrl]]);
   });
 
@@ -184,17 +184,17 @@ describe("Course detail enrollment actions", () => {
       attempts += 1;
       return attempts === 1 ? fail(config, 500) : ok(config, courseDetail());
     } });
-    await screen.findByRole("heading", { name: "Something went wrong" });
+    await screen.findByRole("heading", { name: "Đã xảy ra lỗi" });
     expect(screen.queryByRole("button", { name: "Review course" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Enroll course" })).not.toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Try Again" }));
+    await user.click(screen.getByRole("button", { name: "Thử lại" }));
     expect(await screen.findByRole("button", { name: "Review course" })).toBeVisible();
     expect(requests(http)).toEqual([["get", viewerUrl], ["get", viewerUrl]]);
   });
 
   it("preserves not-found course handling without rendering an action", async () => {
     const { http } = mountCourse({ handler: (config) => fail(config, 404) });
-    await screen.findByRole("heading", { name: "Resource Not Found" });
+    await screen.findByRole("heading", { name: "Không tìm thấy tài nguyên" });
     expect(screen.queryByRole("button", { name: "Review course" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Enroll course" })).not.toBeInTheDocument();
     expect(requests(http)).toEqual([["get", viewerUrl]]);

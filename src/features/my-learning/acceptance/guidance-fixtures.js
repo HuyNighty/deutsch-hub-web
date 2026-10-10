@@ -234,8 +234,8 @@ export async function expectDashboard(server, app, from, label, text, href, orig
 export async function returnToDashboard(user, server) {
   server.allowReads(TRIAD_URLS);
   const from = server.http.mock.calls.length;
-  const header = screen.getByRole("navigation", { name: "Main navigation" }).closest("header");
-  await user.click(within(header).getByRole("link", { name: "My Learning", exact: true }));
+  const header = screen.getByRole("navigation", { name: "Điều hướng chính" }).closest("header");
+  await user.click(within(header).getByRole("link", { name: "Học tập của tôi", exact: true }));
   return from;
 }
 

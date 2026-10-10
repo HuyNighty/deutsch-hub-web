@@ -114,7 +114,7 @@ describe("My Learning canonical Journey snapshot", () => {
       throw new Error("Unexpected loading-state request: " + config.url);
     });
     const { router } = mountAssessmentApp("/my-learning");
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(screen.getByText("Đang tải...")).toBeInTheDocument();
     await user.click(screen.getByRole("link", { name: "Explore available assessments" }));
     await screen.findByRole("link", { name: "View assessment" });
     expect(router.state.location.pathname).toBe("/my-learning/assessments");
@@ -127,12 +127,12 @@ describe("My Learning canonical Journey snapshot", () => {
     let failed = true;
     const http = assessmentHttp((config) => failed ? fail(config, 500) : ok(config, journey([], { currentLevel: "B1", courses: [courseSnapshot()] })));
     mountAssessmentApp("/my-learning");
-    await screen.findByText("Something went wrong");
-    expect(screen.getAllByRole("heading", { name: "Something went wrong" })).toHaveLength(1);
+    await screen.findByText("Đã xảy ra lỗi");
+    expect(screen.getAllByRole("heading", { name: "Đã xảy ra lỗi" })).toHaveLength(1);
     expectNoPartialSnapshot();
     expectSnapshotReads(http);
     failed = false;
-    await user.click(screen.getByRole("button", { name: "Try Again" }));
+    await user.click(screen.getByRole("button", { name: "Thử lại" }));
     await screen.findByText("German Basics");
     expect(within(screen.getByRole("region", { name: "Current German level" })).getByText("B1")).toBeInTheDocument();
     expectSnapshotReads(http, 2);
@@ -146,7 +146,7 @@ describe("My Learning canonical Journey snapshot", () => {
   ])("rejects invalid %s without partially rendering otherwise-valid snapshot data", async (_, snapshot) => {
     const http = assessmentHttp((config) => ok(config, snapshot));
     const { client } = mountAssessmentApp("/my-learning");
-    await screen.findByText("Something went wrong");
+    await screen.findByText("Đã xảy ra lỗi");
     expectNoPartialSnapshot();
     expect(client.getQueryData(["learner-learning-journey"])).toBeUndefined();
     expectSnapshotReads(http);
@@ -161,7 +161,7 @@ describe("My Learning canonical Journey snapshot", () => {
     await screen.findByText("German Basics");
     valid = false;
     await act(async () => { await client.refetchQueries({ queryKey: ["learner-learning-journey"], exact: true }); });
-    await screen.findByText("Something went wrong");
+    await screen.findByText("Đã xảy ra lỗi");
     expectNoPartialSnapshot();
     expectSnapshotReads(http, 2);
   });

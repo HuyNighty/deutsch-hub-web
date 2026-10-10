@@ -14,22 +14,22 @@ const cx = classNames.bind(styles);
 
 const navigationItems = [
   {
-    label: "Learning",
+    label: "Học tiếng Đức",
     path: "/learn-german",
     color: "learning",
   },
   {
-    label: "Content",
+    label: "Khám phá nước Đức",
     path: "/explore-germany",
     color: "content",
   },
   {
-    label: "Study",
+    label: "Du học Đức",
     path: "/study-in-germany",
     color: "study",
   },
   {
-    label: "Communication",
+    label: "Giao lưu",
     path: "/experiences",
     color: "communication",
   },
@@ -81,13 +81,14 @@ export default function Header() {
 
   return (
     <header
+      lang="vi"
       className={cx("header", {
         overlay: isOverlay,
         solid: !isOverlay,
       })}
     >
       <div className={cx("container")}>
-        <Link to="/" className={cx("brand")} aria-label="DeutschHub Home">
+        <Link to="/" className={cx("brand")} aria-label="Trang chủ DeutschHub">
           <span className={cx("brand-mark")}>D</span>
 
           <span className={cx("brand-name")}>
@@ -95,7 +96,7 @@ export default function Header() {
           </span>
         </Link>
 
-        <nav className={cx("navigation")} aria-label="Main navigation">
+        <nav className={cx("navigation")} aria-label="Điều hướng chính">
           {navigationItems.map((item) => (
             <NavLink
               key={item.path}
@@ -115,37 +116,37 @@ export default function Header() {
           {isAuthenticated ? (
             <>
               <AppLink to="/my-learning" variant="outline">
-                My Learning
+                Học tập của tôi
               </AppLink>
 
               <AppLink to="/my-learning/assessments" variant="outline" className={cx("assessment-shortcut")}>
-                Assessments
+                Bài đánh giá
               </AppLink>
 
               <Button
                 type="button"
                 className={cx("icon-button")}
-                aria-label="Notifications"
+                aria-label="Thông báo"
               >
                 🔔
               </Button>
 
-              <AppLink to="/account" className={cx("user")}>
+              <AppLink to="/account" className={cx("user")} aria-label="Tài khoản">
                 <span className={cx("avatar")}>
                   {user?.id?.charAt(0)?.toUpperCase() ?? "U"}
                 </span>
 
-                <span className={cx("user-name")}>Account</span>
+                <span className={cx("user-name")}>Tài khoản</span>
               </AppLink>
             </>
           ) : (
             <>
               <AppLink to="/login" variant="outline">
-                Login
+                Đăng nhập
               </AppLink>
 
               <AppLink to="/register" variant="primary">
-                Get started
+                Đăng ký
               </AppLink>
             </>
           )}

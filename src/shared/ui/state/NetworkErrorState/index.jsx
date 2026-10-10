@@ -1,13 +1,13 @@
 function NetworkErrorState({ onRetry }) {
   return (
     <>
-      <h2>Connection Error</h2>
+      <h2 lang="vi">Lỗi kết nối</h2>
 
-      <p>
-        Unable to connect to the server. Please check your internet connection.
+      <p lang="vi">
+        Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối internet của bạn.
       </p>
 
-      {onRetry && <button onClick={onRetry}>Try Again</button>}
+      {onRetry && <button lang="vi" onClick={onRetry}>Thử lại</button>}
     </>
   );
 }

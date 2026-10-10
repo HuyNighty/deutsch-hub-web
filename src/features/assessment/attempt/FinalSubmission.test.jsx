@@ -103,7 +103,7 @@ describe("Parent finalization", () => {
     expect(screen.getByText("Status: In progress")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Submit assessment" })).not.toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-    expect(screen.queryByText("Something went wrong")).not.toBeInTheDocument();
+    expect(screen.queryByText("Đã xảy ra lỗi")).not.toBeInTheDocument();
     for (const key of execution) expect(client.getQueryState(key).isInvalidated).toBe(true);
     expect(finalRequests(http)).toHaveLength(1);
     expect(parentReads(http)).toHaveLength(2);

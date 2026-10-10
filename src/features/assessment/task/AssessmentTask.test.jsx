@@ -82,7 +82,7 @@ describe("Assessment Task runtime", () => {
   ])("rejects malformed runtime %s without partial Questions", async (_, runtime) => {
     runtimeHttp(runtime);
     const { client } = mountAssessmentApp(TASK_PATH);
-    await screen.findByText("Something went wrong");
+    await screen.findByText("Đã xảy ra lỗi");
     expect(screen.queryByRole("radio")).not.toBeInTheDocument();
     expect(screen.queryByText("Choose a greeting.")).not.toBeInTheDocument();
     expect(client.getQueryData(TASK_KEY)).toBeUndefined();
@@ -91,7 +91,7 @@ describe("Assessment Task runtime", () => {
   it.each(["missing task", "invalid definition"])("rejects stable context with %s", async (kind) => {
     runtimeHttp(taskRuntime(), kind === "missing task" ? assessmentDetail({ components: [] }) : assessmentDetail({ targetLevel: "UNKNOWN" }));
     mountAssessmentApp(TASK_PATH);
-    await screen.findByText("Something went wrong");
+    await screen.findByText("Đã xảy ra lỗi");
     expect(screen.queryByRole("radio")).not.toBeInTheDocument();
   });
 
@@ -105,13 +105,13 @@ describe("Assessment Task runtime", () => {
     const { client } = mountAssessmentApp(TASK_PATH);
     const completed = pending === "runtime" ? ["learner-assessment-attempt-definition", ATTEMPT_ID] : TASK_KEY;
     await waitFor(() => expect(client.getQueryData(completed)).toBeDefined());
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(screen.getByText("Đang tải...")).toBeInTheDocument();
     expect(screen.queryByRole("radio")).not.toBeInTheDocument();
     await act(async () => { read.resolve(); });
     await screen.findByRole("radio", { name: "Hallo" });
   });
 
-  it.each([[403, "Access Denied"], [404, "Resource Not Found"]])(
+  it.each([[403, "Không có quyền truy cập"], [404, "Không tìm thấy tài nguyên"]])(
     "handles direct unbound/foreign Task %s without auto-start or session termination", async (status, copy) => {
       const user = userEvent.setup();
       const http = assessmentHttp((config) => {

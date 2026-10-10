@@ -3,7 +3,7 @@ function LoadingState({ children }) {
     return children;
   }
 
-  return <>Loading...</>;
+  return <span lang="vi">Đang tải...</span>;
 }
 
 export default LoadingState;

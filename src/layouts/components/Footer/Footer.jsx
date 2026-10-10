@@ -7,22 +7,22 @@ const cx = classNames.bind(styles);
 
 const featureLinks = [
   {
-    label: "Learning",
+    label: "Học tiếng Đức",
     to: "/learn-german",
     color: "learning",
   },
   {
-    label: "Content",
+    label: "Khám phá nước Đức",
     to: "/explore-germany",
     color: "content",
   },
   {
-    label: "Study",
+    label: "Du học Đức",
     to: "/study-in-germany",
     color: "study",
   },
   {
-    label: "Communication",
+    label: "Giao lưu",
     to: "/experiences",
     color: "communication",
   },
@@ -30,37 +30,37 @@ const featureLinks = [
 
 const platformLinks = [
   {
-    label: "About DeutschHub",
+    label: "Về DeutschHub",
     to: "/",
   },
   {
-    label: "Account",
+    label: "Tài khoản",
     to: "/account",
   },
 ];
 
 export default function Footer() {
   return (
-    <footer className={cx("footer")}>
+    <footer className={cx("footer")} lang="vi">
       <div className={cx("container")}>
         <div className={cx("main")}>
           <div className={cx("brand-section")}>
-            <AppLink to="/" variant="dark" className={cx("brand")}>
+            <AppLink to="/" variant="dark" className={cx("brand")} aria-label="Trang chủ DeutschHub">
               <span className={cx("brand-mark")}>D</span>
 
               <span className={cx("brand-name")}>DeutschHub</span>
             </AppLink>
 
             <p className={cx("description")}>
-              Learn German, understand Germany, and build your future in one
-              connected place.
+              Học tiếng Đức, tìm hiểu nước Đức và xây dựng tương lai của bạn
+              trên cùng một nền tảng.
             </p>
           </div>
 
           <div className={cx("link-group")}>
-            <h2>Explore</h2>
+            <h2>Khám phá</h2>
 
-            <nav aria-label="Feature navigation">
+            <nav aria-label="Điều hướng tính năng">
               <ul>
                 {featureLinks.map((link) => (
                   <li key={link.to}>
@@ -80,7 +80,7 @@ export default function Footer() {
           <div className={cx("link-group")}>
             <h2>DeutschHub</h2>
 
-            <nav aria-label="Platform navigation">
+            <nav aria-label="Điều hướng DeutschHub">
               <ul>
                 {platformLinks.map((link) => (
                   <li key={link.to}>
@@ -101,7 +101,7 @@ export default function Footer() {
         <div className={cx("bottom")}>
           <span>© 2026 DeutschHub</span>
 
-          <span>Learn · Discover · Connect</span>
+          <span>Học tập · Khám phá · Kết nối</span>
         </div>
       </div>
     </footer>

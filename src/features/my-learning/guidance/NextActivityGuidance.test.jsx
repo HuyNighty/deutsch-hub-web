@@ -119,7 +119,7 @@ describe("Learning Guidance concrete activity refinement", () => {
     expectJourney();
     expect(requests(http)).toEqual(expected(...coldReads));
     failed = false;
-    await userEvent.setup().click(within(recovery).getByRole("button", { name: "Try Again" }));
+    await userEvent.setup().click(within(recovery).getByRole("button", { name: "Thử lại" }));
     await guidance().findByRole("link", { name: "Open next lesson" });
     expect(guidance().getAllByRole("link")).toHaveLength(1);
     expect(screen.queryByRole("region", { name: "Next activity" })).not.toBeInTheDocument();
@@ -140,8 +140,8 @@ describe("Learning Guidance concrete activity refinement", () => {
     const http = guidanceHttp(assessment, differentDirection, (config) => fail(config, 500));
     mountAssessmentApp("/my-learning");
     expect(await guidance().findByRole("link", { name: "Open assessment" })).toBeVisible();
-    await screen.findByRole("button", { name: "Try Again" });
-    expect(guidance().queryByRole("button", { name: "Try Again" })).not.toBeInTheDocument();
+    await screen.findByRole("button", { name: "Thử lại" });
+    expect(guidance().queryByRole("button", { name: "Thử lại" })).not.toBeInTheDocument();
     expect(requests(http)).toEqual(expected(...coldReads));
   });
 
@@ -170,11 +170,11 @@ describe("Learning Guidance concrete activity refinement", () => {
     await screen.findByRole("region", { name: "Next activity" });
     expect(guidance().queryByRole("link")).not.toBeInTheDocument();
     directionFailed = false;
-    await userEvent.setup().click(within(coarseRecovery).getByRole("button", { name: "Try Again" }));
+    await userEvent.setup().click(within(coarseRecovery).getByRole("button", { name: "Thử lại" }));
     await guidance().findByRole("link", { name: "Continue course" });
     expect(requests(http)).toEqual(expected(...coldReads, directionUrl));
     activityFailed = false;
-    await userEvent.setup().click(within(screen.getByRole("region", { name: "Next activity" })).getByRole("button", { name: "Try Again" }));
+    await userEvent.setup().click(within(screen.getByRole("region", { name: "Next activity" })).getByRole("button", { name: "Thử lại" }));
     await guidance().findByRole("link", { name: "Open next lesson" });
     expect(requests(http)).toEqual(expected(...coldReads, directionUrl, nextActivityUrl));
   });

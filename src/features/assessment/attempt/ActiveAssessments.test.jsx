@@ -60,16 +60,16 @@ describe("My Learning active assessment boundary", () => {
       throw new Error("Unexpected request: " + config.url);
     });
     mountAssessmentApp("/my-learning");
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(screen.getByText("Đang tải...")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
     await act(async () => { read.resolve(); });
-    await screen.findByText("Something went wrong");
-    expect(screen.getAllByRole("heading", { name: "Something went wrong" })).toHaveLength(1);
+    await screen.findByText("Đã xảy ra lỗi");
+    expect(screen.getAllByRole("heading", { name: "Đã xảy ra lỗi" })).toHaveLength(1);
     expect(screen.queryByText("German Basics")).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Continue assessment" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeInTheDocument();
     failed = false;
-    await user.click(screen.getByRole("button", { name: "Try Again" }));
+    await user.click(screen.getByRole("button", { name: "Thử lại" }));
     await screen.findByRole("link", { name: "Continue assessment" });
     expect(screen.getByRole("button", { name: "Continue Learning" })).toBeEnabled();
     expect(http.mock.calls.map(([config]) => config.url).sort()).toEqual([journeyUrl, journeyUrl, directionUrl, nextActivityUrl].sort());
@@ -91,7 +91,7 @@ describe("My Learning active assessment boundary", () => {
   it("rejects malformed Attempts without partially rendering valid Courses or current level", async () => {
     assessmentHttp((config) => ok(config, journey([liveAttempt(), liveAttempt({ assessmentId: " " })], { courses: [courseSnapshot()], currentLevel: "B1" })));
     mountAssessmentApp("/my-learning");
-    await screen.findByText("Something went wrong");
+    await screen.findByText("Đã xảy ra lỗi");
     expect(screen.queryByText("German Basics")).not.toBeInTheDocument();
     expect(screen.queryByRole("region", { name: "Current German level" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Continue assessment" })).not.toBeInTheDocument();

@@ -96,7 +96,7 @@ describe("Final Submit failure reconciliation", () => {
     await user.click(await screen.findByRole("button", { name: "Submit assessment" }));
     await screen.findByText("Original final submit error");
     expect(screen.queryByText("Refresh failure")).not.toBeInTheDocument();
-    expect(screen.queryByText("Something went wrong")).not.toBeInTheDocument();
+    expect(screen.queryByText("Đã xảy ra lỗi")).not.toBeInTheDocument();
     expect(client.getQueryData(PARENT_KEY)).toEqual(resumedAttempt());
     expect(screen.getByRole("button", { name: "Submit assessment" })).toBeEnabled();
     for (const key of execution) expect(client.getQueryState(key).isInvalidated).toBe(false);

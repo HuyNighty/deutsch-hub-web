@@ -82,7 +82,7 @@ describe("owned Assessment Attempt runtime", () => {
     const { client } = mountAssessmentApp(attemptPath);
     const completedKey = pending === "attempt" ? "learner-assessment-attempt-definition" : "learner-assessment-attempt";
     await waitFor(() => expect(client.getQueryData([completedKey, ATTEMPT_ID])).toBeDefined());
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(screen.getByText("Đang tải...")).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Writing" })).not.toBeInTheDocument();
     await act(async () => { read.resolve(); });
     await screen.findByText("Status: In progress");
@@ -100,14 +100,14 @@ describe("owned Assessment Attempt runtime", () => {
       ? (boundary === "attempt" ? invalid : resumedAttempt())
       : (boundary === "definition" ? invalid : assessmentDetail())));
     const { router, client } = mountAssessmentApp(attemptPath);
-    await screen.findByText("Something went wrong");
+    await screen.findByText("Đã xảy ra lỗi");
     expect(screen.queryByText("Status: In progress")).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Writing" })).not.toBeInTheDocument();
     expect(router.state.location.pathname).toBe(attemptPath);
     if (boundary === "attempt") expect(client.getQueryData(["learner-assessment-attempt", ATTEMPT_ID])).toBeUndefined();
   });
 
-  it.each([["attempt", 403, "Access Denied"], ["definition", 404, "Resource Not Found"]])(
+  it.each([["attempt", 403, "Không có quyền truy cập"], ["definition", 404, "Không tìm thấy tài nguyên"]])(
     "uses shared errors for %s %s and retains the learner session", async (boundary, status, copy) => {
       assessmentHttp((config) => {
         const isAttempt = config.url === attemptUrl;
@@ -128,9 +128,9 @@ describe("owned Assessment Attempt runtime", () => {
       ? (failed ? fail(config, 500) : ok(config, resumedAttempt()))
       : ok(config, assessmentDetail()));
     mountAssessmentApp(attemptPath);
-    await screen.findByText("Something went wrong");
+    await screen.findByText("Đã xảy ra lỗi");
     failed = false;
-    await user.click(screen.getByRole("button", { name: "Try Again" }));
+    await user.click(screen.getByRole("button", { name: "Thử lại" }));
     await screen.findByText("Status: In progress");
     expect(http).toHaveBeenCalledTimes(4);
   });

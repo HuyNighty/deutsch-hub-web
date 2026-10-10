@@ -68,12 +68,12 @@ describe("Learning Guidance independent resource", () => {
     let failed = true;
     const http = readHttp((config) => failed ? fail(config, 500) : ok(config, discoverDirection));
     mountAssessmentApp("/my-learning");
-    await guidance().findByRole("button", { name: "Try Again" });
+    await guidance().findByRole("button", { name: "Thử lại" });
     await screen.findByText("German Basics");
     expectJourney();
     expect(requests(http)).toEqual(expected(journeyUrl, nextActivityUrl, directionUrl));
     failed = false;
-    await userEvent.setup().click(guidance().getByRole("button", { name: "Try Again" }));
+    await userEvent.setup().click(guidance().getByRole("button", { name: "Thử lại" }));
     await guidance().findByRole("link", { name: "Explore courses" });
     expectJourney();
     expect(requests(http)).toEqual(expected(journeyUrl, nextActivityUrl, directionUrl, directionUrl));
@@ -83,8 +83,8 @@ describe("Learning Guidance independent resource", () => {
     const http = readHttp(discoverDirection, (config) => fail(config, 500));
     mountAssessmentApp("/my-learning");
     expect(await guidance().findByRole("link", { name: "Explore courses" })).toBeVisible();
-    await screen.findByRole("button", { name: "Try Again" });
-    expect(guidance().queryByRole("button", { name: "Try Again" })).not.toBeInTheDocument();
+    await screen.findByRole("button", { name: "Thử lại" });
+    expect(guidance().queryByRole("button", { name: "Thử lại" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Explore available assessments" })).toBeVisible();
     expect(requests(http)).toEqual(expected(journeyUrl, nextActivityUrl, directionUrl));
   });
@@ -92,7 +92,7 @@ describe("Learning Guidance independent resource", () => {
   it("rejects malformed 2xx Direction without Journey fallback, collapse or navigation", async () => {
     const http = readHttp({ type: "RESUME_ASSESSMENT", target: { courseId: "wrong" } });
     const { router, client } = mountAssessmentApp("/my-learning");
-    await guidance().findByRole("button", { name: "Try Again" });
+    await guidance().findByRole("button", { name: "Thử lại" });
     await screen.findByText("German Basics");
     expectJourney();
     expect(guidance().queryByRole("link")).not.toBeInTheDocument();

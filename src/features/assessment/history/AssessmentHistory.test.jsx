@@ -85,7 +85,7 @@ describe("Learner Assessment History production route", () => {
     });
     mountAssessmentApp(HISTORY_PATH);
     await act(async () => { await started.promise; });
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(screen.getByText("Đang tải...")).toBeInTheDocument();
     expect(screen.queryByRole("article")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Back to My Learning" })).toBeInTheDocument();
     expect(http.mock.calls.map(([config]) => config.url)).toEqual([HISTORY_URL]);
@@ -108,11 +108,11 @@ describe("Learner Assessment History production route", () => {
     let failed = true;
     const http = assessmentHttp((config) => failed ? fail(config, status) : ok(config, historyPage()));
     const { router } = mountAssessmentApp(HISTORY_PATH);
-    await screen.findByText(status === 403 ? "Access Denied" : status === 404 ? "Resource Not Found" : "Something went wrong");
+    await screen.findByText(status === 403 ? "Không có quyền truy cập" : status === 404 ? "Không tìm thấy tài nguyên" : "Đã xảy ra lỗi");
     expect(screen.queryByRole("article")).not.toBeInTheDocument();
     expect(router.state.location.pathname).toBe(HISTORY_PATH);
     failed = false;
-    await user.click(screen.getByRole("button", { name: "Try Again" }));
+    await user.click(screen.getByRole("button", { name: status === 403 || status === 404 ? "Try Again" : "Thử lại" }));
     await screen.findByRole("article");
     expect(http.mock.calls.map(([config]) => config.url)).toEqual([HISTORY_URL, HISTORY_URL]);
   });
@@ -130,12 +130,12 @@ describe("Learner Assessment History production route", () => {
     let failed = true;
     const http = assessmentHttp((config) => ok(config, failed ? invalid() : historyPage()));
     const { client } = mountAssessmentApp(HISTORY_PATH);
-    await screen.findByText("Something went wrong");
+    await screen.findByText("Đã xảy ra lỗi");
     expect(client.getQueryState(historyKey()).error.message).toBe("The server returned an invalid assessment history response.");
     expect(screen.queryByRole("article")).not.toBeInTheDocument();
     expect(client.getQueryData(historyKey())).toBeUndefined();
     failed = false;
-    await user.click(screen.getByRole("button", { name: "Try Again" }));
+    await user.click(screen.getByRole("button", { name: "Thử lại" }));
     await screen.findByRole("article");
     expect(client.getQueryData(historyKey())).toEqual(historyPage());
     expect(http).toHaveBeenCalledTimes(2);
@@ -160,7 +160,7 @@ describe("Learner Assessment History production route", () => {
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Next" }));
     await act(async () => { await nextStarted.promise; });
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(screen.getByText("Đang tải...")).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "B1 Placement Assessment" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /View result/ })).not.toBeInTheDocument();
     await act(async () => { response.resolve(); });
@@ -206,7 +206,7 @@ describe("Learner Assessment History production route", () => {
     await screen.findByRole("article");
     valid = false;
     await act(async () => { await client.refetchQueries({ queryKey: historyKey(), exact: true }); });
-    await screen.findByText("Something went wrong");
+    await screen.findByText("Đã xảy ra lỗi");
     expect(screen.queryByRole("article")).not.toBeInTheDocument();
     expect(client.getQueryData(historyKey())).toEqual(historyPage());
   });
@@ -225,7 +225,7 @@ describe("Learner Assessment History production route", () => {
     })));
     const { router, client } = mountAssessmentApp("/my-learning");
     if (state === "empty") await screen.findByText("No courses yet");
-    if (state === "failed") await screen.findByText("Something went wrong");
+    if (state === "failed") await screen.findByText("Đã xảy ra lỗi");
     if (state === "active") {
       expect(await screen.findByRole("link", { name: "Continue assessment" })).toHaveAttribute("href", attemptPath);
     }
@@ -330,7 +330,7 @@ describe("Learner Assessment History production route", () => {
     await screen.findByRole("heading", { name: "Learner B history" });
     await act(async () => { oldResponse.resolve(); });
     expect(screen.queryByText("Delayed Learner A history")).not.toBeInTheDocument();
-    expect(screen.queryByText("Something went wrong")).not.toBeInTheDocument();
+    expect(screen.queryByText("Đã xảy ra lỗi")).not.toBeInTheDocument();
     expect(auth.current.isAuthenticated).toBe(true);
     expect(auth.current.user.id).toBe("learner-b");
     expect(client.getQueryData(historyKey()).items[0].assessmentTitle).toBe("Learner B history");

@@ -366,6 +366,8 @@
 @media (max-width: 576px) {
   .container {
     width: min(100% - 1.5rem, 1200px);
+
+    gap: 0.5rem;
   }
 
   .brand-name {
@@ -379,5 +381,9 @@
 
   .actions {
     gap: 0.5rem;
+  }
+
+  .user {
+    padding-inline: 0;
   }
 }

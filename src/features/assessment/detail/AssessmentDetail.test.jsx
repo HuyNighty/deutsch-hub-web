@@ -44,7 +44,7 @@ describe("learner Assessment detail", () => {
     });
     mountAssessmentApp(`/my-learning/assessments/${ASSESSMENT_ID}`);
     await act(async () => { await started.promise; });
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(screen.getByText("Đang tải...")).toBeInTheDocument();
     await act(async () => { response.resolve(); });
     await screen.findByRole("heading", { name: "Untitled assessment" });
     expect(screen.getByText("Time limit: No time limit")).toBeInTheDocument();
@@ -55,7 +55,7 @@ describe("learner Assessment detail", () => {
     const http = assessmentHttp((config) => config.url === "/me/assessments"
       ? ok(config, assessmentPage()) : fail(config, 404));
     const { router } = mountAssessmentApp(`/my-learning/assessments/${ASSESSMENT_ID}`);
-    await screen.findByText("Resource Not Found");
+    await screen.findByText("Không tìm thấy tài nguyên");
     const link = screen.getByRole("link", { name: "Browse assessments" });
     expect(link).toHaveAttribute("href", "/my-learning/assessments");
     await user.click(link);
@@ -75,7 +75,7 @@ describe("learner Assessment detail", () => {
     invalidate(detail);
     assessmentHttp((config) => ok(config, detail));
     const { client } = mountAssessmentApp(`/my-learning/assessments/${ASSESSMENT_ID}`);
-    await screen.findByText("Something went wrong");
+    await screen.findByText("Đã xảy ra lỗi");
     expect(screen.queryByRole("heading", { name: "B1 Placement Assessment" })).not.toBeInTheDocument();
     expect(screen.queryByText(/Task \d/)).not.toBeInTheDocument();
     expect(client.getQueryData(["learner-assessment", ASSESSMENT_ID])).toBeUndefined();

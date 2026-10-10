@@ -132,7 +132,7 @@ describe("Submit failure canonical reconciliation", () => {
     expect(screen.getByRole("radio", { name: "Hallo" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Submit task" })).toBeEnabled();
     expect(screen.queryByText("Refresh failed")).not.toBeInTheDocument();
-    expect(screen.queryByText("Something went wrong")).not.toBeInTheDocument();
+    expect(screen.queryByText("Đã xảy ra lỗi")).not.toBeInTheDocument();
     expect(runtimeReads(http)).toHaveLength(2);
     expect(submitRequests(http)).toHaveLength(1);
   });

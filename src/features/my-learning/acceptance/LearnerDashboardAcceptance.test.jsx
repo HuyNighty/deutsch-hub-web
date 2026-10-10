@@ -67,12 +67,12 @@ describe("Learner dashboard integrated acceptance", () => {
     const { router } = mountAssessmentApp("/experiences");
     await act(async () => {});
     const header = within(screen.getByRole("banner"));
-    const myLearning = header.getByRole("link", { name: "My Learning", exact: true });
+    const myLearning = header.getByRole("link", { name: "Học tập của tôi", exact: true });
 
-    expect(header.getByRole("link", { name: "Learning", exact: true })).toHaveAttribute("href", "/learn-german");
+    expect(header.getByRole("link", { name: "Học tiếng Đức", exact: true })).toHaveAttribute("href", "/learn-german");
     expect(myLearning).toBeVisible();
     expect(myLearning).toHaveAttribute("href", "/my-learning");
-    expect(header.getByRole("link", { name: /Account/ })).toHaveAttribute("href", "/account");
+    expect(header.getByRole("link", { name: "Tài khoản" })).toHaveAttribute("href", "/account");
     expect(router.state.location.pathname).toBe("/experiences");
     expect(requests(http)).toEqual([]);
 

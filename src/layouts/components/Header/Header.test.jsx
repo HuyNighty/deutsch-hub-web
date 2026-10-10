@@ -21,17 +21,20 @@ describe("authenticated learning Header IA", () => {
   it("preserves public navigation and orders My Learning, Assessments, Notifications and Account outside it", () => {
     const http = assessmentHttp(rejectUnexpectedRequest);
     const { router } = mountAssessmentApp("/experiences");
-    const navigation = header().getByRole("navigation", { name: "Main navigation" });
-    const learning = within(navigation).getByRole("link", { name: "Learning", exact: true });
-    const myLearning = header().getByRole("link", { name: "My Learning", exact: true });
-    const assessments = header().getByRole("link", { name: "Assessments", exact: true });
-    const notifications = header().getByRole("button", { name: "Notifications" });
-    const account = header().getByRole("link", { name: /Account/ });
+    const navigation = header().getByRole("navigation", { name: "Điều hướng chính" });
+    const learning = within(navigation).getByRole("link", { name: "Học tiếng Đức", exact: true });
+    const myLearning = header().getByRole("link", { name: "Học tập của tôi", exact: true });
+    const assessments = header().getByRole("link", { name: "Bài đánh giá", exact: true });
+    const notifications = header().getByRole("button", { name: "Thông báo" });
+    const account = header().getByRole("link", { name: "Tài khoản" });
 
+    expect(screen.getByRole("banner")).toHaveAttribute("lang", "vi");
+    expect(header().getByRole("link", { name: "Trang chủ DeutschHub" })).toHaveAttribute("href", "/");
+    expect(account).toHaveAttribute("aria-label", "Tài khoản");
     expect(learning).toHaveAttribute("href", "/learn-german");
     expect(within(navigation).getAllByRole("link").map((link) => [link.textContent, link.getAttribute("href")]))
-      .toEqual([["Learning", "/learn-german"], ["Content", "/explore-germany"],
-        ["Study", "/study-in-germany"], ["Communication", "/experiences"]]);
+      .toEqual([["Học tiếng Đức", "/learn-german"], ["Khám phá nước Đức", "/explore-germany"],
+        ["Du học Đức", "/study-in-germany"], ["Giao lưu", "/experiences"]]);
     expect(myLearning).toBeVisible();
     expect(myLearning).toHaveAttribute("href", "/my-learning");
     expect(assessments).toBeVisible();
@@ -41,10 +44,19 @@ describe("authenticated learning Header IA", () => {
     expect(navigation).not.toContainElement(assessments);
     expect(Array.from(myLearning.parentElement.children)).toEqual([myLearning, assessments, notifications, account]);
     expect(myLearning.parentElement.parentElement).toBe(navigation.parentElement);
-    expect(header().queryByRole("link", { name: "Login" })).not.toBeInTheDocument();
-    expect(header().queryByRole("link", { name: "Get started" })).not.toBeInTheDocument();
+    expect(header().queryByRole("link", { name: "Đăng nhập" })).not.toBeInTheDocument();
+    expect(header().queryByRole("link", { name: "Đăng ký" })).not.toBeInTheDocument();
     expect(router.state.location.pathname).toBe("/experiences");
     expect(http).not.toHaveBeenCalled();
+  });
+
+  it("keeps the localized Notifications control inactive", async () => {
+    const http = assessmentHttp(rejectUnexpectedRequest);
+    const { router, client } = mountAssessmentApp("/experiences");
+    await userEvent.setup().click(header().getByRole("button", { name: "Thông báo" }));
+    expect(router.state.location.pathname).toBe("/experiences");
+    expect(http).not.toHaveBeenCalled();
+    expect(client.getMutationCache().getAll()).toEqual([]);
   });
 
   it("keeps anonymous public navigation, Login and Get started without authenticated actions", async () => {
@@ -53,15 +65,15 @@ describe("authenticated learning Header IA", () => {
     await screen.findByTestId("auth");
     expect(screen.getByTestId("auth")).toHaveTextContent("ANONYMOUS");
 
-    expect(header().getByRole("link", { name: "Learning", exact: true })).toHaveAttribute("href", "/learn-german");
-    expect(within(header().getByRole("navigation", { name: "Main navigation" })).getAllByRole("link").map((link) => link.textContent))
-      .toEqual(["Learning", "Content", "Study", "Communication"]);
-    expect(header().getByRole("link", { name: "Login" })).toHaveAttribute("href", "/login");
-    expect(header().getByRole("link", { name: "Get started" })).toHaveAttribute("href", "/register");
-    expect(header().queryByRole("link", { name: "My Learning", exact: true })).not.toBeInTheDocument();
-    expect(header().queryByRole("link", { name: "Assessments", exact: true })).not.toBeInTheDocument();
-    expect(header().queryByRole("button", { name: "Notifications" })).not.toBeInTheDocument();
-    expect(header().queryByRole("link", { name: /Account/ })).not.toBeInTheDocument();
+    expect(header().getByRole("link", { name: "Học tiếng Đức", exact: true })).toHaveAttribute("href", "/learn-german");
+    expect(within(header().getByRole("navigation", { name: "Điều hướng chính" })).getAllByRole("link").map((link) => link.textContent))
+      .toEqual(["Học tiếng Đức", "Khám phá nước Đức", "Du học Đức", "Giao lưu"]);
+    expect(header().getByRole("link", { name: "Đăng nhập" })).toHaveAttribute("href", "/login");
+    expect(header().getByRole("link", { name: "Đăng ký" })).toHaveAttribute("href", "/register");
+    expect(header().queryByRole("link", { name: "Học tập của tôi", exact: true })).not.toBeInTheDocument();
+    expect(header().queryByRole("link", { name: "Bài đánh giá", exact: true })).not.toBeInTheDocument();
+    expect(header().queryByRole("button", { name: "Thông báo" })).not.toBeInTheDocument();
+    expect(header().queryByRole("link", { name: "Tài khoản" })).not.toBeInTheDocument();
     expect(router.state.location.pathname).toBe("/experiences");
     expect(http).not.toHaveBeenCalled();
   });
@@ -74,7 +86,7 @@ describe("authenticated learning Header IA", () => {
       return rejectUnexpectedRequest(config);
     })));
     const { router, client } = mountAssessmentApp("/experiences");
-    const myLearning = header().getByRole("link", { name: "My Learning", exact: true });
+    const myLearning = header().getByRole("link", { name: "Học tập của tôi", exact: true });
 
     expect(myLearning).toBeVisible();
     expect(router.state.location.pathname).toBe("/experiences");
@@ -106,7 +118,7 @@ describe("authenticated learning Header IA", () => {
     // Home retains its existing public content read; the Header adds no requests.
     expect(http.mock.calls.map(([config]) => config.url)).toEqual(path === "/" ? ["/articles"] : []);
     expect(client.getQueryData(["learner-learning-journey"])).toBeUndefined();
-    const assessments = header().getByRole("link", { name: "Assessments", exact: true });
+    const assessments = header().getByRole("link", { name: "Bài đánh giá", exact: true });
     expect(assessments).toHaveAttribute("href", "/my-learning/assessments");
     await user.click(assessments);
     await screen.findByRole("heading", { name: "B1 Placement Assessment" });
@@ -127,7 +139,7 @@ describe("authenticated learning Header IA", () => {
     const http = assessmentHttp((config) => config.url === "/me/assessments"
       ? ok(config, assessmentPage()) : rejectUnexpectedRequest(config));
     const { router, client } = mountAssessmentApp("/experiences");
-    for (const name of ["DeutschHub Home", "Learning", "Content", "Study", "Communication", "My Learning", "Assessments"]) {
+    for (const name of ["Trang chủ DeutschHub", "Học tiếng Đức", "Khám phá nước Đức", "Du học Đức", "Giao lưu", "Học tập của tôi", "Bài đánh giá"]) {
       await user.tab();
       expect(header().getByRole("link", { name, exact: true })).toHaveFocus();
     }

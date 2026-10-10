@@ -33,7 +33,7 @@ describe("learner Assessment catalog", () => {
     });
     mountAssessmentApp("/my-learning/assessments");
     await act(async () => { await started.promise; });
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(screen.getByText("Đang tải...")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "View assessment" })).not.toBeInTheDocument();
     await act(async () => { response.resolve(); });
     await screen.findByRole("heading", { name: "B1 Placement Assessment" });
@@ -89,7 +89,7 @@ describe("learner Assessment catalog", () => {
   ])("rejects malformed 200 with %s without rendering partial data", async (_, invalid) => {
     assessmentHttp((config) => ok(config, invalid()));
     const { client } = mountAssessmentApp("/my-learning/assessments");
-    await screen.findByText("Something went wrong");
+    await screen.findByText("Đã xảy ra lỗi");
     expect(screen.queryByRole("heading", { name: "B1 Placement Assessment" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "View assessment" })).not.toBeInTheDocument();
     expect(client.getQueryData(["learner-assessments", { page: 0, size: 20 }])).toBeUndefined();
@@ -100,9 +100,9 @@ describe("learner Assessment catalog", () => {
     let failed = true;
     const http = assessmentHttp((config) => failed ? fail(config, 500) : ok(config, assessmentPage()));
     mountAssessmentApp("/my-learning/assessments");
-    await screen.findByText("Something went wrong");
+    await screen.findByText("Đã xảy ra lỗi");
     failed = false;
-    await user.click(screen.getByRole("button", { name: "Try Again" }));
+    await user.click(screen.getByRole("button", { name: "Thử lại" }));
     await screen.findByRole("heading", { name: "B1 Placement Assessment" });
     expect(http).toHaveBeenCalledTimes(2);
   });
