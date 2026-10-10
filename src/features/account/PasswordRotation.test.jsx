@@ -20,7 +20,7 @@ const routes = [
 ];
 const passwords = { currentPassword: "CurrentPassword123", newPassword: "NewPassword456", verifyNewPassword: "NewPassword456" };
 const labels = { currentPassword: "Current password", newPassword: "New password", verifyNewPassword: "Confirm new password" };
-const changedMessage = "Password changed successfully. Please sign in again.";
+const changedMessage = "Đã đổi mật khẩu thành công. Vui lòng đăng nhập lại.";
 const uncertaintyMessage = "We couldn't confirm whether your password changed. The safest recovery is to use Logout to end this local session, then sign in again.";
 
 function reject(config, { status = 400, code = 400, message = "Validation failed", errors = [] } = {}) {
@@ -222,7 +222,7 @@ describe("Learner password rotation", () => {
       expect(logs.flatMap((spy) => spy.mock.calls).flat().map(String).join(" ")).not.toContain(value);
     }
     await user.click(screen.getByRole("button", { name: "Logout", exact: true }));
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(auth.current.status).toBe("ANONYMOUS");
     expect(getSessionGeneration()).toBe(generation + 1);
     expect(getAccessToken()).toBeNull();
@@ -265,9 +265,9 @@ describe("Learner password rotation", () => {
     await user.click(screen.getByRole("button", { name: "Change Password" }));
     await screen.findByText(changedMessage);
     expect(client.getQueryData(["account"])).toBeUndefined();
-    await user.type(screen.getByLabelText("Username or Email"), "learner");
-    await user.type(screen.getByLabelText("Password"), passwords.newPassword);
-    await user.click(screen.getByRole("button", { name: /Login to DeutschHub/ }));
+    await user.type(screen.getByLabelText("Tên đăng nhập hoặc email"), "learner");
+    await user.type(screen.getByLabelText("Mật khẩu"), passwords.newPassword);
+    await user.click(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ }));
     await screen.findByRole("button", { name: "Change Password" });
     expect(router.state.location.pathname).toBe("/account");
     expect(router.state.historyAction).toBe("REPLACE");
@@ -325,7 +325,7 @@ describe("Learner password rotation", () => {
     await user.click(screen.getByRole("button", { name: "Change Password" }));
     await act(async () => { await started.promise; });
     await user.click(screen.getByRole("button", { name: "Logout" }));
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     const sessionB = loginResult(id);
     canonical = { ...account, id, username: "new-session" };
     await act(async () => { auth.current.setSession(sessionB); });

@@ -9,7 +9,7 @@ export default function useRegister() {
   const { mutateAsync, isPending, error } = useMutation({
     mutationFn: register,
     onSuccess() {
-      alert("Register successfully!");
+      alert("Đăng ký thành công!");
 
       navigate("/login", { replace: true, state: { returnTo: location.state?.returnTo } });
     },

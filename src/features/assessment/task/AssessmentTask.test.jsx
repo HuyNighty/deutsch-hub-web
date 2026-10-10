@@ -140,13 +140,13 @@ describe("Assessment Task runtime", () => {
       throw new Error(`Unexpected request: ${config.url}`);
     }, { allowTaskExecution: true });
     const { router } = mountAssessmentApp(TASK_PATH, { anonymous: true });
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(router.state.location.pathname).toBe("/login");
     expect(router.state.location.state).toEqual({ returnTo: TASK_PATH });
     expect(http).not.toHaveBeenCalled();
-    await user.type(screen.getByLabelText("Username or Email"), "learner");
-    await user.type(screen.getByLabelText("Password"), "password");
-    await user.click(screen.getByRole("button", { name: /Login to DeutschHub/ }));
+    await user.type(screen.getByLabelText("Tên đăng nhập hoặc email"), "learner");
+    await user.type(screen.getByLabelText("Mật khẩu"), "password");
+    await user.click(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ }));
     await screen.findByRole("radio", { name: "Hallo" });
     expect(router.state.location.pathname).toBe(TASK_PATH);
     expect(http.mock.calls.map(([config]) => config.url)).toEqual(["/auth/login", TASK_URL, `${attemptUrl}/assessment`]);

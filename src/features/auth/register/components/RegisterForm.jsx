@@ -65,7 +65,7 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className={cx("register-page")}>
+    <div className={cx("register-page")} lang="vi">
       <div className={cx("background")} aria-hidden="true">
         <div className={cx("background-image")} />
         <div className={cx("background-overlay")} />
@@ -85,14 +85,14 @@ export default function RegisterForm() {
                   <strong className={cx("brand-name")}>DeutschHub</strong>
 
                   <span className={cx("brand-tagline")}>
-                    Learn. Discover. Connect.
+                    Học tập. Khám phá. Kết nối.
                   </span>
                 </span>
               </AppLink>
 
               <p className={cx("brand-description")}>
-                Learn German, understand Germany, and build your future through
-                one connected learning experience.
+                Học tiếng Đức, tìm hiểu nước Đức và xây dựng tương lai của bạn
+                qua một trải nghiệm học tập kết nối.
               </p>
             </div>
 
@@ -103,11 +103,11 @@ export default function RegisterForm() {
                 </div>
 
                 <div className={cx("feature-copy")}>
-                  <h2>Learn German</h2>
+                  <h2>Học tiếng Đức</h2>
 
                   <p>
-                    Build your German skills through structured learning and
-                    meaningful practice.
+                    Phát triển kỹ năng tiếng Đức qua việc học có cấu trúc và
+                    thực hành có ý nghĩa.
                   </p>
                 </div>
               </div>
@@ -118,11 +118,11 @@ export default function RegisterForm() {
                 </div>
 
                 <div className={cx("feature-copy")}>
-                  <h2>Explore Germany</h2>
+                  <h2>Khám phá nước Đức</h2>
 
                   <p>
-                    Discover culture, history, places, people, and everyday life
-                    beyond the language.
+                    Khám phá văn hóa, lịch sử, địa điểm, con người và cuộc sống
+                    hằng ngày bên cạnh việc học ngôn ngữ.
                   </p>
                 </div>
               </div>
@@ -133,20 +133,20 @@ export default function RegisterForm() {
                 </div>
 
                 <div className={cx("feature-copy")}>
-                  <h2>Connect with others</h2>
+                  <h2>Kết nối với mọi người</h2>
 
                   <p>
-                    Share experiences and grow together with people on the same
-                    journey.
+                    Chia sẻ trải nghiệm và cùng phát triển với những người trên
+                    cùng hành trình.
                   </p>
                 </div>
               </div>
             </div>
 
             <div className={cx("brand-footer")}>
-              <span>LEARN</span>
-              <span>DISCOVER</span>
-              <span>CONNECT</span>
+              <span>HỌC TẬP</span>
+              <span>KHÁM PHÁ</span>
+              <span>KẾT NỐI</span>
             </div>
           </section>
 
@@ -156,16 +156,16 @@ export default function RegisterForm() {
                 <header className={cx("form-header")}>
                   <AppLink to="/" variant="outline" className={cx("home-link")}>
                     <FontAwesomeIcon icon={faArrowLeft} />
-                    <span>Home</span>
+                    <span>Trang chủ</span>
                   </AppLink>
 
                   <div className={cx("header-copy")}>
-                    <span className={cx("eyebrow")}>JOIN DEUTSCHHUB</span>
+                    <span className={cx("eyebrow")}>THAM GIA DEUTSCHHUB</span>
 
-                    <h1 className={cx("title")}>Create your account</h1>
+                    <h1 className={cx("title")}>Tạo tài khoản của bạn</h1>
 
                     <p className={cx("description")}>
-                      Start learning German and exploring Germany with
+                      Bắt đầu học tiếng Đức và khám phá nước Đức cùng
                       DeutschHub.
                     </p>
                   </div>
@@ -173,8 +173,7 @@ export default function RegisterForm() {
 
                 {error && (
                   <div className={cx("error")} role="alert">
-                    {error?.message ||
-                      "Registration failed. Please check your information."}
+                    Không thể đăng ký. Vui lòng kiểm tra thông tin và thử lại.
                   </div>
                 )}
 
@@ -185,7 +184,7 @@ export default function RegisterForm() {
                 >
                   <div className={cx("fields")}>
                     <div className={cx("field")}>
-                      <label htmlFor="username">Username</label>
+                      <label htmlFor="username">Tên đăng nhập</label>
 
                       <div className={cx("input-wrapper")}>
                         <span className={cx("input-icon")}>
@@ -196,7 +195,7 @@ export default function RegisterForm() {
                           id="username"
                           name="username"
                           type="text"
-                          placeholder="Choose a username"
+                          placeholder="Chọn tên đăng nhập"
                           autoComplete="username"
                           value={form.username}
                           onChange={handleChange}
@@ -226,7 +225,7 @@ export default function RegisterForm() {
                           id="email"
                           name="email"
                           type="email"
-                          placeholder="Enter your email"
+                          placeholder="Nhập email"
                           autoComplete="email"
                           value={form.email}
                           onChange={handleChange}
@@ -245,7 +244,7 @@ export default function RegisterForm() {
                     </div>
 
                     <div className={cx("field")}>
-                      <label htmlFor="password">Password</label>
+                      <label htmlFor="password">Mật khẩu</label>
 
                       <div className={cx("input-wrapper")}>
                         <span className={cx("input-icon")}>
@@ -256,7 +255,7 @@ export default function RegisterForm() {
                           id="password"
                           name="password"
                           type={showPassword ? "text" : "password"}
-                          placeholder="Create a password"
+                          placeholder="Tạo mật khẩu"
                           autoComplete="new-password"
                           value={form.password}
                           onChange={handleChange}
@@ -272,7 +271,7 @@ export default function RegisterForm() {
                             className={cx("password-toggle")}
                             onClick={() => setShowPassword((prev) => !prev)}
                             aria-label={
-                              showPassword ? "Hide password" : "Show password"
+                              showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"
                             }
                           >
                             <FontAwesomeIcon
@@ -291,7 +290,7 @@ export default function RegisterForm() {
 
                     <div className={cx("row")}>
                       <div className={cx("field")}>
-                        <label htmlFor="firstName">First Name</label>
+                        <label htmlFor="firstName">Tên</label>
 
                         <div className={cx("input-wrapper")}>
                           <span className={cx("input-icon")}>
@@ -302,7 +301,7 @@ export default function RegisterForm() {
                             id="firstName"
                             name="firstName"
                             type="text"
-                            placeholder="First name"
+                            placeholder="Nhập tên"
                             autoComplete="given-name"
                             value={form.firstName}
                             onChange={handleChange}
@@ -321,7 +320,7 @@ export default function RegisterForm() {
                       </div>
 
                       <div className={cx("field")}>
-                        <label htmlFor="lastName">Last Name</label>
+                        <label htmlFor="lastName">Họ</label>
 
                         <div className={cx("input-wrapper")}>
                           <span className={cx("input-icon")}>
@@ -332,7 +331,7 @@ export default function RegisterForm() {
                             id="lastName"
                             name="lastName"
                             type="text"
-                            placeholder="Last name"
+                            placeholder="Nhập họ"
                             autoComplete="family-name"
                             value={form.lastName}
                             onChange={handleChange}
@@ -352,7 +351,7 @@ export default function RegisterForm() {
                     </div>
 
                     <div className={cx("field")}>
-                      <label htmlFor="phoneNumber">Phone Number</label>
+                      <label htmlFor="phoneNumber">Số điện thoại</label>
 
                       <div className={cx("input-wrapper")}>
                         <span className={cx("input-icon")}>
@@ -363,7 +362,7 @@ export default function RegisterForm() {
                           id="phoneNumber"
                           name="phoneNumber"
                           type="tel"
-                          placeholder="Enter your phone number"
+                          placeholder="Nhập số điện thoại"
                           autoComplete="tel"
                           value={form.phoneNumber}
                           onChange={handleChange}
@@ -386,20 +385,20 @@ export default function RegisterForm() {
                     <input type="checkbox" required />
 
                     <span>
-                      I agree to the{" "}
-                      <AppLink to="/terms">Terms of Service</AppLink> and{" "}
-                      <AppLink to="/privacy">Privacy Policy</AppLink>.
+                      Tôi đồng ý với{" "}
+                      <AppLink to="/terms">Điều khoản dịch vụ</AppLink> và{" "}
+                      <AppLink to="/privacy">Chính sách quyền riêng tư</AppLink>.
                     </span>
                   </label>
 
                   <Button type="submit" fullWidth>
-                    Create Account
+                    Đăng ký tài khoản
                     <span className={cx("button-arrow")}>→</span>
                   </Button>
                 </form>
 
                 <div className={cx("divider")}>
-                  <span>OR</span>
+                  <span>HOẶC</span>
                 </div>
 
                 <div className={cx("social-register")}>
@@ -415,9 +414,9 @@ export default function RegisterForm() {
                 </div>
 
                 <div className={cx("login")}>
-                  <span>Already part of DeutschHub?</span>
+                  <span>Bạn đã có tài khoản DeutschHub?</span>
 
-                  <AppLink to="/login" state={{ returnTo: location.state?.returnTo }}>Login</AppLink>
+                  <AppLink to="/login" state={{ returnTo: location.state?.returnTo }}>Đăng nhập</AppLink>
                 </div>
               </div>
             </div>

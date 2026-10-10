@@ -116,14 +116,14 @@ describe("Official Result with Vietnamese curated skill guidance", () => {
     const oldEntry = catalog.guidanceEntries.find((entry) => entry.id === "reading.a1.not_passed");
     await screen.findByText(oldEntry.content.split("\n\n")[0]);
     await act(async () => { auth.current.logout(); });
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(router.state.location.state).toEqual({ returnTo: RESULT_PATH });
     expect(client.getQueryData(RESULT_KEY)).toBeUndefined();
     expect(client.getQueryData(COMPETENCY_KEY)).toBeUndefined();
     expect(guidanceRegions()).toHaveLength(0);
-    await user.type(screen.getByLabelText("Username or Email"), "learner-b");
-    await user.type(screen.getByLabelText("Password"), "password");
-    await user.click(screen.getByRole("button", { name: /Login to DeutschHub/ }));
+    await user.type(screen.getByLabelText("Tên đăng nhập hoặc email"), "learner-b");
+    await user.type(screen.getByLabelText("Mật khẩu"), "password");
+    await user.click(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ }));
     const newEntry = catalog.guidanceEntries.find((entry) => entry.id === "reading.a2.not_passed");
     await screen.findByText(newEntry.content.split("\n\n")[0]);
     expect(screen.queryByText(oldEntry.content.split("\n\n")[0])).not.toBeInTheDocument();

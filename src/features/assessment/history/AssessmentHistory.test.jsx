@@ -269,13 +269,13 @@ describe("Learner Assessment History production route", () => {
     const http = assessmentHttp((config) => config.url === "/auth/login"
       ? ok(config, loginResult()) : ok(config, historyPage()));
     const { router } = mountAssessmentApp(HISTORY_PATH, { anonymous: true });
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(router.state.location.pathname).toBe("/login");
     expect(router.state.location.state).toEqual({ returnTo: HISTORY_PATH });
     expect(http).not.toHaveBeenCalled();
-    await user.type(screen.getByLabelText("Username or Email"), "learner");
-    await user.type(screen.getByLabelText("Password"), "password");
-    await user.click(screen.getByRole("button", { name: /Login to DeutschHub/ }));
+    await user.type(screen.getByLabelText("Tên đăng nhập hoặc email"), "learner");
+    await user.type(screen.getByLabelText("Mật khẩu"), "password");
+    await user.click(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ }));
     await screen.findByRole("article");
     expect(router.state.location.pathname).toBe(HISTORY_PATH);
     expect(http.mock.calls.map(([config]) => config.url)).toEqual(["/auth/login", HISTORY_URL]);
@@ -295,14 +295,14 @@ describe("Learner Assessment History production route", () => {
     await screen.findByRole("heading", { name: "Learner A history" });
     client.setQueryData(historyKey(1), historyPage({ page: 1, totalElements: 21, totalPages: 2 }));
     await act(async () => { auth.current.logout(); });
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(client.getQueryData(historyKey())).toBeUndefined();
     expect(client.getQueryData(historyKey(1))).toBeUndefined();
     expect(screen.queryByText("Learner A history")).not.toBeInTheDocument();
     expect(router.state.location.state).toEqual({ returnTo: HISTORY_PATH });
-    await user.type(screen.getByLabelText("Username or Email"), "learner-b");
-    await user.type(screen.getByLabelText("Password"), "password");
-    await user.click(screen.getByRole("button", { name: /Login to DeutschHub/ }));
+    await user.type(screen.getByLabelText("Tên đăng nhập hoặc email"), "learner-b");
+    await user.type(screen.getByLabelText("Mật khẩu"), "password");
+    await user.click(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ }));
     await screen.findByRole("heading", { name: "Learner B history" });
     expect(client.getQueryData(historyKey()).items[0].assessmentTitle).toBe("Learner B history");
     expect(client.getQueryData(historyKey(1))).toBeUndefined();

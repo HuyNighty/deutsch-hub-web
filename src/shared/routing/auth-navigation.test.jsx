@@ -30,12 +30,12 @@ const routes = [
 ];
 
 async function fillLogin(user) {
-  await user.type(screen.getByLabelText("Username or Email"), "learner");
-  await user.type(screen.getByLabelText("Password"), "password");
+  await user.type(screen.getByLabelText("Tên đăng nhập hoặc email"), "learner");
+  await user.type(screen.getByLabelText("Mật khẩu"), "password");
 }
 async function submitLogin(user) {
   await fillLogin(user);
-  await user.click(screen.getByRole("button", { name: /Login to DeutschHub/ }));
+  await user.click(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ }));
 }
 
 describe("auth navigation and form boundary", () => {
@@ -92,7 +92,7 @@ describe("auth navigation and form boundary", () => {
     const user = userEvent.setup();
     setHttpHandler((config) => ok(config, loginResult()));
     const { router } = mountSession(routes, { path: target });
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(router.state.location.pathname).toBe("/login");
     expect(router.state.location.state).toEqual({ returnTo: target });
     await submitLogin(user);
@@ -109,7 +109,7 @@ describe("auth navigation and form boundary", () => {
     setHttpHandler(http);
     const { router } = mountSession(routes, { path: "/learn-german/courses/course-42" });
     await user.click(screen.getByRole("button", { name: "Enroll" }));
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(router.state.location.state).toEqual({ returnTo: "/learn-german/courses/course-42" });
     await submitLogin(user);
     await screen.findByText("Selected Course");
@@ -132,10 +132,10 @@ describe("auth navigation and form boundary", () => {
     const user = userEvent.setup();
     setHttpHandler((config) => ok(config, loginResult()));
     const { router } = mountSession(routes, { path: "/login", state: { returnTo: target } });
-    await user.click(screen.getByRole("link", { name: "Create one" }));
+    await user.click(screen.getByRole("link", { name: "Đăng ký" }));
     expect(router.state.location.pathname).toBe("/register");
     expect(router.state.location.state.returnTo).toBe(target);
-    await user.click(screen.getByRole("link", { name: "Login" }));
+    await user.click(screen.getByRole("link", { name: "Đăng nhập" }));
     expect(router.state.location.pathname).toBe("/login");
     expect(router.state.location.state.returnTo).toBe(target);
     await submitLogin(user);
@@ -154,7 +154,7 @@ describe("auth navigation and form boundary", () => {
     setHttpHandler(http);
     mountSession(routes, { path: "/login" });
     await fillLogin(user);
-    const button = screen.getByRole("button", { name: /Login to DeutschHub/ });
+    const button = screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     const form = button.closest("form");
     act(() => { fireEvent.submit(form); fireEvent.submit(form); });
     await act(async () => { await started.promise; });
@@ -178,6 +178,6 @@ describe("auth navigation and form boundary", () => {
     expect(getAccessToken()).toBeNull();
     expect(getRefreshToken()).toBeNull();
     expect(router.state.location.pathname).toBe("/login");
-    expect(screen.getByRole("button", { name: /Login to DeutschHub/ })).toBeEnabled();
+    expect(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ })).toBeEnabled();
   });
 });

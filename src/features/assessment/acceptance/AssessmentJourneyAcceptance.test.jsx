@@ -141,13 +141,13 @@ describe("Learner Assessment integrated journey", () => {
     const competencyGate = deferred();
     const server = journeyServer({ finalized: true, competencyGate });
     const { router, client, auth } = mountAssessmentApp(RESULT_PATH, { anonymous: true });
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(router.state.location.pathname).toBe("/login");
     expect(router.state.location.state).toEqual({ returnTo: RESULT_PATH });
     expect(server.http).not.toHaveBeenCalled();
-    await user.type(screen.getByLabelText("Username or Email"), "learner-a");
-    await user.type(screen.getByLabelText("Password"), "password");
-    await user.click(screen.getByRole("button", { name: /Login to DeutschHub/ }));
+    await user.type(screen.getByLabelText("Tên đăng nhập hoặc email"), "learner-a");
+    await user.type(screen.getByLabelText("Mật khẩu"), "password");
+    await user.click(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ }));
     await screen.findByText("Kết quả tổng thể: Đạt");
     expect(router.state.location.pathname).toBe(RESULT_PATH);
     expect(auth.current.status).toBe("AUTHENTICATED");

@@ -14,7 +14,7 @@ import { account } from "./test/account-fixtures";
 import { otherSession, sessionRows } from "./test/session-rows";
 import { deactivationMutationKey } from "./hooks/account-mutations";
 
-const statusMessage = "Your account has been deactivated. You cannot sign in unless it is reactivated.";
+const statusMessage = "Tài khoản của bạn đã bị vô hiệu hóa. Bạn chỉ có thể đăng nhập sau khi tài khoản được kích hoạt lại.";
 const routes = [
   { element: <ProtectedRoute />, children: [{ path: "/account", element: <AccountPage /> }] },
   { element: <GuestRoute />, children: [{ path: "/login", element: <LoginForm /> }] },
@@ -130,7 +130,7 @@ describe("Learner Account Deactivation", () => {
     expect(router.state.location.pathname).toBe("/login");
     expect(router.state.historyAction).toBe("REPLACE");
     expect(router.state.location.state).toEqual({ accountDeactivated: true });
-    expect(screen.queryByText("All login sessions were revoked. Please sign in again.")).not.toBeInTheDocument();
+    expect(screen.queryByText("Tất cả phiên đăng nhập đã bị thu hồi. Vui lòng đăng nhập lại.")).not.toBeInTheDocument();
     expect(patches(http)).toHaveLength(1);
     expect(otherMutations(http)).toHaveLength(0);
   });
@@ -175,7 +175,7 @@ describe("Learner Account Deactivation", () => {
     expect(client.getQueryData(["sentinel"])).toBe("private learner data");
     expect(patches(http)).toHaveLength(1); expect(otherMutations(http)).toHaveLength(0);
     await user.click(screen.getByRole("button", { name: "Logout", exact: true }));
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(auth.current.status).toBe("ANONYMOUS");
     expect(client.getQueryCache().getAll()).toHaveLength(0);
     expect(patches(http)).toHaveLength(1);
@@ -286,16 +286,16 @@ describe("Learner Account Deactivation", () => {
 });
 
 describe("Login after account deactivation", () => {
-  it.each([[403, 4005, statusMessage], [401, 4001, "Invalid username/email or password."], [403, 4999, "Invalid username/email or password."], [400, 4005, "Invalid username/email or password."]])("HTTP %s / code %s maps only the authenticated Backend deactivation refusal", async (status, code, message) => {
+  it.each([[403, 4005, statusMessage], [401, 4001, "Không thể đăng nhập. Vui lòng kiểm tra tên đăng nhập/email và mật khẩu."], [403, 4999, "Không thể đăng nhập. Vui lòng kiểm tra tên đăng nhập/email và mật khẩu."], [400, 4005, "Không thể đăng nhập. Vui lòng kiểm tra tên đăng nhập/email và mật khẩu."]])("HTTP %s / code %s maps only the authenticated Backend deactivation refusal", async (status, code, message) => {
     const http = vi.fn((config) => reject(config, status, code));
     setHttpHandler(http);
     const { router } = mountSession(routes, { path: "/login" });
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(http).toHaveBeenCalledTimes(0);
-    fireEvent.change(screen.getByLabelText("Username or Email"), { target: { value: "learner" } });
-    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password" } });
-    fireEvent.submit(screen.getByRole("button", { name: /Login to DeutschHub/ }).closest("form"));
+    fireEvent.change(screen.getByLabelText("Tên đăng nhập hoặc email"), { target: { value: "learner" } });
+    fireEvent.change(screen.getByLabelText("Mật khẩu"), { target: { value: "password" } });
+    fireEvent.submit(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ }).closest("form"));
     expect(await screen.findByRole("alert")).toHaveTextContent(message);
     expect(http).toHaveBeenCalledTimes(1);
     expect(router.state.location.pathname).toBe("/login");

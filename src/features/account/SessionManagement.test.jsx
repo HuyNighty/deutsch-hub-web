@@ -15,7 +15,7 @@ import { account } from "./test/account-fixtures";
 import { currentSession, otherSession, revokedSession, expiredSession, sessionRows } from "./test/session-rows";
 
 const sessionsKey = ["account", "sessions"];
-const endedMessage = "Your session has ended. Please sign in again.";
+const endedMessage = "Phiên đăng nhập của bạn đã kết thúc. Vui lòng đăng nhập lại.";
 const revokedMessage = "Login session revoked.";
 const routes = [
   { element: <ProtectedRoute />, children: [{ path: "/account", element: <AccountPage /> }] },
@@ -229,9 +229,9 @@ describe("Learner login sessions on Account", () => {
     const { user, client, http, sessionReads, router, auth } = await setup({ login: (config) => ok(config, session) });
     await confirm(user, currentSession);
     await screen.findByText(endedMessage);
-    fireEvent.change(screen.getByLabelText("Username or Email"), { target: { value: "learner" } });
-    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "Password123" } });
-    await user.click(screen.getByRole("button", { name: /Login to DeutschHub/ }));
+    fireEvent.change(screen.getByLabelText("Tên đăng nhập hoặc email"), { target: { value: "learner" } });
+    fireEvent.change(screen.getByLabelText("Mật khẩu"), { target: { value: "Password123" } });
+    await user.click(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ }));
     await screen.findByRole("region", { name: "Login sessions" });
     await within(section()).findByRole("list");
     expect(router.state.location.pathname).toBe("/account");
@@ -326,7 +326,7 @@ describe("Learner login sessions on Account", () => {
       await confirm(user, current ? currentSession : otherSession);
       await act(async () => { await started.promise; });
       await user.click(screen.getByRole("button", { name: "Logout" }));
-      await screen.findByRole("button", { name: /Login to DeutschHub/ });
+      await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
       const sessionB = loginResult(id);
       canonical = [{ ...otherSession, id: "77777777-7777-4777-8777-777777777777", current: true }];
       canonicalAccount = { ...account, id, username: "new-session" };
@@ -399,7 +399,7 @@ describe("Learner login sessions on Account", () => {
     await confirm(user);
     await act(async () => { await started.promise; });
     await user.click(screen.getByRole("button", { name: "Logout" }));
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     const sessionB = loginResult();
     await act(async () => { auth.current.setSession(sessionB); });
     await screen.findByRole("region", { name: "Login sessions" });
@@ -448,7 +448,7 @@ describe("Learner login sessions on Account", () => {
       } });
     await confirm(user);
     if (terminal) {
-      await screen.findByRole("button", { name: /Login to DeutschHub/ });
+      await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
       expect(auth.current.status).toBe("ANONYMOUS");
       expect(getAccessToken()).toBeNull();
       expect(getRefreshToken()).toBeNull();
@@ -484,7 +484,7 @@ describe("Learner login sessions on Account", () => {
     setHttpHandler(http);
     const { client, auth, router } = mountSession(routes, { path: "/account" });
     if (terminal) {
-      await screen.findByRole("button", { name: /Login to DeutschHub/ });
+      await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
       expect(auth.current.status).toBe("ANONYMOUS");
       expect(client.getQueryCache().getAll()).toHaveLength(0);
       expect(getAccessToken()).toBeNull();

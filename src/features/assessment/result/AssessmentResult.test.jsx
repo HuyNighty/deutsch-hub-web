@@ -80,13 +80,13 @@ describe("Learner Result and current German level", () => {
       return ok(config, config.url === RESULT_URL ? resultFixture() : competency());
     } });
     const { router } = mountAssessmentApp(RESULT_PATH, { anonymous: true });
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(router.state.location.pathname).toBe("/login");
     expect(router.state.location.state).toEqual({ returnTo: RESULT_PATH });
     expect(http).not.toHaveBeenCalled();
-    await user.type(screen.getByLabelText("Username or Email"), "learner");
-    await user.type(screen.getByLabelText("Password"), "password");
-    await user.click(screen.getByRole("button", { name: /Login to DeutschHub/ }));
+    await user.type(screen.getByLabelText("Tên đăng nhập hoặc email"), "learner");
+    await user.type(screen.getByLabelText("Mật khẩu"), "password");
+    await user.click(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ }));
     await screen.findByText("Kết quả tổng thể: Chưa đạt");
     await waitFor(() => expect(http).toHaveBeenCalledTimes(4));
     expect(router.state.location.pathname).toBe(RESULT_PATH);

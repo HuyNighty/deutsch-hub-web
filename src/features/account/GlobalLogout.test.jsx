@@ -14,7 +14,7 @@ import { deferred, ok, setHttpHandler } from "@/test/http";
 import { account } from "./test/account-fixtures";
 import { currentSession, otherSession, sessionRows } from "./test/session-rows";
 
-const statusMessage = "All login sessions were revoked. Please sign in again.";
+const statusMessage = "Tất cả phiên đăng nhập đã bị thu hồi. Vui lòng đăng nhập lại.";
 const ambiguityMessage = "We couldn't confirm whether all login sessions were revoked. Use Logout to end this local session, then sign in again.";
 const routes = [
   { element: <ProtectedRoute />, children: [{ path: "/account", element: <AccountPage /> }] },
@@ -131,9 +131,9 @@ describe("Learner Sign out everywhere", () => {
     const { user, http, auth, client, router } = await setup({ login: (config) => ok(config, session) });
     await confirm(user);
     await screen.findByText(statusMessage);
-    fireEvent.change(screen.getByLabelText("Username or Email"), { target: { value: "learner" } });
-    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "Password123" } });
-    await user.click(screen.getByRole("button", { name: /Login to DeutschHub/ }));
+    fireEvent.change(screen.getByLabelText("Tên đăng nhập hoặc email"), { target: { value: "learner" } });
+    fireEvent.change(screen.getByLabelText("Mật khẩu"), { target: { value: "Password123" } });
+    await user.click(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ }));
     await screen.findByRole("button", { name: "Sign out everywhere" });
     await within(screen.getByRole("region", { name: "Login sessions" })).findByRole("list");
     expect(router.state.location.pathname).toBe("/account");
@@ -210,7 +210,7 @@ describe("Learner Sign out everywhere", () => {
     expect(posts(http)).toHaveLength(1);
     assertNoOtherSecurityRequests(http);
     await user.click(screen.getByRole("button", { name: "Logout", exact: true }));
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(auth.current.status).toBe("ANONYMOUS");
     expect(getAccessToken()).toBeNull();
     expect(getRefreshToken()).toBeNull();
@@ -294,7 +294,7 @@ describe("Learner Sign out everywhere", () => {
     await confirm(user);
     await act(async () => { await started.promise; });
     await user.click(screen.getByRole("button", { name: "Logout", exact: true }));
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     const sessionB = loginResult(id);
     canonical = { ...account, id, username: "new-session" };
     canonicalSessions = [{ ...currentSession, id: "77777777-7777-4777-8777-777777777777" }];

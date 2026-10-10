@@ -124,7 +124,7 @@ describe("Course detail enrollment actions", () => {
   it("keeps Review course behind the existing auth guard even for an anonymous completed viewer snapshot", async () => {
     const { user, router, http } = mountCourse({ anonymous: true });
     await user.click(await screen.findByRole("button", { name: "Review course" }));
-    await screen.findByRole("heading", { name: "Welcome back" });
+    await screen.findByRole("heading", { name: "Chào mừng bạn trở lại" });
     expect(router.state.location.pathname).toBe("/login");
     expect(router.state.location.state).toEqual({ returnTo: coursePath });
     // Anonymous bootstrap can clear/refetch the public query; no private read or mutation is allowed.
@@ -159,7 +159,7 @@ describe("Course detail enrollment actions", () => {
   it("preserves anonymous enrollment redirect to Login without a mutation", async () => {
     const { user, router, http } = mountCourse({ enrollmentStatus: null, anonymous: true });
     await user.click(await screen.findByRole("button", { name: "Enroll course" }));
-    await screen.findByRole("heading", { name: "Welcome back" });
+    await screen.findByRole("heading", { name: "Chào mừng bạn trở lại" });
     expect(router.state.location.pathname).toBe("/login");
     expect(router.state.location.state).toEqual({ returnTo: publicPath });
     expect(http).toHaveBeenCalled();

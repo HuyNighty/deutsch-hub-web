@@ -42,7 +42,7 @@ export default function LoginForm() {
     setError("");
 
     if (!usernameOrEmail.trim() || !password) {
-      setError("Please enter your username/email and password.");
+      setError("Vui lòng nhập tên đăng nhập/email và mật khẩu.");
       return;
     }
 
@@ -53,13 +53,13 @@ export default function LoginForm() {
       });
     } catch (failure) {
       setError(failure.status === 403 && failure.code === 4005
-        ? "Your account has been deactivated. You cannot sign in unless it is reactivated."
-        : "Invalid username/email or password.");
+        ? "Tài khoản của bạn đã bị vô hiệu hóa. Bạn chỉ có thể đăng nhập sau khi tài khoản được kích hoạt lại."
+        : "Không thể đăng nhập. Vui lòng kiểm tra tên đăng nhập/email và mật khẩu.");
     }
   }
 
   return (
-    <div className={cx("login-page")}>
+    <div className={cx("login-page")} lang="vi">
       <div className={cx("background")} aria-hidden="true">
         <div className={cx("background-image")} />
         <div className={cx("background-overlay")} />
@@ -79,14 +79,14 @@ export default function LoginForm() {
                   <strong className={cx("brand-name")}>DeutschHub</strong>
 
                   <span className={cx("brand-tagline")}>
-                    Learn. Discover. Connect.
+                    Học tập. Khám phá. Kết nối.
                   </span>
                 </span>
               </AppLink>
 
               <p className={cx("brand-description")}>
-                Learn German, understand Germany, and build your future through
-                one connected learning experience.
+                Học tiếng Đức, tìm hiểu nước Đức và xây dựng tương lai của bạn
+                qua một trải nghiệm học tập kết nối.
               </p>
             </div>
 
@@ -97,9 +97,9 @@ export default function LoginForm() {
                 </div>
 
                 <div>
-                  <h2>Learn German</h2>
+                  <h2>Học tiếng Đức</h2>
                   <p>
-                    Courses, lessons, vocabulary, and structured learning paths.
+                    Các khóa học, bài học, từ vựng và lộ trình học tập có cấu trúc.
                   </p>
                 </div>
               </div>
@@ -110,9 +110,9 @@ export default function LoginForm() {
                 </div>
 
                 <div>
-                  <h2>Explore Germany</h2>
+                  <h2>Khám phá nước Đức</h2>
                   <p>
-                    Discover German culture, history, places, and everyday life.
+                    Khám phá văn hóa, lịch sử, các địa điểm và cuộc sống hằng ngày tại Đức.
                   </p>
                 </div>
               </div>
@@ -123,18 +123,18 @@ export default function LoginForm() {
                 </div>
 
                 <div>
-                  <h2>Connect with others</h2>
+                  <h2>Kết nối với mọi người</h2>
                   <p>
-                    Share experiences and learn together with the community.
+                    Chia sẻ trải nghiệm và cùng học tập với cộng đồng.
                   </p>
                 </div>
               </div>
             </div>
 
             <div className={cx("brand-footer")}>
-              <span>LEARN</span>
-              <span>DISCOVER</span>
-              <span>CONNECT</span>
+              <span>HỌC TẬP</span>
+              <span>KHÁM PHÁ</span>
+              <span>KẾT NỐI</span>
             </div>
           </section>
 
@@ -144,41 +144,41 @@ export default function LoginForm() {
                 <div className={cx("form-header")}>
                   <AppLink to="/" variant="outline" className={cx("home-link")}>
                     <FontAwesomeIcon icon={faArrowLeft} />
-                    <span>Home</span>
+                    <span>Trang chủ</span>
                   </AppLink>
 
                   <div className={cx("header-copy")}>
-                    <span className={cx("eyebrow")}>WELCOME BACK</span>
+                    <span className={cx("eyebrow")}>CHÀO MỪNG TRỞ LẠI</span>
 
-                    <h1 className={cx("title")}>Welcome back</h1>
+                    <h1 className={cx("title")}>Chào mừng bạn trở lại</h1>
 
                     <p className={cx("description")}>
-                      Login to continue your journey with DeutschHub.
+                      Đăng nhập để tiếp tục hành trình của bạn cùng DeutschHub.
                     </p>
                   </div>
                 </div>
 
                 {location.state?.passwordChanged === true && (
                   <p className={cx("status")} role="status">
-                    Password changed successfully. Please sign in again.
+                    Đã đổi mật khẩu thành công. Vui lòng đăng nhập lại.
                   </p>
                 )}
 
                 {location.state?.sessionEnded === true && (
                   <p className={cx("status")} role="status">
-                    Your session has ended. Please sign in again.
+                    Phiên đăng nhập của bạn đã kết thúc. Vui lòng đăng nhập lại.
                   </p>
                 )}
 
                 {location.state?.allSessionsRevoked === true && (
                   <p className={cx("status")} role="status">
-                    All login sessions were revoked. Please sign in again.
+                    Tất cả phiên đăng nhập đã bị thu hồi. Vui lòng đăng nhập lại.
                   </p>
                 )}
 
                 {location.state?.accountDeactivated === true && (
                   <p className={cx("status")} role="status">
-                    Your account has been deactivated. You cannot sign in unless it is reactivated.
+                    Tài khoản của bạn đã bị vô hiệu hóa. Bạn chỉ có thể đăng nhập sau khi tài khoản được kích hoạt lại.
                   </p>
                 )}
 
@@ -190,7 +190,7 @@ export default function LoginForm() {
 
                 <form className={cx("login-form")} onSubmit={onSubmit}>
                   <div className={cx("field")}>
-                    <label htmlFor="usernameOrEmail">Username or Email</label>
+                    <label htmlFor="usernameOrEmail">Tên đăng nhập hoặc email</label>
 
                     <div
                       className={cx("input-wrapper", {
@@ -204,7 +204,7 @@ export default function LoginForm() {
                       <input
                         id="usernameOrEmail"
                         type="text"
-                        placeholder="Enter your username or email"
+                        placeholder="Nhập tên đăng nhập hoặc email"
                         autoComplete="username"
                         value={usernameOrEmail}
                         onChange={(event) =>
@@ -217,7 +217,7 @@ export default function LoginForm() {
                   </div>
 
                   <div className={cx("field")}>
-                    <label htmlFor="password">Password</label>
+                    <label htmlFor="password">Mật khẩu</label>
 
                     <div
                       className={cx("input-wrapper", {
@@ -231,7 +231,7 @@ export default function LoginForm() {
                       <input
                         id="password"
                         type={showPassword ? "text" : "password"}
-                        placeholder="Enter your password"
+                        placeholder="Nhập mật khẩu"
                         autoComplete="current-password"
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
@@ -245,7 +245,7 @@ export default function LoginForm() {
                           className={cx("password-toggle")}
                           onClick={() => setShowPassword((prev) => !prev)}
                           aria-label={
-                            showPassword ? "Hide password" : "Show password"
+                            showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"
                           }
                         >
                           <FontAwesomeIcon
@@ -259,7 +259,7 @@ export default function LoginForm() {
                   <div className={cx("form-options")}>
                     <label className={cx("remember")}>
                       <input type="checkbox" />
-                      <span>Remember me</span>
+                      <span>Ghi nhớ đăng nhập</span>
                     </label>
 
                     <AppLink
@@ -267,21 +267,21 @@ export default function LoginForm() {
                       variant="default"
                       className={cx("forgot")}
                     >
-                      Forgot password?
+                      Quên mật khẩu?
                     </AppLink>
                   </div>
 
                   <Button type="submit" variant="primary" fullWidth loading={loading}>
-                    Login to DeutschHub
+                    Đăng nhập vào DeutschHub
                     <span className={cx("button-arrow")}>→</span>
                   </Button>
                 </form>
 
                 <div className={cx("register")}>
-                  <span>Don't have an account?</span>
+                  <span>Bạn chưa có tài khoản?</span>
 
                   <AppLink to="/register" variant="default" state={{ returnTo: location.state?.returnTo }}>
-                    Create one
+                    Đăng ký
                   </AppLink>
                 </div>
               </div>

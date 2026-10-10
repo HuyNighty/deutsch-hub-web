@@ -155,7 +155,7 @@ describe("authenticated learning Header IA", () => {
     const http = assessmentHttp(rejectUnexpectedRequest);
     const path = "/my-learning/assessments?source=header#catalog";
     const { router } = mountAssessmentApp(path, { anonymous: true });
-    await screen.findByRole("button", { name: /Login to DeutschHub/ });
+    await screen.findByRole("button", { name: /Đăng nhập vào DeutschHub/ });
     expect(router.state.location.pathname).toBe("/login");
     expect(router.state.location.state).toEqual({ returnTo: path });
     expect(http).not.toHaveBeenCalled();
