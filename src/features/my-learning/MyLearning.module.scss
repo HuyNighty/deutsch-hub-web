@@ -7,6 +7,11 @@
   gap: 2rem;
 
   padding-block: 2rem;
+  padding-block-start: calc(72px + 2rem);
+
+  @include md {
+    padding-block-start: calc(64px + 2rem);
+  }
 }
 
 .header {
