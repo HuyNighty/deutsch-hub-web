@@ -20,14 +20,14 @@ export default function CourseCatalog() {
       error={error}
       empty={courses.length === 0}
       emptyProps={{
-        title: "No courses found",
-        description: "There are no available courses at the moment.",
+        title: <span lang="vi">Không tìm thấy khóa học</span>,
+        description: <span lang="vi">Hiện chưa có khóa học nào.</span>,
       }}
       errorProps={{
         onRetry: refetch,
       }}
     >
-      <main className={cx("catalog")}>
+      <main lang="vi" className={cx("catalog")}>
         <CourseCatalogHeader />
 
         <div className={cx("content")}>

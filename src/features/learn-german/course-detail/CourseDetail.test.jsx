@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { router as appRouter } from "@/app/router/routes";
 import { mountSession, seedSession } from "@/test/session-fixtures";
 import { deferred, fail, ok, setHttpHandler } from "@/test/http";
+import { courseViewer } from "../course-catalog/test/course-fixtures";
 
 const courseId = "completed-course";
 const publicPath = `/learn-german/courses/${courseId}`;
@@ -63,17 +64,51 @@ function requests(http) {
 }
 
 describe("Course detail enrollment actions", () => {
+  it("localizes metadata and curriculum while preserving authored order, values and preview as a badge", async () => {
+    const detail = { ...courseViewer, id: courseId };
+    const { http } = mountCourse({ handler: (config) => ok(config, detail) });
+    const title = await screen.findByRole("heading", { name: detail.title, level: 1 });
+    const main = title.closest("main");
+    expect(main).toHaveAttribute("lang", "vi");
+    expect(screen.getByText(detail.description)).toBeVisible();
+    expect(screen.getByRole("link", { name: /Quay lại tất cả khóa học/ })).toHaveAttribute("href", "/learn-german");
+    expect(screen.getByText("Trình độ A1")).toBeVisible();
+    expect(screen.getByText("12.5 giờ")).toBeVisible();
+    expect(screen.getAllByText("2 phần")).toHaveLength(2);
+    expect(screen.getByText("TỔNG QUAN KHÓA HỌC")).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Nội dung bạn sẽ học" })).toBeVisible();
+    for (const label of ["Giờ", "Phần", "Bài học", "Trình độ"]) expect(screen.getByText(label, { exact: true })).toBeVisible();
+    const curriculum = screen.getByRole("region", { name: "Nội dung khóa học" });
+    const sections = within(curriculum).getAllByRole("article");
+    expect(sections.map((node) => within(node).getByRole("heading", { level: 3 }).textContent)).toEqual(detail.sections.map((section) => section.title));
+    for (const [index, section] of detail.sections.entries()) {
+      expect(within(sections[index]).getByText(section.description)).toBeVisible();
+      expect(within(sections[index]).getAllByRole("heading", { level: 4 }).map((node) => node.textContent)).toEqual(section.lessons.map((lesson) => lesson.title));
+      for (const lesson of section.lessons) expect(within(sections[index]).getByText(lesson.description)).toBeVisible();
+    }
+    expect(within(sections[0]).getByText("2 bài học · 25 phút")).toBeVisible();
+    expect(within(sections[1]).getByText("1 bài học · 12 phút")).toBeVisible();
+    expect(within(curriculum).getByText("17 phút")).toBeVisible();
+    const preview = within(curriculum).getByText("Bài học xem trước");
+    expect(preview.tagName).toBe("SPAN");
+    expect(preview.closest("li")).toHaveTextContent("Guten Tag");
+    expect(within(curriculum).queryByRole("button")).not.toBeInTheDocument();
+    expect(within(curriculum).queryByRole("link")).not.toBeInTheDocument();
+    expect(within(curriculum).getAllByText("Bài học xem trước")).toHaveLength(1);
+    expect(requests(http)).toEqual([["get", viewerUrl]]);
+  });
+
   it.each([
-    ["COMPLETED", "Review course", "Completed"],
-    ["ENROLLED", "Continue learning", "Enrolled"],
-    ["IN_PROGRESS", "Continue learning", "In progress"],
+    ["COMPLETED", "Xem lại khóa học", "Đã hoàn thành khóa học"],
+    ["ENROLLED", "Tiếp tục học", "Đã đăng ký"],
+    ["IN_PROGRESS", "Tiếp tục học", "Đang học"],
   ])("%s navigates to the existing My Course Detail without enrollment or completion mutations", async (status, action, label) => {
     const { user, router, http, client } = mountCourse({ enrollmentStatus: status });
     const button = await screen.findByRole("button", { name: action });
     expect(button).toBeVisible();
     expect(screen.getByText(label, { exact: true })).toBeVisible();
-    expect(screen.queryByRole("button", { name: "View certificate" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Enroll course" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Xem chứng chỉ|View certificate/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Đăng ký khóa học" })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Everyday German", level: 1 })).toBeVisible();
     expect(screen.getByText("Learn everyday conversations.")).toBeVisible();
     expect(screen.getByRole("heading", { name: "Conversations" })).toBeVisible();
@@ -89,7 +124,7 @@ describe("Course detail enrollment actions", () => {
 
   it("reviews completed lessons through normal lesson and next/previous navigation with read-only mocked responses", async () => {
     const { user, router, http } = mountCourse();
-    await user.click(await screen.findByRole("button", { name: "Review course" }));
+    await user.click(await screen.findByRole("button", { name: "Xem lại khóa học" }));
     const lessonLink = await screen.findByRole("link", { name: /Greetings/ });
     expect(lessonLink).toHaveAttribute("href", lessonPath("lesson-1"));
     expect(screen.getByText("Completed", { exact: true })).toBeVisible();
@@ -123,7 +158,7 @@ describe("Course detail enrollment actions", () => {
 
   it("keeps Review course behind the existing auth guard even for an anonymous completed viewer snapshot", async () => {
     const { user, router, http } = mountCourse({ anonymous: true });
-    await user.click(await screen.findByRole("button", { name: "Review course" }));
+    await user.click(await screen.findByRole("button", { name: "Xem lại khóa học" }));
     await screen.findByRole("heading", { name: "Chào mừng bạn trở lại" });
     expect(router.state.location.pathname).toBe("/login");
     expect(router.state.location.state).toEqual({ returnTo: coursePath });
@@ -146,9 +181,9 @@ describe("Course detail enrollment actions", () => {
         throw new Error(`Unexpected enrollment request: ${config.method} ${config.url}`);
       },
     });
-    const button = await screen.findByRole("button", { name: "Enroll course" });
-    expect(screen.getByText("Available")).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Review course" })).not.toBeInTheDocument();
+    const button = await screen.findByRole("button", { name: "Đăng ký khóa học" });
+    expect(screen.getByText("Khả dụng")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Xem lại khóa học" })).not.toBeInTheDocument();
     await user.click(button);
     await screen.findByRole("heading", { name: "Learning Progress" });
     expect(router.state.location.pathname).toBe(coursePath);
@@ -158,7 +193,7 @@ describe("Course detail enrollment actions", () => {
 
   it("preserves anonymous enrollment redirect to Login without a mutation", async () => {
     const { user, router, http } = mountCourse({ enrollmentStatus: null, anonymous: true });
-    await user.click(await screen.findByRole("button", { name: "Enroll course" }));
+    await user.click(await screen.findByRole("button", { name: "Đăng ký khóa học" }));
     await screen.findByRole("heading", { name: "Chào mừng bạn trở lại" });
     expect(router.state.location.pathname).toBe("/login");
     expect(router.state.location.state).toEqual({ returnTo: publicPath });
@@ -170,10 +205,10 @@ describe("Course detail enrollment actions", () => {
     const response = deferred();
     const { http } = mountCourse({ handler: () => response.promise });
     expect(screen.getByText("Đang tải...")).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Review course" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Enroll course" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Xem lại khóa học" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Đăng ký khóa học" })).not.toBeInTheDocument();
     await act(async () => response.resolve(ok(http.mock.calls[0][0], courseDetail())));
-    expect(await screen.findByRole("button", { name: "Review course" })).toBeVisible();
+    expect(await screen.findByRole("button", { name: "Xem lại khóa học" })).toBeVisible();
     expect(screen.queryByText("Đang tải...")).not.toBeInTheDocument();
     expect(requests(http)).toEqual([["get", viewerUrl]]);
   });
@@ -185,18 +220,18 @@ describe("Course detail enrollment actions", () => {
       return attempts === 1 ? fail(config, 500) : ok(config, courseDetail());
     } });
     await screen.findByRole("heading", { name: "Đã xảy ra lỗi" });
-    expect(screen.queryByRole("button", { name: "Review course" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Enroll course" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Xem lại khóa học" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Đăng ký khóa học" })).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Thử lại" }));
-    expect(await screen.findByRole("button", { name: "Review course" })).toBeVisible();
+    expect(await screen.findByRole("button", { name: "Xem lại khóa học" })).toBeVisible();
     expect(requests(http)).toEqual([["get", viewerUrl], ["get", viewerUrl]]);
   });
 
   it("preserves not-found course handling without rendering an action", async () => {
     const { http } = mountCourse({ handler: (config) => fail(config, 404) });
     await screen.findByRole("heading", { name: "Không tìm thấy tài nguyên" });
-    expect(screen.queryByRole("button", { name: "Review course" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Enroll course" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Xem lại khóa học" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Đăng ký khóa học" })).not.toBeInTheDocument();
     expect(requests(http)).toEqual([["get", viewerUrl]]);
   });
 });

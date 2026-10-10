@@ -10,16 +10,16 @@ import { nextActivityKey } from "@/features/my-learning/guidance/hooks/useNextAc
 import { enrollCourse } from "../services/enroll.service";
 import { getViewerCourseDetail } from "../services/course-detail.service";
 
-const uncertainMessage = "We couldn't confirm your enrollment. It may still complete. Check your enrollment status again.";
+const uncertainMessage = "Chưa thể xác nhận bạn đã đăng ký khóa học hay chưa. Việc đăng ký có thể đã được ghi nhận. Hãy kiểm tra lại trạng thái đăng ký.";
 const accessibleStatuses = ["ENROLLED", "IN_PROGRESS", "COMPLETED"];
 
 function failureMessage(status) {
-  if (status === 401) return "Your session could not be verified. Please sign in again.";
-  if (status === 403) return "You do not have permission to enroll in this course.";
-  if (status === 404 || status === 410) return "This course is unavailable for enrollment.";
-  if (status === 400 || status === 422) return "Enrollment could not be submitted. Please check the course details and try again.";
-  if (status === 409) return "Enrollment could not be completed because the course state changed.";
-  return "Enrollment could not be completed. Please try again.";
+  if (status === 401) return "Không thể xác minh phiên đăng nhập của bạn. Vui lòng đăng nhập lại.";
+  if (status === 403) return "Bạn không có quyền đăng ký khóa học này.";
+  if (status === 404 || status === 410) return "Khóa học này hiện không khả dụng để đăng ký.";
+  if (status === 400 || status === 422) return "Không thể gửi yêu cầu đăng ký khóa học. Vui lòng kiểm tra thông tin khóa học và thử lại.";
+  if (status === 409) return "Không thể hoàn tất đăng ký vì trạng thái khóa học đã thay đổi.";
+  return "Không thể hoàn tất đăng ký khóa học. Vui lòng thử lại.";
 }
 
 export function useEnrollAction(courseId) {
@@ -66,7 +66,7 @@ export function useEnrollAction(courseId) {
         if (accessibleStatuses.includes(viewer.enrollmentStatus)) return { phase: "confirmed" };
         if (["DROPPED", "EXPIRED"].includes(viewer.enrollmentStatus)) {
           return { phase: "unavailable", error: new ApiError({
-            message: `Your enrollment is ${viewer.enrollmentStatus.toLowerCase()}. Course access is unavailable.`,
+            message: `Trạng thái đăng ký của bạn là ${viewer.enrollmentStatus}. Hiện không thể truy cập khóa học.`,
           }) };
         }
       }

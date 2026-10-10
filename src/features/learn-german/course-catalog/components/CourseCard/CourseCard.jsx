@@ -31,7 +31,7 @@ function CourseCard({ course }) {
         <p className={cx("description")}>{course.description}</p>
 
         <div className={cx("meta")}>
-          <span>{course.estimatedHours} hours</span>
+          <span>{course.estimatedHours} giờ</span>
 
           <span>{formatPrice(course.price, course.currency)}</span>
         </div>
@@ -42,7 +42,7 @@ function CourseCard({ course }) {
           to={`/learn-german/courses/${course.id}`}
           className={cx("link")}
         >
-          View course
+          Xem khóa học
           <span aria-hidden="true">→</span>
         </AppLink>
       </footer>

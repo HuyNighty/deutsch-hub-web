@@ -24,7 +24,7 @@ export default function CourseAction({ courseId, enrollmentStatus }) {
           fullWidth
           onClick={() => navigate(`/my-learning/courses/${courseId}`)}
         >
-          Continue learning
+          Tiếp tục học
         </Button>
       );
       break;
@@ -36,7 +36,7 @@ export default function CourseAction({ courseId, enrollmentStatus }) {
           fullWidth
           onClick={() => navigate(`/my-learning/courses/${courseId}`)}
         >
-          Review course
+          Xem lại khóa học
         </Button>
       );
       break;
@@ -44,28 +44,28 @@ export default function CourseAction({ courseId, enrollmentStatus }) {
     default:
       button = (
         <Button size="lg" fullWidth onClick={handleEnroll} loading={loading} disabled={canCheckEnrollment}>
-          {phase === "checking" ? "Checking enrollment…" : phase === "confirmed" ? "Opening course…" : loading ? "Enrolling…" : "Enroll course"}
+          {phase === "checking" ? "Đang kiểm tra trạng thái đăng ký…" : phase === "confirmed" ? "Đã xác nhận đăng ký. Đang mở khóa học…" : loading ? "Đang đăng ký khóa học…" : "Đăng ký khóa học"}
         </Button>
       );
   }
 
   return (
-    <aside className={cx("action")}>
+    <aside lang="vi" className={cx("action")}>
       <div className={cx("header")}>
-        <span className={cx("label")}>COURSE ACCESS</span>
+        <span className={cx("label")}>TRUY CẬP KHÓA HỌC</span>
 
         <span className={cx("status")}>
           {phase === "unavailable"
-            ? "Unavailable"
+            ? "Không khả dụng"
             : phase === "uncertain"
-              ? "Unconfirmed"
+              ? "Chưa xác nhận"
               : enrollmentStatus === "COMPLETED"
-                ? "Completed"
+                ? "Đã hoàn thành khóa học"
                 : enrollmentStatus === "IN_PROGRESS"
-                  ? "In progress"
+                  ? "Đang học"
                   : enrollmentStatus === "ENROLLED"
-                    ? "Enrolled"
-                    : "Available"}
+                    ? "Đã đăng ký"
+                    : "Khả dụng"}
         </span>
       </div>
 
@@ -76,7 +76,7 @@ export default function CourseAction({ courseId, enrollmentStatus }) {
       {error && <p role="alert">{error.message}</p>}
       {canCheckEnrollment && (
         <Button variant="outline" fullWidth onClick={checkEnrollment}>
-          Check enrollment status
+          Kiểm tra trạng thái đăng ký
         </Button>
       )}
     </aside>

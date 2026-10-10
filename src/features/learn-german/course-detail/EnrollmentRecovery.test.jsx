@@ -63,14 +63,14 @@ function setup({ enroll = (config) => ok(config), read = (config) => ok(config, 
 }
 
 async function enroll(user) {
-  await user.click(screen.getByRole("button", { name: "Enroll course" }));
+  await user.click(screen.getByRole("button", { name: "Đăng ký khóa học" }));
 }
 
 async function expectUncertain(app) {
-  expect(await screen.findByRole("alert")).toHaveTextContent("We couldn't confirm your enrollment. It may still complete.");
+  expect(await screen.findByRole("alert")).toHaveTextContent("Chưa thể xác nhận bạn đã đăng ký khóa học hay chưa. Việc đăng ký có thể đã được ghi nhận. Hãy kiểm tra lại trạng thái đăng ký.");
   await waitFor(() => expect(app.client.isMutating()).toBe(0));
-  expect(screen.getByRole("button", { name: "Enroll course" })).toBeDisabled();
-  expect(screen.getByRole("button", { name: "Check enrollment status" })).toBeEnabled();
+  expect(screen.getByRole("button", { name: "Đăng ký khóa học" })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Kiểm tra trạng thái đăng ký" })).toBeEnabled();
   expect(app.router.state.location.pathname).toBe(publicPath);
 }
 
@@ -100,7 +100,7 @@ describe("Learner enrollment recovery", () => {
     const app = setup({ enroll: (config) => { started.resolve(); return response.promise.then(() => ok(config)); } });
     await enroll(app.user);
     await started.promise;
-    const button = screen.getByRole("button", { name: "Enrolling…" });
+    const button = screen.getByRole("button", { name: "Đang đăng ký khóa học…" });
     expect(button).toBeDisabled();
     expect(button).toHaveAttribute("aria-busy", "true");
     expect(screen.getByRole("heading", { name: "German Basics" })).toBeVisible();
@@ -146,10 +146,10 @@ describe("Learner enrollment recovery", () => {
   it.each(["DROPPED", "EXPIRED"])("does not grant access for a duplicate with an existing %s enrollment", async (status) => {
     const app = setup({ enroll: (config) => refuse(config), read: (config) => ok(config, viewer(status)) });
     await enroll(app.user);
-    expect(await screen.findByRole("alert")).toHaveTextContent(`Your enrollment is ${status.toLowerCase()}. Course access is unavailable.`);
-    expect(screen.getByText("Unavailable", { exact: true })).toBeVisible();
-    expect(screen.getByRole("button", { name: "Enroll course" })).toBeDisabled();
-    expect(screen.queryByRole("button", { name: "Continue learning" })).not.toBeInTheDocument();
+    expect(await screen.findByRole("alert")).toHaveTextContent(`Trạng thái đăng ký của bạn là ${status}. Hiện không thể truy cập khóa học.`);
+    expect(screen.getByText("Không khả dụng", { exact: true })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Đăng ký khóa học" })).toBeDisabled();
+    expect(screen.queryByRole("button", { name: "Tiếp tục học" })).not.toBeInTheDocument();
     expect(app.router.state.location.pathname).toBe(publicPath);
     expectCourseState(app.cache);
     expect(requests(app.http)).toEqual([["post", enrollUrl], ["get", viewerUrl]]);
@@ -183,7 +183,7 @@ describe("Learner enrollment recovery", () => {
     expect(app.client.getQueryData(["courses", COURSE_ID])).toBe(stale);
     expect(app.client.getQueryState(["courses", COURSE_ID]).isInvalidated).toBe(false);
     expectCourseState(app.cache);
-    await app.user.click(screen.getByRole("button", { name: "Enroll course" }));
+    await app.user.click(screen.getByRole("button", { name: "Đăng ký khóa học" }));
     expect(requests(app.http)).toEqual([["post", enrollUrl], ["get", viewerUrl]]);
   });
 
@@ -205,30 +205,56 @@ describe("Learner enrollment recovery", () => {
     } });
     await enroll(app.user);
     await expectUncertain(app);
-    const check = screen.getByRole("button", { name: "Check enrollment status" });
+    const check = screen.getByRole("button", { name: "Kiểm tra trạng thái đăng ký" });
     await app.user.dblClick(check);
     await started.promise;
-    expect(screen.getByRole("button", { name: "Checking enrollment…" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Đang kiểm tra trạng thái đăng ký…" })).toBeDisabled();
     expect(requests(app.http)).toEqual([["post", enrollUrl], ["get", viewerUrl], ["get", viewerUrl]]);
     await act(async () => response.resolve());
     await screen.findByRole("heading", { name: "Course destination" });
     expect(requests(app.http)).toEqual([["post", enrollUrl], ["get", viewerUrl], ["get", viewerUrl]]);
   });
 
-  it.each([[400, 50004], [403, 50004], [404, 50004], [409, 50005], [409, "50004"], [422, 9999]])("does not recover unrelated HTTP %s / code %s or expose backend detail", async (status, code) => {
+  it.each([
+    [400, 50004, "Không thể gửi yêu cầu đăng ký khóa học. Vui lòng kiểm tra thông tin khóa học và thử lại."],
+    [403, 50004, "Bạn không có quyền đăng ký khóa học này."],
+    [404, 50004, "Khóa học này hiện không khả dụng để đăng ký."],
+    [410, 9999, "Khóa học này hiện không khả dụng để đăng ký."],
+    [409, 50005, "Không thể hoàn tất đăng ký vì trạng thái khóa học đã thay đổi."],
+    [409, "50004", "Không thể hoàn tất đăng ký vì trạng thái khóa học đã thay đổi."],
+    [422, 9999, "Không thể gửi yêu cầu đăng ký khóa học. Vui lòng kiểm tra thông tin khóa học và thử lại."],
+    [418, 9999, "Không thể hoàn tất đăng ký khóa học. Vui lòng thử lại."],
+  ])("does not recover unrelated HTTP %s / code %s or expose backend detail", async (status, code, expected) => {
     const log = vi.spyOn(console, "log").mockImplementation(() => {});
     const alert = vi.spyOn(window, "alert").mockImplementation(() => {});
     const app = setup({ enroll: (config) => refuse(config, status, code) });
     await enroll(app.user);
     const message = await screen.findByRole("alert");
+    expect(message).toHaveTextContent(expected);
     expect(message).not.toHaveTextContent("Private backend detail");
-    expect(screen.getByRole("button", { name: "Enroll course" })).toBeEnabled();
-    expect(screen.queryByRole("button", { name: "Check enrollment status" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Đăng ký khóa học" })).toBeEnabled();
+    expect(screen.queryByRole("button", { name: "Kiểm tra trạng thái đăng ký" })).not.toBeInTheDocument();
     expect(app.router.state.location.pathname).toBe(publicPath);
     expectCourseState(app.cache);
     expect(requests(app.http)).toEqual([["post", enrollUrl]]);
     expect(log).not.toHaveBeenCalled();
     expect(alert).not.toHaveBeenCalled();
+  });
+
+  it("shows the approved confirmed/opening label while existing cache cancellation is pending", async () => {
+    const app = setup();
+    const cancellation = deferred();
+    vi.spyOn(app.client, "cancelQueries").mockImplementation(() => cancellation.promise);
+    await enroll(app.user);
+    const opening = await screen.findByRole("button", { name: "Đã xác nhận đăng ký. Đang mở khóa học…" });
+    expect(opening).toBeDisabled();
+    expect(opening).toHaveAttribute("aria-busy", "true");
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(requests(app.http)).toEqual([["post", enrollUrl]]);
+    expect(app.router.state.location.pathname).toBe(publicPath);
+    await act(async () => cancellation.resolve());
+    await screen.findByRole("heading", { name: "Course destination" });
+    expectCourseState(app.cache, true);
   });
 
   it("preserves anonymous Login returnTo and performs no mutation or viewer reconciliation", async () => {

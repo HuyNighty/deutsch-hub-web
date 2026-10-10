@@ -17,7 +17,7 @@ export default function CourseHeader({ course }) {
         className={cx("back")}
       >
         <span aria-hidden="true">←</span>
-        All courses
+        Quay lại tất cả khóa học
       </AppLink>
 
       <div className={cx("content")}>
@@ -28,12 +28,12 @@ export default function CourseHeader({ course }) {
         <p className={cx("description")}>{course.description}</p>
 
         <div className={cx("meta")}>
-          <span>{course.level} Level</span>
+          <span>Trình độ {course.level}</span>
 
-          <span>{course.estimatedHours} hours</span>
+          <span>{course.estimatedHours} giờ</span>
 
           <span>
-            {sectionCount} {sectionCount === 1 ? "section" : "sections"}
+            {sectionCount} phần
           </span>
         </div>
       </div>

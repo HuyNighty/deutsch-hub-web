@@ -19,7 +19,7 @@ function CourseCatalogHeader() {
       <div className={cx("hero-overlay")} aria-hidden="true" />
 
       <div className={cx("hero-content")}>
-        <span className={cx("eyebrow")}>LEARNING</span>
+        <span className={cx("eyebrow")}>HỌC TẬP</span>
 
         <h1 id="course-catalog-title" className={cx("title")}>
           Học tiếng Đức

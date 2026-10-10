@@ -12,14 +12,14 @@ export default function CourseSectionList({ sections = [] }) {
       aria-labelledby="course-curriculum-title"
     >
       <div className={cx("heading-group")}>
-        <span className={cx("eyebrow")}>COURSE CONTENT</span>
+        <span className={cx("eyebrow")}>NỘI DUNG KHÓA HỌC</span>
 
         <div className={cx("heading-row")}>
           <h2 id="course-curriculum-title" className={cx("heading")}>
-            Curriculum
+            Nội dung khóa học
           </h2>
 
-          <span className={cx("count")}>{sections.length} sections</span>
+          <span className={cx("count")}>{sections.length} phần</span>
         </div>
       </div>
 

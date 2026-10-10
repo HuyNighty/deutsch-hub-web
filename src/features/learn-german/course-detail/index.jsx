@@ -27,7 +27,7 @@ export default function CourseDetail() {
       }}
     >
       {course && (
-        <main className={cx("page")}>
+        <main lang="vi" className={cx("page")}>
           <div className={cx("top")}>
             <CourseHeader course={course} />
 

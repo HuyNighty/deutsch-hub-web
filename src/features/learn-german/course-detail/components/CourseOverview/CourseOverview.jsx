@@ -14,30 +14,30 @@ export default function CourseOverview({ course }) {
   return (
     <section className={cx("overview")}>
       <div className={cx("heading-group")}>
-        <span className={cx("eyebrow")}>ABOUT THIS COURSE</span>
+        <span className={cx("eyebrow")}>TỔNG QUAN KHÓA HỌC</span>
 
-        <h2 className={cx("heading")}>What you'll learn</h2>
+        <h2 className={cx("heading")}>Nội dung bạn sẽ học</h2>
       </div>
 
       <div className={cx("stats")}>
         <div className={cx("stat")}>
           <strong>{course.estimatedHours}</strong>
-          <span>Hours</span>
+          <span>Giờ</span>
         </div>
 
         <div className={cx("stat")}>
           <strong>{sections.length}</strong>
-          <span>Sections</span>
+          <span>Phần</span>
         </div>
 
         <div className={cx("stat")}>
           <strong>{lessonCount}</strong>
-          <span>Lessons</span>
+          <span>Bài học</span>
         </div>
 
         <div className={cx("stat")}>
           <strong>{course.level}</strong>
-          <span>Level</span>
+          <span>Trình độ</span>
         </div>
       </div>
     </section>

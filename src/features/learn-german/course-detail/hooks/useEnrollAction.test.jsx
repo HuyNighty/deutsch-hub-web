@@ -6,6 +6,8 @@ import { fail, ok, setHttpHandler } from "@/test/http";
 import { COURSE_ID, seedCourseState, expectCourseState } from "@/test/course-state-fixtures";
 import { learningJourneyKey } from "@/features/assessment/attempt/hooks/useLearningJourney";
 import { useEnrollAction } from "./useEnrollAction";
+import { ApiError } from "@/shared/api/api-error";
+import * as enrollmentService from "../services/enroll.service";
 
 const publicPath = `/learn-german/courses/${COURSE_ID}`;
 const coursePath = `/my-learning/courses/${COURSE_ID}`;
@@ -23,6 +25,27 @@ const routes = [
 afterEach(() => { vi.restoreAllMocks(); });
 
 describe("Enroll Course cache coherence", () => {
+  it("localizes a known 401 surfaced by the service without deriving meaning from backend wording", async () => {
+    seedSession();
+    const cache = seedCourseState();
+    // Isolate presentation when the service surfaces 401. Shared HTTP refresh and
+    // terminal-session behavior remain covered by EnrollmentRecovery's real adapter.
+    const enroll = vi.spyOn(enrollmentService, "enrollCourse").mockRejectedValue(new ApiError({
+      status: 401, code: 9999, message: "Unexpected backend diagnostic",
+    }));
+    const http = vi.fn(() => { throw new Error("No reconciliation or HTTP replay expected"); });
+    setHttpHandler(http);
+    const { router, auth } = mountSession(routes, { path: publicPath, client: cache.client });
+    await userEvent.setup().click(screen.getByRole("button", { name: "Enroll" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Không thể xác minh phiên đăng nhập của bạn. Vui lòng đăng nhập lại.");
+    expect(screen.queryByText("Unexpected backend diagnostic")).not.toBeInTheDocument();
+    expect(enroll).toHaveBeenCalledTimes(1);
+    expect(http).not.toHaveBeenCalled();
+    expect(auth.current.status).toBe("AUTHENTICATED");
+    expect(router.state.location.pathname).toBe(publicPath);
+    expectCourseState(cache);
+  });
+
   it("invalidates only exact Journey and the existing Course family without patching or fetching Journey, then navigates", async () => {
     seedSession();
     const cache = seedCourseState();
@@ -52,7 +75,7 @@ describe("Enroll Course cache coherence", () => {
     setHttpHandler(http);
     const { router } = mountSession(routes, { path: publicPath, client: cache.client });
     await userEvent.setup().click(screen.getByRole("button", { name: "Enroll" }));
-    expect(await screen.findByRole("alert")).toHaveTextContent("You do not have permission to enroll in this course.");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Bạn không có quyền đăng ký khóa học này.");
     await waitFor(() => expect(screen.getByRole("button", { name: "Enroll" })).toBeEnabled());
     expect(alert).not.toHaveBeenCalled();
     expect(console.log).not.toHaveBeenCalled();

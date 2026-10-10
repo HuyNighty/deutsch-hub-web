@@ -21,9 +21,9 @@ export default function LessonItem({ lesson }) {
       </div>
 
       <div className={cx("meta")}>
-        {lesson.freePreview && <span className={cx("preview")}>Preview</span>}
+        {lesson.freePreview && <span className={cx("preview")}>Bài học xem trước</span>}
 
-        <span className={cx("duration")}>{lesson.estimatedMinutes} min</span>
+        <span className={cx("duration")}>{lesson.estimatedMinutes} phút</span>
       </div>
     </li>
   );

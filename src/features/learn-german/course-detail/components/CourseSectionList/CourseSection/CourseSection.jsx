@@ -23,7 +23,7 @@ export default function CourseSection({ section, index }) {
             <h3 className={cx("title")}>{section.title}</h3>
 
             <span className={cx("meta")}>
-              {lessons.length} lessons · {totalMinutes} min
+              {lessons.length} bài học · {totalMinutes} phút
             </span>
           </div>
 
