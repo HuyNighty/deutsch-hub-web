@@ -13,9 +13,9 @@ describe("Assessment integrated entry and recovery", () => {
     const user = userEvent.setup();
     const server = journeyServer({ active: true, bound: ["task-writing-4"] });
     const { router, client } = mountAssessmentApp(detailPath);
-    await user.click(await screen.findByRole("link", { name: "Continue Assessment" }));
+    await user.click(await screen.findByRole("link", { name: "Tiếp tục bài đánh giá" }));
     await screen.findByText("Status: In progress");
-    expect(screen.queryByRole("button", { name: "Start Assessment" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Bắt đầu bài đánh giá" })).not.toBeInTheDocument();
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(client.getQueryData(PARENT_KEY)).toEqual(server.parent());
     expect(Date.parse(server.parent().expiresAt)).toBeLessThan(Date.now());
@@ -34,7 +34,7 @@ describe("Assessment integrated entry and recovery", () => {
     const user = userEvent.setup();
     const server = journeyServer({ conflict: true });
     const { router } = mountAssessmentApp(detailPath);
-    await server.clickWrite(user, await screen.findByRole("button", { name: "Start Assessment" }), "post", startUrl);
+    await server.clickWrite(user, await screen.findByRole("button", { name: "Bắt đầu bài đánh giá" }), "post", startUrl);
     await screen.findByText("Status: In progress");
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(writes(server.http)).toEqual([["post", startUrl]]);
@@ -85,7 +85,7 @@ describe("Assessment integrated entry and recovery", () => {
     const server = journeyServer({ active: true, definition, denyTaskId: later.taskId });
     const { router } = mountAssessmentApp(attemptPath);
     await screen.findByText("Status: In progress");
-    const row = screen.getByText("Task 6").closest("li");
+    const row = screen.getByText("Bài tập 6").closest("li");
     const start = within(row).getByRole("button", { name: "Start task" });
     expect(start).toBeEnabled();
     expect(server.parent().taskAttempts).toEqual([]);

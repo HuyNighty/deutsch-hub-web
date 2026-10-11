@@ -100,7 +100,7 @@ describe("My Learning canonical Journey snapshot", () => {
     if (empty) expect(screen.getByText("Bắt đầu học khóa học đầu tiên của bạn.")).toBeInTheDocument();
     expectSnapshotReads(http);
     await user.click(entry);
-    await screen.findByRole("link", { name: "View assessment" });
+    await screen.findByRole("link", { name: "Xem bài đánh giá" });
     expect(router.state.location.pathname).toBe("/my-learning/assessments");
     expect(http.mock.calls.map(([config]) => [config.method, config.url]).sort()).toEqual([["get", journeyUrl], ["get", directionUrl], ["get", nextActivityUrl], ["get", "/me/assessments"]].sort());
   });
@@ -116,7 +116,7 @@ describe("My Learning canonical Journey snapshot", () => {
     const { router } = mountAssessmentApp("/my-learning");
     expect(screen.getByText("Đang tải...")).toBeInTheDocument();
     await user.click(screen.getByRole("link", { name: "Khám phá bài đánh giá" }));
-    await screen.findByRole("link", { name: "View assessment" });
+    await screen.findByRole("link", { name: "Xem bài đánh giá" });
     expect(router.state.location.pathname).toBe("/my-learning/assessments");
     expect(http.mock.calls.map(([config]) => config.url).sort()).toEqual([journeyUrl, directionUrl, nextActivityUrl, "/me/assessments"].sort());
     await act(async () => { response.resolve(); });

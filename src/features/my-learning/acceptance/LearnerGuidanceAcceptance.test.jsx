@@ -49,7 +49,7 @@ describe("Learner Guidance integrated acceptance", () => {
 
     await openParent(user, server, app);
     const beforeStart = captureGuidance(app.client);
-    const row = screen.getByText("Task 4").closest("li");
+    const row = screen.getByText("Bài tập 4").closest("li");
     const startWindow = await server.clickWrite(user, within(row).getByRole("button", { name: "Start task" }), TASK_URL, {
       reads: [TASK_URL, DEFINITION_URL],
     });

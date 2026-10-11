@@ -10,14 +10,14 @@ import styles from "../shared/Assessment.module.scss";
 
 const cx = classNames.bind(styles);
 const PAGE_SIZE = 20;
-const STATUS_LABELS = { COMPLETED: "Completed", EXPIRED: "Expired", CANCELLED: "Cancelled" };
-const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
+const STATUS_LABELS = { COMPLETED: "Đã hoàn thành", EXPIRED: "Hết hạn", CANCELLED: "Đã hủy" };
+const dateFormatter = new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium", timeStyle: "short" });
 
 function outcomeLabel(item) {
   if (item.resultAvailable) {
-    return item.passed ? "Passed" : "Not passed";
+    return item.passed ? "Đạt" : "Chưa đạt";
   }
-  return item.status === "EXPIRED" ? "Result not available yet" : "Result not available";
+  return item.status === "EXPIRED" ? "Chưa có kết quả để xem" : "Không có kết quả để xem";
 }
 
 export default function AssessmentHistory() {
@@ -26,10 +26,10 @@ export default function AssessmentHistory() {
 
   return (
     <section className={cx("page")} aria-labelledby="assessment-history-title">
-      <header className={cx("header")}>
-        <AppLink to="/my-learning">Back to My Learning</AppLink>
-        <h1 id="assessment-history-title" className={cx("title")}>Assessment History</h1>
-        <p className={cx("description")}>See your past assessment attempts and available official results.</p>
+      <header lang="vi" className={cx("header")}>
+        <AppLink to="/my-learning">Quay lại việc học của tôi</AppLink>
+        <h1 id="assessment-history-title" className={cx("title")}>Lịch sử bài đánh giá</h1>
+        <p className={cx("description")}>Xem các lượt làm bài đánh giá trước đây và kết quả chính thức hiện có.</p>
       </header>
 
       <ResourceState
@@ -37,8 +37,8 @@ export default function AssessmentHistory() {
         error={error}
         empty={data?.items.length === 0}
         emptyProps={{
-          title: "No assessment history",
-          description: "There are no past assessment attempts on this page.",
+          title: <span lang="vi">Chưa có lịch sử bài đánh giá</span>,
+          description: <span lang="vi">Trang này chưa có lượt làm bài đánh giá trước đây.</span>,
         }}
         errorProps={{ onRetry: refetch }}
       >
@@ -47,24 +47,24 @@ export default function AssessmentHistory() {
             {data.items.map((item) => {
               const title = assessmentTitle(item.assessmentTitle);
               return (
-                <article className={cx("card")} key={item.assessmentAttemptId} aria-label={`${title} attempt`}>
-                  <h2 className={cx("cardTitle")}>{title}</h2>
-                  <p className={cx("metadata")}>Target level: {item.targetLevel}</p>
-                  <p>Status: {STATUS_LABELS[item.status]}</p>
-                  <p>{outcomeLabel(item)}</p>
+                <article className={cx("card")} key={item.assessmentAttemptId} aria-label={`Lượt làm bài đánh giá: ${title}`}>
+                  <h2 lang={item.assessmentTitle === null ? "vi" : undefined} className={cx("cardTitle")}>{title}</h2>
+                  <p lang="vi" className={cx("metadata")}>Trình độ mục tiêu: {item.targetLevel}</p>
+                  <p lang="vi">Trạng thái: {STATUS_LABELS[item.status]}</p>
+                  <p lang="vi">{outcomeLabel(item)}</p>
                   {item.startedAt !== null && (
-                    <p className={cx("metadata")}>
-                      Started: <time dateTime={item.startedAt}>{dateFormatter.format(new Date(item.startedAt))}</time>
+                    <p lang="vi" className={cx("metadata")}>
+                      Bắt đầu: <time dateTime={item.startedAt}>{dateFormatter.format(new Date(item.startedAt))}</time>
                     </p>
                   )}
                   {item.expiresAt !== null && (
-                    <p className={cx("metadata")}>
-                      Deadline: <time dateTime={item.expiresAt}>{dateFormatter.format(new Date(item.expiresAt))}</time>
+                    <p lang="vi" className={cx("metadata")}>
+                      Hạn kết thúc: <time dateTime={item.expiresAt}>{dateFormatter.format(new Date(item.expiresAt))}</time>
                     </p>
                   )}
                   {item.resultAvailable && (
-                    <AppLink to={resultRoute(item.assessmentAttemptId)} variant="outline" aria-label={`View result for ${title}`}>
-                      View result
+                    <AppLink to={resultRoute(item.assessmentAttemptId)} variant="outline" aria-label={`Xem kết quả của ${title}`}>
+                      <span lang="vi">Xem kết quả</span>
                     </AppLink>
                   )}
                 </article>
@@ -75,17 +75,17 @@ export default function AssessmentHistory() {
       </ResourceState>
 
       {error && [403, 404].includes(error.status) && (
-        <Button variant="outline" onClick={() => refetch()}>Try Again</Button>
+        <Button lang="vi" variant="outline" onClick={() => refetch()}>Thử lại</Button>
       )}
 
       {!isLoading && !error && data && (data.totalPages > 0 || data.page > 0) && (
-        <nav className={cx("pagination")} aria-label="Assessment history pages">
+        <nav className={cx("pagination")} lang="vi" aria-label="Các trang lịch sử bài đánh giá">
           <Button variant="outline" disabled={data.page === 0} onClick={() => setPage(data.page - 1)}>
-            Previous
+            Trang trước
           </Button>
-          <span>Page {data.page + 1}{data.page < data.totalPages && ` of ${data.totalPages}`}</span>
+          <span>Trang {data.page + 1}{data.page < data.totalPages && ` / ${data.totalPages}`}</span>
           <Button variant="outline" disabled={data.page + 1 >= data.totalPages} onClick={() => setPage(data.page + 1)}>
-            Next
+            Trang tiếp
           </Button>
         </nav>
       )}

@@ -34,11 +34,11 @@ describe("owned Assessment Attempt runtime", () => {
     expect(within(region).getByText(/Started:/)).toBeInTheDocument();
     expect(within(region).getByText(/Deadline:/)).toBeInTheDocument();
     expect(within(region).getAllByRole("heading", { level: 2 }).map((el) => el.textContent))
-      .toEqual(["Writing", "Listening", "Reading", "Speaking"]);
-    expect(within(region).getAllByText("Execution mode: Independent")).toHaveLength(2);
-    expect(within(region).getAllByText("Execution mode: Sequential")).toHaveLength(2);
+      .toEqual(["Viết", "Nghe", "Đọc", "Nói"]);
+    expect(within(region).getAllByText("Cách thực hiện: Độc lập")).toHaveLength(2);
+    expect(within(region).getAllByText("Cách thực hiện: Tuần tự")).toHaveLength(2);
     expect(within(region).getAllByRole("listitem").map((el) => el.querySelector("span").textContent))
-      .toEqual(["Task 4", "Task 2", "Task 1", "Task 3", "Task 5"]);
+      .toEqual(["Bài tập 4", "Bài tập 2", "Bài tập 1", "Bài tập 3", "Bài tập 5"]);
     const identities = [ATTEMPT_ID, ASSESSMENT_ID, ...attempt.taskAttempts.flatMap((task) => [task.taskId, task.quizAttemptId]),
       ...definition.components.flatMap((component) => [component.componentId,
         ...component.tasks.flatMap((task) => [task.taskId, task.quizRevisionId])])];
@@ -59,7 +59,7 @@ describe("owned Assessment Attempt runtime", () => {
       : assessmentDetail({ title: null, timeLimitMinutes: null })));
     const { router } = mountAssessmentApp(attemptPath);
     await screen.findByText(`Status: ${label}`);
-    expect(screen.getByRole("heading", { name: "Untitled assessment" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Bài đánh giá chưa có tên" })).toBeInTheDocument();
     expect(screen.getByText("Started: Not started")).toBeInTheDocument();
     expect(screen.getByText("Deadline: No time limit")).toBeInTheDocument();
     expect(router.state.location.pathname).toBe(attemptPath);
@@ -83,7 +83,7 @@ describe("owned Assessment Attempt runtime", () => {
     const completedKey = pending === "attempt" ? "learner-assessment-attempt-definition" : "learner-assessment-attempt";
     await waitFor(() => expect(client.getQueryData([completedKey, ATTEMPT_ID])).toBeDefined());
     expect(screen.getByText("Đang tải...")).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Writing" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Viết" })).not.toBeInTheDocument();
     await act(async () => { read.resolve(); });
     await screen.findByText("Status: In progress");
   });
@@ -102,7 +102,7 @@ describe("owned Assessment Attempt runtime", () => {
     const { router, client } = mountAssessmentApp(attemptPath);
     await screen.findByText("Đã xảy ra lỗi");
     expect(screen.queryByText("Status: In progress")).not.toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Writing" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Viết" })).not.toBeInTheDocument();
     expect(router.state.location.pathname).toBe(attemptPath);
     if (boundary === "attempt") expect(client.getQueryData(["learner-assessment-attempt", ATTEMPT_ID])).toBeUndefined();
   });
@@ -117,7 +117,7 @@ describe("owned Assessment Attempt runtime", () => {
       const { auth } = mountAssessmentApp(attemptPath);
       await screen.findByText(copy);
       expect(auth.current.status).toBe("AUTHENTICATED");
-      expect(screen.queryByRole("heading", { name: "Writing" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Viết" })).not.toBeInTheDocument();
     },
   );
 

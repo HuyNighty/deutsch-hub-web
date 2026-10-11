@@ -127,15 +127,15 @@ describe("Task submission and parent progression", () => {
     expect(router.state.location.pathname).toBe(attemptPath);
     await waitFor(() => expect(http.mock.calls.some(([config]) => config.url === attemptUrl)).toBe(true));
     expect(screen.getByRole("link", { name: "Continue task" })).toHaveAttribute("href", TASK_PATH);
-    const laterRow = screen.getByText("Task 2").closest("li");
+    const laterRow = screen.getByText("Bài tập 2").closest("li");
     expect(within(laterRow).getByRole("button", { name: "Start task" })).toBeEnabled();
     expect(laterRow.textContent).not.toMatch(/unlock|eligible|completed/i);
     // Returning to the predecessor reads canonical SUBMITTED evidence without re-submission.
     await user.click(screen.getByRole("link", { name: "Continue task" }));
     await screen.findByText("Status: Submitted");
     await user.click(screen.getByRole("link", { name: "Continue assessment" }));
-    await screen.findByRole("heading", { name: "Writing" });
-    await user.click(within(screen.getByText("Task 2").closest("li")).getByRole("button", { name: "Start task" }));
+    await screen.findByRole("heading", { name: "Viết" });
+    await user.click(within(screen.getByText("Bài tập 2").closest("li")).getByRole("button", { name: "Start task" }));
     await screen.findByRole("heading", { name: "Task 2" });
     expect(router.state.location.pathname).toBe(laterPath);
     expect(http.mock.calls.filter(([config]) => config.method === "post").map(([config]) => config.url))

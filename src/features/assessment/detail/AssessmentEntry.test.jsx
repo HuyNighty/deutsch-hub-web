@@ -35,12 +35,12 @@ describe("Assessment entry and Start", () => {
     mountAssessmentApp(detailPath);
     expect(http.mock.calls.some(([config]) => config.url === journeyUrl)).toBe(false);
     await act(async () => { definition.resolve(); });
-    await screen.findByText("Checking assessment attempts...");
-    expect(screen.queryByRole("button", { name: "Start Assessment" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Continue Assessment" })).not.toBeInTheDocument();
+    await screen.findByText("Đang kiểm tra lượt làm bài đánh giá...");
+    expect(screen.queryByRole("button", { name: "Bắt đầu bài đánh giá" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Tiếp tục bài đánh giá" })).not.toBeInTheDocument();
     await act(async () => { read.resolve(); });
-    await screen.findByRole("button", { name: "Start Assessment" });
-    expect(screen.queryByRole("link", { name: "Continue Assessment" })).not.toBeInTheDocument();
+    await screen.findByRole("button", { name: "Bắt đầu bài đánh giá" });
+    expect(screen.queryByRole("link", { name: "Tiếp tục bài đánh giá" })).not.toBeInTheDocument();
     expect(posts(http)).toHaveLength(0);
   });
 
@@ -50,9 +50,9 @@ describe("Assessment entry and Start", () => {
       liveAttempt({ assessmentId: "other-assessment", assessmentAttemptId: "other-attempt" }), liveAttempt(),
     ])));
     const { router, client } = mountAssessmentApp(detailPath);
-    const link = await screen.findByRole("link", { name: "Continue Assessment" });
+    const link = await screen.findByRole("link", { name: "Tiếp tục bài đánh giá" });
     expect(link).toHaveAttribute("href", attemptPath);
-    expect(screen.queryByRole("button", { name: "Start Assessment" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Bắt đầu bài đánh giá" })).not.toBeInTheDocument();
     expect(client.getQueryData(["learner-learning-journey"]).assessmentAttempts).toHaveLength(2);
     await user.click(link);
     await screen.findByText("Status: In progress");
@@ -65,12 +65,12 @@ describe("Assessment entry and Start", () => {
     let failed = true;
     const http = entryHttp((config) => failed ? fail(config, 500) : ok(config, journey()));
     mountAssessmentApp(detailPath);
-    await screen.findByText("Unable to check assessment attempts.");
-    expect(screen.getByRole("heading", { name: "Writing" })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Start Assessment" })).not.toBeInTheDocument();
+    await screen.findByText("Không thể kiểm tra lượt làm bài đánh giá.");
+    expect(screen.getByRole("heading", { name: "Viết" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Bắt đầu bài đánh giá" })).not.toBeInTheDocument();
     failed = false;
-    await user.click(screen.getByRole("button", { name: "Retry assessment check" }));
-    await screen.findByRole("button", { name: "Start Assessment" });
+    await user.click(screen.getByRole("button", { name: "Kiểm tra lại lượt làm bài" }));
+    await screen.findByRole("button", { name: "Bắt đầu bài đánh giá" });
     expect(http.mock.calls.filter(([config]) => config.url === journeyUrl)).toHaveLength(2);
     expect(posts(http)).toHaveLength(0);
   });
@@ -87,7 +87,7 @@ describe("Assessment entry and Start", () => {
       ? ok(config, journey([liveAttempt({ assessmentId: "other-assessment" })]))
       : response.promise.then(() => ok(config, startedAttempt())));
     const { router, auth } = mountAssessmentApp(detailPath, { client });
-    const button = await screen.findByRole("button", { name: "Start Assessment" });
+    const button = await screen.findByRole("button", { name: "Bắt đầu bài đánh giá" });
     const userId = auth.current.user.id;
     // Dispatch both interactions in the same React batch, before pending state rerenders.
     act(() => { fireEvent.click(button); fireEvent.click(button); });
@@ -126,8 +126,8 @@ describe("Assessment entry and Start", () => {
     const user = userEvent.setup();
     const http = entryHttp((config) => ok(config, config.url === journeyUrl ? journey() : startedAttempt(overrides)));
     const { router, client } = mountAssessmentApp(detailPath);
-    await user.click(await screen.findByRole("button", { name: "Start Assessment" }));
-    await screen.findByText("The server returned an invalid assessment start response.");
+    await user.click(await screen.findByRole("button", { name: "Bắt đầu bài đánh giá" }));
+    await screen.findByText("Máy chủ trả về thông tin bắt đầu bài đánh giá không hợp lệ.");
     expect(router.state.location.pathname).toBe(detailPath);
     expect(client.getQueryData(["learner-assessment-attempt", ATTEMPT_ID])).toBeUndefined();
     expect(posts(http)).toHaveLength(1);
@@ -141,9 +141,9 @@ describe("Assessment entry and Start", () => {
   ])("rejects malformed Journey %s without an action decision", async (_, invalid) => {
     const http = entryHttp((config) => ok(config, journey([invalid])));
     const { client } = mountAssessmentApp(detailPath);
-    await screen.findByText("Unable to check assessment attempts.");
-    expect(screen.queryByRole("button", { name: "Start Assessment" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Continue Assessment" })).not.toBeInTheDocument();
+    await screen.findByText("Không thể kiểm tra lượt làm bài đánh giá.");
+    expect(screen.queryByRole("button", { name: "Bắt đầu bài đánh giá" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Tiếp tục bài đánh giá" })).not.toBeInTheDocument();
     expect(client.getQueryData(["learner-learning-journey"])).toBeUndefined();
     expect(posts(http)).toHaveLength(0);
   });
@@ -169,14 +169,14 @@ describe("Start conflict recovery", () => {
       const { router, client } = mountAssessmentApp(detailPath);
       const direction = seedDirection(client);
       const activity = seedNextActivity(client);
-      await user.click(await screen.findByRole("button", { name: "Start Assessment" }));
+      await user.click(await screen.findByRole("button", { name: "Bắt đầu bài đánh giá" }));
       if (outcome === "match") {
         await screen.findByText("Status: In progress");
         expect(router.state.location.pathname).toBe(attemptPath);
         expect(client.getQueryData(["learner-learning-journey"])).toEqual(fresh);
         expect(client.getQueryState(["learner-learning-journey"]).isInvalidated).toBe(false);
       } else {
-        await screen.findByText("HTTP failure");
+        await screen.findByText("Chưa thể bắt đầu bài đánh giá do xung đột trạng thái. Vui lòng kiểm tra lại lượt làm bài.");
         expect(router.state.location.pathname).toBe(detailPath);
       }
       direction(outcome === "match");
@@ -192,8 +192,8 @@ describe("Start conflict recovery", () => {
     const { client } = mountAssessmentApp(detailPath);
     const direction = seedDirection(client);
     const activity = seedNextActivity(client);
-    await user.click(await screen.findByRole("button", { name: "Start Assessment" }));
-    await screen.findByText("HTTP failure");
+    await user.click(await screen.findByRole("button", { name: "Bắt đầu bài đánh giá" }));
+    await screen.findByText("Không thể bắt đầu bài đánh giá. Vui lòng kiểm tra lại lượt làm bài trước khi thử lại.");
     direction(false);
     activity(false);
     expect(http.mock.calls.filter(([config]) => config.url === journeyUrl)).toHaveLength(1);

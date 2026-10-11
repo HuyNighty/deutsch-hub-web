@@ -27,10 +27,10 @@ describe("Attempt Task Start / Continue", () => {
     mountAssessmentApp(attemptPath);
     await screen.findByText("Status: In progress");
     expect(screen.getAllByRole("button", { name: "Start task" })).toHaveLength(5);
-    expect(within(taskRow("Task 3")).getByRole("button", { name: "Start task" })).toBeEnabled();
+    expect(within(taskRow("Bài tập 3")).getByRole("button", { name: "Start task" })).toBeEnabled();
     expect(within(screen.getByRole("region", { name: "Assessment attempt" })).getAllByRole("listitem")
       .map((el) => el.querySelector("span").textContent))
-      .toEqual(["Task 4", "Task 2", "Task 1", "Task 3", "Task 5"]);
+      .toEqual(["Bài tập 4", "Bài tập 2", "Bài tập 1", "Bài tập 3", "Bài tập 5"]);
     expect(mutations(http)).toHaveLength(0);
   });
 
@@ -40,7 +40,7 @@ describe("Attempt Task Start / Continue", () => {
     const { router } = mountAssessmentApp(attemptPath);
     const link = await screen.findByRole("link", { name: "Continue task" });
     expect(link).toHaveAttribute("href", TASK_PATH);
-    expect(within(taskRow("Task 4")).queryByRole("button", { name: "Start task" })).not.toBeInTheDocument();
+    expect(within(taskRow("Bài tập 4")).queryByRole("button", { name: "Start task" })).not.toBeInTheDocument();
     await user.click(link);
     await screen.findByRole("radio", { name: "Hallo" });
     expect(router.state.location.pathname).toBe(TASK_PATH);
@@ -51,7 +51,7 @@ describe("Attempt Task Start / Continue", () => {
   it.each(["COMPLETED", "EXPIRED", "CANCELLED"])("leaves parent %s task structure readonly", async (status) => {
     const http = entryHttp(() => { throw new Error("No task request expected"); }, resumedAttempt({ status, taskAttempts: [] }));
     mountAssessmentApp(attemptPath);
-    await screen.findByRole("heading", { name: "Writing" });
+    await screen.findByRole("heading", { name: "Viết" });
     expect(screen.queryByRole("button", { name: "Start task" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Continue task" })).not.toBeInTheDocument();
     expect(mutations(http)).toHaveLength(0);
@@ -70,13 +70,13 @@ describe("Attempt Task Start / Continue", () => {
       : read.promise.then(() => ok(config, taskRuntime())));
     const { router } = mountAssessmentApp(attemptPath, { client });
     await screen.findByText("Status: In progress");
-    const button = within(taskRow("Task 4")).getByRole("button", { name: "Start task" });
+    const button = within(taskRow("Bài tập 4")).getByRole("button", { name: "Start task" });
     act(() => { fireEvent.click(button); fireEvent.click(button); });
     await waitFor(() => expect(mutations(http)).toHaveLength(1));
     expect(button).toBeDisabled();
     expect(button).toHaveAttribute("aria-busy", "true");
     expect(mutations(http)[0][0]).toMatchObject({ method: "post", url: TASK_URL, data: undefined });
-    expect(within(taskRow("Task 2")).getByRole("button", { name: "Start task" })).toBeEnabled();
+    expect(within(taskRow("Bài tập 2")).getByRole("button", { name: "Start task" })).toBeEnabled();
     await act(async () => { post.resolve(); });
     await waitFor(() => expect(router.state.location.pathname).toBe(TASK_PATH));
     expect(client.getQueryData(TASK_KEY)).toBeUndefined();
@@ -100,7 +100,7 @@ describe("Attempt Task Start / Continue", () => {
     const activity = seedNextActivity(client);
     const direction = seedDirection(client);
     await screen.findByText("Status: In progress");
-    await user.click(within(taskRow("Task 4")).getByRole("button", { name: "Start task" }));
+    await user.click(within(taskRow("Bài tập 4")).getByRole("button", { name: "Start task" }));
     const option = await screen.findByRole("radio", { name: "Hallo" });
     expect(option).toBeDisabled();
     activity(true);
@@ -122,7 +122,7 @@ describe("Attempt Task Start / Continue", () => {
     const activity = seedNextActivity(client);
     const direction = seedDirection(client);
     await screen.findByText("Status: In progress");
-    await user.click(within(taskRow("Task 4")).getByRole("button", { name: "Start task" }));
+    await user.click(within(taskRow("Bài tập 4")).getByRole("button", { name: "Start task" }));
     await screen.findByText("The server returned an invalid assessment task start response.");
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(client.getQueryData(["learner-assessment-attempt", ATTEMPT_ID]).taskAttempts).toEqual([]);
@@ -143,8 +143,8 @@ describe("Attempt Task Start / Continue", () => {
     const activity = seedNextActivity(client);
     const direction = seedDirection(client);
     await screen.findByText("Status: In progress");
-    await user.click(within(taskRow("Task 3")).getByRole("button", { name: "Start task" }));
-    const row = taskRow("Task 3");
+    await user.click(within(taskRow("Bài tập 3")).getByRole("button", { name: "Start task" }));
+    const row = taskRow("Bài tập 3");
     expect(await within(row).findByRole("alert")).toHaveTextContent("HTTP failure");
     activity(false);
     direction(false);

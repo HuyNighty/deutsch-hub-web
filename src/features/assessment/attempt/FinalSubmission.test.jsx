@@ -15,7 +15,7 @@ describe("Parent finalization", () => {
   it.each(["IN_PROGRESS", "EXPIRED", "COMPLETED", "CANCELLED", "CREATED"])("offers only authorized initial %s actions", async (status) => {
     const http = finalHttp(() => { throw new Error("No implicit writes"); }, { attempt: resumedAttempt({ status, taskAttempts: [] }) });
     mountAssessmentApp(attemptPath);
-    await screen.findByRole("heading", { name: "Writing" });
+    await screen.findByRole("heading", { name: "Viết" });
     const region = screen.getByRole("region", { name: "Assessment finalization" });
     if (status === "IN_PROGRESS") {
       expect(within(region).getByRole("button", { name: "Submit assessment" })).toBeEnabled();

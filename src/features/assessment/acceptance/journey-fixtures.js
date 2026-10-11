@@ -148,7 +148,7 @@ export function journeyServer({
 
 export async function openTask(user, server, task, { bound = false } = {}) {
   const region = screen.getByRole("region", { name: "Assessment attempt" });
-  const row = within(region).getByText(`Task ${task.order}`).closest("li");
+  const row = within(region).getByText(`Bài tập ${task.order}`).closest("li");
   if (bound) await user.click(within(row).getByRole("link", { name: "Continue task" }));
   else await server.clickWrite(user, within(row).getByRole("button", { name: "Start task" }), "post", taskUrl(task));
   await screen.findByRole("heading", { name: `Task ${task.order}` });
