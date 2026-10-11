@@ -13,7 +13,7 @@ describe("Read-only View result entry", () => {
   it.each(["COMPLETED", "EXPIRED", "IN_PROGRESS", "CREATED", "CANCELLED"])("offers only authorized initial %s navigation", async (status) => {
     const http = finalHttp(() => { throw new Error("No implicit action expected"); }, { attempt: resumedAttempt({ status }) });
     mountAssessmentApp(attemptPath);
-    await screen.findByRole("heading", { name: "Writing" });
+    await screen.findByRole("heading", { name: "Viết" });
     if (["COMPLETED", "EXPIRED"].includes(status)) {
       expect(screen.getByRole("link", { name: "View result" })).toHaveAttribute("href", RESULT_PATH);
       if (status === "EXPIRED") expect(screen.getByRole("button", { name: "Finalize expired assessment" })).toBeEnabled();

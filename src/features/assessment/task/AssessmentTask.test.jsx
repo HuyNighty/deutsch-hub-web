@@ -29,7 +29,7 @@ describe("Assessment Task runtime", () => {
     expect(screen.getByRole("radio", { name: "Das stimmt" })).not.toBeChecked();
     const region = screen.getByRole("region", { name: "Assessment task" });
     expect(within(region).getByRole("heading", { name: "B1 Placement Assessment" })).toBeInTheDocument();
-    expect(within(region).getByText("Writing")).toBeInTheDocument();
+    expect(within(region).getByText("Viết")).toBeInTheDocument();
     expect(within(region).getByRole("heading", { name: "Task 4" })).toBeInTheDocument();
     expect(within(region).getByText("Status: In progress")).toBeInTheDocument();
     const time = region.querySelector("time");
@@ -60,7 +60,7 @@ describe("Assessment Task runtime", () => {
       const http = runtimeHttp(taskRuntime({ status, expiresAt: null }), assessmentDetail({ title: null }));
       const { router } = mountAssessmentApp(TASK_PATH);
       await screen.findByText(`Status: ${label}`);
-      expect(screen.getByRole("heading", { name: "Untitled assessment" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Bài đánh giá chưa có tên" })).toBeInTheDocument();
       expect(screen.getByText("Deadline: No time limit")).toBeInTheDocument();
       for (const input of [...screen.getAllByRole("radio"), ...screen.getAllByRole("checkbox")]) expect(input).toBeDisabled();
       expect(screen.getByRole("radio", { name: "Guten Tag" })).toBeChecked();

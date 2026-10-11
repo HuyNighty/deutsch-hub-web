@@ -122,7 +122,7 @@ describe("authenticated learning Header IA", () => {
     expect(assessments).toHaveAttribute("href", "/my-learning/assessments");
     await user.click(assessments);
     await screen.findByRole("heading", { name: "B1 Placement Assessment" });
-    expect(screen.getByRole("heading", { name: "Assessments", level: 1 })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Bài đánh giá", level: 1 })).toBeVisible();
     expect(router.state.location.pathname).toBe("/my-learning/assessments");
     const reads = http.mock.calls.map(([config]) => config).filter((config) => config.url === "/me/assessments");
     expect(reads).toHaveLength(1);
@@ -131,7 +131,7 @@ describe("authenticated learning Header IA", () => {
     expect(client.getQueryData(["learner-assessments", { page: 0, size: 20 }])).toEqual(catalog);
     expect(client.getQueryData(["learner-learning-journey"])).toBeUndefined();
     expect(client.getMutationCache().getAll()).toEqual([]);
-    expect(screen.queryByRole("button", { name: "Start Assessment" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Bắt đầu (?:bài )?đánh giá$/ })).not.toBeInTheDocument();
   });
 
   it("supports keyboard discovery and activation without reading or mutating until Enter", async () => {

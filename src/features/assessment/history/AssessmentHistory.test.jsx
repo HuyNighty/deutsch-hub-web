@@ -28,38 +28,38 @@ describe("Learner Assessment History production route", () => {
       _sessionGeneration: getSessionGeneration(),
     });
     expect(client.getQueryData(historyKey())).toEqual(page);
-    const region = screen.getByRole("region", { name: "Assessment History" });
-    expect(within(region).getByText("Target level: B1")).toBeInTheDocument();
-    expect(within(region).getByText("Status: Completed")).toBeInTheDocument();
-    expect(within(region).getByText("Passed", { exact: true })).toBeInTheDocument();
-    expect(within(region).getByRole("link", { name: "View result for B1 Placement Assessment" }))
+    const region = screen.getByRole("region", { name: "Lịch sử bài đánh giá" });
+    expect(within(region).getByText("Trình độ mục tiêu: B1")).toBeInTheDocument();
+    expect(within(region).getByText("Trạng thái: Đã hoàn thành")).toBeInTheDocument();
+    expect(within(region).getByText("Đạt", { exact: true })).toBeInTheDocument();
+    expect(within(region).getByRole("link", { name: "Xem kết quả của B1 Placement Assessment" }))
       .toHaveAttribute("href", resultRoute(HISTORY_ATTEMPT_ID));
     const times = region.querySelectorAll("time");
     expect([...times].map((time) => time.dateTime)).toEqual([page.items[0].startedAt, page.items[0].expiresAt]);
     expect(region.textContent).not.toMatch(/secret-|question|correct answer|selected answer|detailed review/i);
     expect(region.textContent).not.toContain(HISTORY_ATTEMPT_ID);
     expect(region.textContent).not.toContain(ASSESSMENT_ID);
-    expect(screen.getByRole("link", { name: "Back to My Learning" })).toHaveAttribute("href", "/my-learning");
+    expect(screen.getByRole("link", { name: "Quay lại việc học của tôi" })).toHaveAttribute("href", "/my-learning");
     expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
   });
 
   it.each([
-    ["COMPLETED", true, true, "Completed", "Passed"],
-    ["COMPLETED", true, false, "Completed", "Not passed"],
-    ["COMPLETED", false, null, "Completed", "Result not available"],
-    ["EXPIRED", true, true, "Expired", "Passed"],
-    ["EXPIRED", true, false, "Expired", "Not passed"],
-    ["EXPIRED", false, null, "Expired", "Result not available yet"],
-    ["CANCELLED", true, true, "Cancelled", "Passed"],
-    ["CANCELLED", true, false, "Cancelled", "Not passed"],
-    ["CANCELLED", false, null, "Cancelled", "Result not available"],
+    ["COMPLETED", true, true, "Đã hoàn thành", "Đạt"],
+    ["COMPLETED", true, false, "Đã hoàn thành", "Chưa đạt"],
+    ["COMPLETED", false, null, "Đã hoàn thành", "Không có kết quả để xem"],
+    ["EXPIRED", true, true, "Hết hạn", "Đạt"],
+    ["EXPIRED", true, false, "Hết hạn", "Chưa đạt"],
+    ["EXPIRED", false, null, "Hết hạn", "Chưa có kết quả để xem"],
+    ["CANCELLED", true, true, "Đã hủy", "Đạt"],
+    ["CANCELLED", true, false, "Đã hủy", "Chưa đạt"],
+    ["CANCELLED", false, null, "Đã hủy", "Không có kết quả để xem"],
   ])("keeps status %s, availability %s and outcome %s independent", async (status, resultAvailable, passed, statusLabel, outcome) => {
     const http = assessmentHttp((config) => ok(config, historyPage({ items: [historyItem({ status, resultAvailable, passed })] })));
     mountAssessmentApp(HISTORY_PATH);
-    const card = await screen.findByRole("article", { name: "B1 Placement Assessment attempt" });
-    expect(within(card).getByText(`Status: ${statusLabel}`)).toBeInTheDocument();
+    const card = await screen.findByRole("article", { name: "Lượt làm bài đánh giá: B1 Placement Assessment" });
+    expect(within(card).getByText(`Trạng thái: ${statusLabel}`)).toBeInTheDocument();
     expect(within(card).getByText(outcome, { exact: true })).toBeInTheDocument();
-    expect(within(card).queryByRole("link", { name: /View result/ }) !== null).toBe(resultAvailable);
+    expect(within(card).queryByRole("link", { name: /Xem kết quả/ }) !== null).toBe(resultAvailable);
     expect(card.textContent).not.toMatch(/failed/i);
     expect(http.mock.calls.map(([config]) => config.url)).toEqual([HISTORY_URL]);
   });
@@ -69,10 +69,10 @@ describe("Learner Assessment History production route", () => {
       assessmentTitle: null, startedAt: null, expiresAt: null, resultAvailable: false, passed: null,
     })] })));
     mountAssessmentApp(HISTORY_PATH);
-    const card = await screen.findByRole("article", { name: "Untitled assessment attempt" });
-    expect(within(card).getByRole("heading", { name: "Untitled assessment" })).toBeInTheDocument();
+    const card = await screen.findByRole("article", { name: "Lượt làm bài đánh giá: Bài đánh giá chưa có tên" });
+    expect(within(card).getByRole("heading", { name: "Bài đánh giá chưa có tên" })).toBeInTheDocument();
     expect(card.querySelector("time")).toBeNull();
-    expect(card.textContent).not.toMatch(/Started:|Deadline:|Invalid Date/);
+    expect(card.textContent).not.toMatch(/Bắt đầu:|Hạn kết thúc:|Invalid Date/);
     expect(within(card).queryByRole("link")).not.toBeInTheDocument();
   });
 
@@ -87,7 +87,7 @@ describe("Learner Assessment History production route", () => {
     await act(async () => { await started.promise; });
     expect(screen.getByText("Đang tải...")).toBeInTheDocument();
     expect(screen.queryByRole("article")).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Back to My Learning" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Quay lại việc học của tôi" })).toBeInTheDocument();
     expect(http.mock.calls.map(([config]) => config.url)).toEqual([HISTORY_URL]);
     await act(async () => { response.resolve(); });
     await screen.findByRole("article");
@@ -96,11 +96,11 @@ describe("Learner Assessment History production route", () => {
   it("shows meaningful empty history without Page 1 of 0", async () => {
     assessmentHttp((config) => ok(config, historyPage({ items: [], totalElements: 0, totalPages: 0 })));
     mountAssessmentApp(HISTORY_PATH);
-    await screen.findByText("No assessment history");
-    expect(screen.getByText("There are no past assessment attempts on this page.")).toBeInTheDocument();
-    expect(screen.queryByText(/Page 1 of 0/)).not.toBeInTheDocument();
-    expect(screen.queryByRole("navigation", { name: "Assessment history pages" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /View result/ })).not.toBeInTheDocument();
+    await screen.findByText("Chưa có lịch sử bài đánh giá");
+    expect(screen.getByText("Trang này chưa có lượt làm bài đánh giá trước đây.")).toBeInTheDocument();
+    expect(screen.queryByText(/Trang 1 \/ 0/)).not.toBeInTheDocument();
+    expect(screen.queryByRole("navigation", { name: "Các trang lịch sử bài đánh giá" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Xem kết quả/ })).not.toBeInTheDocument();
   });
 
   it.each([403, 404, 500])("retries History HTTP %s explicitly without navigating or reading Result", async (status) => {
@@ -112,7 +112,7 @@ describe("Learner Assessment History production route", () => {
     expect(screen.queryByRole("article")).not.toBeInTheDocument();
     expect(router.state.location.pathname).toBe(HISTORY_PATH);
     failed = false;
-    await user.click(screen.getByRole("button", { name: status === 403 || status === 404 ? "Try Again" : "Thử lại" }));
+    await user.click(screen.getByRole("button", { name: "Thử lại" }));
     await screen.findByRole("article");
     expect(http.mock.calls.map(([config]) => config.url)).toEqual([HISTORY_URL, HISTORY_URL]);
   });
@@ -155,23 +155,23 @@ describe("Learner Assessment History production route", () => {
       return response.promise.then(() => ok(config, second));
     });
     const { client } = mountAssessmentApp(HISTORY_PATH);
-    await screen.findByText("Page 1 of 2");
-    expect(screen.getByRole("button", { name: "Previous" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
-    await user.click(screen.getByRole("button", { name: "Next" }));
+    await screen.findByText("Trang 1 / 2");
+    expect(screen.getByRole("button", { name: "Trang trước" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Trang tiếp" })).toBeEnabled();
+    await user.click(screen.getByRole("button", { name: "Trang tiếp" }));
     await act(async () => { await nextStarted.promise; });
     expect(screen.getByText("Đang tải...")).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "B1 Placement Assessment" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /View result/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Xem kết quả/ })).not.toBeInTheDocument();
     await act(async () => { response.resolve(); });
     await screen.findByRole("heading", { name: "Earlier attempt" });
-    expect(screen.getByText("Page 2 of 2")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Previous" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
+    expect(screen.getByText("Trang 2 / 2")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Trang trước" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Trang tiếp" })).toBeDisabled();
     expect(client.getQueryData(historyKey())).toEqual(first);
     expect(client.getQueryData(historyKey(1))).toEqual(second);
     expect(http.mock.calls.map(([config]) => config.params)).toEqual([{ page: 0, size: 20 }, { page: 1, size: 20 }]);
-    await user.click(screen.getByRole("button", { name: "Previous" }));
+    await user.click(screen.getByRole("button", { name: "Trang trước" }));
     await screen.findByRole("heading", { name: "B1 Placement Assessment" });
     await waitFor(() => expect(http).toHaveBeenCalledTimes(3));
     expect(http.mock.calls[2][0].params).toEqual({ page: 0, size: 20 });
@@ -188,14 +188,14 @@ describe("Learner Assessment History production route", () => {
       return ok(config, historyPage(shrunk ? {} : { totalElements: 21, totalPages: 2 }));
     });
     mountAssessmentApp(HISTORY_PATH);
-    await screen.findByText("Page 1 of 2");
-    await user.click(screen.getByRole("button", { name: "Next" }));
-    await screen.findByText("No assessment history");
-    expect(screen.getByText("Page 2", { exact: true })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Previous" })).toBeEnabled();
-    await user.click(screen.getByRole("button", { name: "Previous" }));
-    await screen.findByText("Page 1 of 1");
+    await screen.findByText("Trang 1 / 2");
+    await user.click(screen.getByRole("button", { name: "Trang tiếp" }));
+    await screen.findByText("Chưa có lịch sử bài đánh giá");
+    expect(screen.getByText("Trang 2", { exact: true })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Trang tiếp" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Trang trước" })).toBeEnabled();
+    await user.click(screen.getByRole("button", { name: "Trang trước" }));
+    await screen.findByText("Trang 1 / 1");
     expect(http.mock.calls.map(([config]) => config.params.page)).toEqual([0, 1, 0]);
   });
 
@@ -254,7 +254,7 @@ describe("Learner Assessment History production route", () => {
       throw new Error(`Unexpected History/Result request: ${config.url}`);
     }, { allowResultReads: true });
     const { client, router } = mountAssessmentApp(HISTORY_PATH);
-    const link = await screen.findByRole("link", { name: /View result for/ });
+    const link = await screen.findByRole("link", { name: /Xem kết quả của/ });
     expect(http).toHaveBeenCalledTimes(1);
     await user.click(link);
     await screen.findByText("Kết quả tổng thể: Chưa đạt");

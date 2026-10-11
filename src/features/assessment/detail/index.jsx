@@ -18,24 +18,24 @@ export default function AssessmentDetail() {
   const { data: assessment, isLoading, error, refetch } = useLearnerAssessment(assessmentId);
 
   return (
-    <section className={cx("page")} aria-label="Assessment detail">
-      <AppLink to="/my-learning/assessments">Back to Assessments</AppLink>
+    <section className={cx("page")} aria-label="Chi tiết bài đánh giá">
+      <AppLink lang="vi" to="/my-learning/assessments">Quay lại bài đánh giá</AppLink>
       <ResourceState
         loading={isLoading}
         error={error}
         errorProps={{
           onRetry: refetch,
           actions: {
-            notFound: { to: "/my-learning/assessments", label: "Browse assessments" },
+            notFound: { to: "/my-learning/assessments", label: "Khám phá bài đánh giá" },
           },
         }}
       >
         {assessment && (
           <>
             <header className={cx("header")}>
-              <h1 className={cx("title")}>{assessmentTitle(assessment.title)}</h1>
-              <p className={cx("metadata")}>Target level: {assessment.targetLevel}</p>
-              <p className={cx("metadata")}>Time limit: {assessmentTimeLimit(assessment.timeLimitMinutes)}</p>
+              <h1 lang={assessment.title === null ? "vi" : undefined} className={cx("title")}>{assessmentTitle(assessment.title)}</h1>
+              <p lang="vi" className={cx("metadata")}>Trình độ mục tiêu: {assessment.targetLevel}</p>
+              <p lang="vi" className={cx("metadata")}>Giới hạn thời gian: {assessmentTimeLimit(assessment.timeLimitMinutes)}</p>
             </header>
             <AssessmentEntry assessmentId={assessmentId} />
             <AssessmentStructure components={assessment.components} />

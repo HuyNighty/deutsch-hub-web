@@ -8,7 +8,7 @@ import { assessmentPage, assessmentDetail, ASSESSMENT_ID } from "./fixtures";
 
 describe("Assessment discovery protected routing", () => {
   it.each([
-    ["/my-learning/assessments", "Assessments"],
+    ["/my-learning/assessments", "Bài đánh giá"],
     [`/my-learning/assessments/${ASSESSMENT_ID}`, "B1 Placement Assessment"],
   ])("returns an anonymous learner from Login to %s using the production guards", async (path, heading) => {
     const user = userEvent.setup();

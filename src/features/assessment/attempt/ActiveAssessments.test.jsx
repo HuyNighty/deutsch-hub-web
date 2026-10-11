@@ -74,7 +74,7 @@ describe("My Learning active assessment boundary", () => {
     expect(screen.getByRole("button", { name: "Tiếp tục học" })).toBeEnabled();
     expect(http.mock.calls.map(([config]) => config.url).sort()).toEqual([journeyUrl, journeyUrl, directionUrl, nextActivityUrl].sort());
     await user.click(screen.getByRole("link", { name: "Khám phá bài đánh giá" }));
-    await screen.findByRole("link", { name: "View assessment" });
+    await screen.findByRole("link", { name: "Xem bài đánh giá" });
     expect(http.mock.calls.map(([config]) => config.url).sort()).toEqual([journeyUrl, journeyUrl, directionUrl, nextActivityUrl, "/me/assessments"].sort());
   });
 

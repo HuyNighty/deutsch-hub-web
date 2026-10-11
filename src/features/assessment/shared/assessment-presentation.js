@@ -1,19 +1,19 @@
 export function assessmentTitle(title) {
-  return title === null ? "Untitled assessment" : title;
+  return title === null ? "Bài đánh giá chưa có tên" : title;
 }
 
 export function assessmentTimeLimit(timeLimitMinutes) {
-  return timeLimitMinutes === null ? "No time limit" : `${timeLimitMinutes} minutes`;
+  return timeLimitMinutes === null ? "Không giới hạn thời gian" : `${timeLimitMinutes} phút`;
 }
 
 export const skillLabels = {
-  LISTENING: "Listening",
-  READING: "Reading",
-  WRITING: "Writing",
-  SPEAKING: "Speaking",
+  LISTENING: "Nghe",
+  READING: "Đọc",
+  WRITING: "Viết",
+  SPEAKING: "Nói",
 };
 
 export const executionModeLabels = {
-  SEQUENTIAL: "Sequential",
-  INDEPENDENT: "Independent",
+  SEQUENTIAL: "Tuần tự",
+  INDEPENDENT: "Độc lập",
 };

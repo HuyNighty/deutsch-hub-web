@@ -22,15 +22,15 @@ describe("Learner Assessment integrated journey", () => {
     const server = journeyServer({ answerGate });
     const app = mountAssessmentApp(CATALOG_PATH);
     const { router, client } = app;
-    await screen.findByRole("heading", { name: "Assessments", level: 1 });
-    await user.click(await screen.findByRole("link", { name: "View assessment" }));
-    await screen.findByRole("button", { name: "Start Assessment" });
+    await screen.findByRole("heading", { name: "Bài đánh giá", level: 1 });
+    await user.click(await screen.findByRole("link", { name: "Xem bài đánh giá" }));
+    await screen.findByRole("button", { name: "Bắt đầu bài đánh giá" });
     expect(router.state.location.pathname).toBe(detailPath);
     expect(requestSequence(server.http)).toEqual([
       ["get", "/me/assessments"], ["get", detailPath.replace("/my-learning", "/me")], ["get", journeyUrl],
     ]);
     expect(writes(server.http)).toEqual([]);
-    await server.clickWrite(user, screen.getByRole("button", { name: "Start Assessment" }), "post", startUrl);
+    await server.clickWrite(user, screen.getByRole("button", { name: "Bắt đầu bài đánh giá" }), "post", startUrl);
     await screen.findByText("Status: In progress");
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(client.getQueryData(PARENT_KEY)).toEqual(server.parent());

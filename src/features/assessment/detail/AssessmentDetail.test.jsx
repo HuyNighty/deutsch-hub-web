@@ -13,25 +13,25 @@ describe("learner Assessment detail", () => {
     const http = assessmentHttp((config) => ok(config, detail));
     const { client } = mountAssessmentApp(`/my-learning/assessments/${ASSESSMENT_ID}`);
     await screen.findByRole("heading", { name: detail.title });
-    await screen.findByRole("button", { name: "Start Assessment" });
+    await screen.findByRole("button", { name: "Bắt đầu bài đánh giá" });
     expect(http).toHaveBeenCalledTimes(2);
     expect(http.mock.calls[0][0]).toMatchObject({ method: "get", url: `/me/assessments/${ASSESSMENT_ID}` });
     expect(client.getQueryData(["learner-assessment", ASSESSMENT_ID])).toEqual(detail);
     expect(client.getQueryData(["learner-assessments", { page: 0, size: 20 }])).toBeUndefined();
-    expect(screen.getByText("Target level: B1")).toBeInTheDocument();
-    expect(screen.getByText("Time limit: 60 minutes")).toBeInTheDocument();
-    const region = screen.getByRole("region", { name: "Assessment detail" });
+    expect(screen.getByText("Trình độ mục tiêu: B1")).toBeInTheDocument();
+    expect(screen.getByText("Giới hạn thời gian: 60 phút")).toBeInTheDocument();
+    const region = screen.getByRole("region", { name: "Chi tiết bài đánh giá" });
     const headings = within(region).getAllByRole("heading", { level: 2 });
-    expect(headings.map((heading) => heading.textContent)).toEqual(["Writing", "Listening", "Reading", "Speaking"]);
-    expect(within(headings[0].closest("section")).getByText("Execution mode: Independent")).toBeInTheDocument();
-    expect(within(headings[1].closest("section")).getByText("Execution mode: Sequential")).toBeInTheDocument();
+    expect(headings.map((heading) => heading.textContent)).toEqual(["Viết", "Nghe", "Đọc", "Nói"]);
+    expect(within(headings[0].closest("section")).getByText("Cách thực hiện: Độc lập")).toBeInTheDocument();
+    expect(within(headings[1].closest("section")).getByText("Cách thực hiện: Tuần tự")).toBeInTheDocument();
     expect(within(region).getAllByRole("listitem").map((item) => item.textContent))
-      .toEqual(["Task 4", "Task 2", "Task 1", "Task 3", "Task 5"]);
+      .toEqual(["Bài tập 4", "Bài tập 2", "Bài tập 1", "Bài tập 3", "Bài tập 5"]);
     const identities = [detail.assessmentId, ...detail.components.flatMap((component) => [
       component.componentId, ...component.tasks.flatMap((task) => [task.taskId, task.quizRevisionId]),
     ])];
     for (const identity of identities) expect(region.textContent).not.toContain(identity);
-    expect(within(region).getByRole("button", { name: "Start Assessment" })).toBeInTheDocument();
+    expect(within(region).getByRole("button", { name: "Bắt đầu bài đánh giá" })).toBeInTheDocument();
     expect(region.textContent).not.toMatch(/recommended|too difficult|unlocked|locked|ready|coming soon/i);
   });
 
@@ -46,8 +46,8 @@ describe("learner Assessment detail", () => {
     await act(async () => { await started.promise; });
     expect(screen.getByText("Đang tải...")).toBeInTheDocument();
     await act(async () => { response.resolve(); });
-    await screen.findByRole("heading", { name: "Untitled assessment" });
-    expect(screen.getByText("Time limit: No time limit")).toBeInTheDocument();
+    await screen.findByRole("heading", { name: "Bài đánh giá chưa có tên" });
+    expect(screen.getByText("Giới hạn thời gian: Không giới hạn thời gian")).toBeInTheDocument();
   });
 
   it("renders the existing not-found state for Backend 404 with a working catalog action", async () => {
@@ -56,10 +56,10 @@ describe("learner Assessment detail", () => {
       ? ok(config, assessmentPage()) : fail(config, 404));
     const { router } = mountAssessmentApp(`/my-learning/assessments/${ASSESSMENT_ID}`);
     await screen.findByText("Không tìm thấy tài nguyên");
-    const link = screen.getByRole("link", { name: "Browse assessments" });
+    const link = screen.getByRole("link", { name: "Khám phá bài đánh giá" });
     expect(link).toHaveAttribute("href", "/my-learning/assessments");
     await user.click(link);
-    await screen.findByRole("link", { name: "View assessment" });
+    await screen.findByRole("link", { name: "Xem bài đánh giá" });
     expect(router.state.location.pathname).toBe("/my-learning/assessments");
     expect(http.mock.calls.map(([config]) => config.url)).toEqual([
       `/me/assessments/${ASSESSMENT_ID}`, "/me/assessments",
@@ -77,7 +77,7 @@ describe("learner Assessment detail", () => {
     const { client } = mountAssessmentApp(`/my-learning/assessments/${ASSESSMENT_ID}`);
     await screen.findByText("Đã xảy ra lỗi");
     expect(screen.queryByRole("heading", { name: "B1 Placement Assessment" })).not.toBeInTheDocument();
-    expect(screen.queryByText(/Task \d/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Bài tập \d/)).not.toBeInTheDocument();
     expect(client.getQueryData(["learner-assessment", ASSESSMENT_ID])).toBeUndefined();
   });
 
@@ -86,8 +86,8 @@ describe("learner Assessment detail", () => {
     assessmentHttp((config) => ok(config, config.url === "/me/assessments" ? assessmentPage() : assessmentDetail()));
     const { router } = mountAssessmentApp(`/my-learning/assessments/${ASSESSMENT_ID}`);
     await screen.findByRole("heading", { name: "B1 Placement Assessment" });
-    await user.click(screen.getByRole("link", { name: "Back to Assessments" }));
-    await screen.findByRole("link", { name: "View assessment" });
+    await user.click(screen.getByRole("link", { name: "Quay lại bài đánh giá" }));
+    await screen.findByRole("link", { name: "Xem bài đánh giá" });
     expect(router.state.location.pathname).toBe("/my-learning/assessments");
   });
 

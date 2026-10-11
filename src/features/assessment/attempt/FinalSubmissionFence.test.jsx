@@ -14,7 +14,7 @@ import { useTaskAnswer } from "../task/hooks/useTaskAnswer";
 import { useSubmitTask } from "../task/hooks/useSubmitTask";
 
 function startButton() {
-  return within(screen.getByText("Task 2").closest("li")).getByRole("button", { name: "Start task" });
+  return within(screen.getByText("Bài tập 2").closest("li")).getByRole("button", { name: "Start task" });
 }
 
 describe("Attempt-scoped final submission fences", () => {

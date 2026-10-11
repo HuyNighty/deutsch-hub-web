@@ -133,11 +133,11 @@ describe("Learner dashboard integrated acceptance", () => {
     const { http, allowDestinationReads } = dashboardHttp(dashboardSnapshot(), { "/me/assessments": page });
     const { router } = mountAssessmentApp("/my-learning");
     await expectDashboard(http);
-    expect(screen.queryByRole("link", { name: "View assessment" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Xem bài đánh giá" })).not.toBeInTheDocument();
 
     allowDestinationReads();
     await user.click(screen.getByRole("link", { name: "Khám phá bài đánh giá" }));
-    const view = await screen.findByRole("link", { name: "View assessment" });
+    const view = await screen.findByRole("link", { name: "Xem bài đánh giá" });
     expect(view).toBeVisible();
     expect(view).toHaveAttribute("href", `/my-learning/assessments/${page.items[0].assessmentId}`);
     expect(screen.getByRole("heading", { name: page.items[0].title })).toBeVisible();

@@ -9,12 +9,12 @@ export default function AssessmentStructure({ components, renderTaskAction }) {
     <div className={cx("components")}>
       {components.map((component) => (
         <section className={cx("card")} key={component.componentId}>
-          <h2 className={cx("cardTitle")}>{skillLabels[component.skillDimension]}</h2>
-          <p className={cx("metadata")}>Execution mode: {executionModeLabels[component.executionMode]}</p>
+          <h2 lang="vi" className={cx("cardTitle")}>{skillLabels[component.skillDimension]}</h2>
+          <p lang="vi" className={cx("metadata")}>Cách thực hiện: {executionModeLabels[component.executionMode]}</p>
           <ul className={cx("tasks")}>
             {component.tasks.map((task) => (
               <li key={task.taskId}>
-                <span>Task {task.order}</span>
+                <span lang="vi">Bài tập {task.order}</span>
                 {renderTaskAction?.(task)}
               </li>
             ))}

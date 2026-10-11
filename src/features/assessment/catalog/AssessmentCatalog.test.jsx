@@ -16,9 +16,9 @@ describe("learner Assessment catalog", () => {
       method: "get", url: "/me/assessments", params: { page: 0, size: 20 },
     });
     expect(client.getQueryData(["learner-assessments", { page: 0, size: 20 }])).toEqual(page);
-    expect(screen.getByText("Target level: B1")).toBeInTheDocument();
-    expect(screen.getByText("Time limit: 60 minutes")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "View assessment" })).toHaveAttribute(
+    expect(screen.getByText("Trình độ mục tiêu: B1")).toBeInTheDocument();
+    expect(screen.getByText("Giới hạn thời gian: 60 phút")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Xem bài đánh giá" })).toHaveAttribute(
       "href", `/my-learning/assessments/${ASSESSMENT_ID}`,
     );
     expect(screen.queryByText(ASSESSMENT_ID)).not.toBeInTheDocument();
@@ -34,7 +34,7 @@ describe("learner Assessment catalog", () => {
     mountAssessmentApp("/my-learning/assessments");
     await act(async () => { await started.promise; });
     expect(screen.getByText("Đang tải...")).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "View assessment" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Xem bài đánh giá" })).not.toBeInTheDocument();
     await act(async () => { response.resolve(); });
     await screen.findByRole("heading", { name: "B1 Placement Assessment" });
   });
@@ -42,10 +42,10 @@ describe("learner Assessment catalog", () => {
   it("shows empty copy without Page 1 of 0 or pagination controls", async () => {
     assessmentHttp((config) => ok(config, assessmentPage({ items: [], totalElements: 0, totalPages: 0 })));
     mountAssessmentApp("/my-learning/assessments");
-    await screen.findByText("No assessments available");
-    expect(screen.getByText("There are no active assessments available right now.")).toBeInTheDocument();
-    expect(screen.queryByText(/Page 1 of 0/)).not.toBeInTheDocument();
-    expect(screen.queryByRole("navigation", { name: "Assessment pages" })).not.toBeInTheDocument();
+    await screen.findByText("Chưa có bài đánh giá");
+    expect(screen.getByText("Hiện chưa có bài đánh giá đang hoạt động.")).toBeInTheDocument();
+    expect(screen.queryByText(/Trang 1 \/ 0/)).not.toBeInTheDocument();
+    expect(screen.queryByRole("navigation", { name: "Các trang bài đánh giá" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /create|admin/i })).not.toBeInTheDocument();
   });
 
@@ -58,28 +58,28 @@ describe("learner Assessment catalog", () => {
     });
     const http = assessmentHttp((config) => ok(config, config.params.page === 0 ? first : second));
     const { client } = mountAssessmentApp("/my-learning/assessments");
-    await screen.findByText("Page 1 of 2");
-    expect(screen.getByRole("button", { name: "Previous" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
-    await user.click(screen.getByRole("button", { name: "Next" }));
+    await screen.findByText("Trang 1 / 2");
+    expect(screen.getByRole("button", { name: "Trang trước" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Trang tiếp" })).toBeEnabled();
+    await user.click(screen.getByRole("button", { name: "Trang tiếp" }));
     await screen.findByRole("heading", { name: "Second assessment" });
-    expect(screen.getByText("Page 2 of 2")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Previous" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
+    expect(screen.getByText("Trang 2 / 2")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Trang trước" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Trang tiếp" })).toBeDisabled();
     expect(http.mock.calls.map(([config]) => config.params)).toEqual([{ page: 0, size: 20 }, { page: 1, size: 20 }]);
     expect(client.getQueryData(["learner-assessments", { page: 0, size: 20 }])).toEqual(first);
     expect(client.getQueryData(["learner-assessments", { page: 1, size: 20 }])).toEqual(second);
-    await user.click(screen.getByRole("button", { name: "Previous" }));
-    await screen.findByText("Page 1 of 2");
-    expect(screen.getByRole("button", { name: "Previous" })).toBeDisabled();
+    await user.click(screen.getByRole("button", { name: "Trang trước" }));
+    await screen.findByText("Trang 1 / 2");
+    expect(screen.getByRole("button", { name: "Trang trước" })).toBeDisabled();
   });
 
   it("presents historical null title and time limit with learner-safe fallback labels", async () => {
     assessmentHttp((config) => ok(config, assessmentPage({ items: [summary({ title: null, timeLimitMinutes: null })] })));
     mountAssessmentApp("/my-learning/assessments");
-    await screen.findByRole("heading", { name: "Untitled assessment" });
-    expect(screen.getByText("Time limit: No time limit")).toBeInTheDocument();
-    expect(screen.getByText("Target level: B1")).toBeInTheDocument();
+    await screen.findByRole("heading", { name: "Bài đánh giá chưa có tên" });
+    expect(screen.getByText("Giới hạn thời gian: Không giới hạn thời gian")).toBeInTheDocument();
+    expect(screen.getByText("Trình độ mục tiêu: B1")).toBeInTheDocument();
   });
 
   it.each([
@@ -91,7 +91,7 @@ describe("learner Assessment catalog", () => {
     const { client } = mountAssessmentApp("/my-learning/assessments");
     await screen.findByText("Đã xảy ra lỗi");
     expect(screen.queryByRole("heading", { name: "B1 Placement Assessment" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "View assessment" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Xem bài đánh giá" })).not.toBeInTheDocument();
     expect(client.getQueryData(["learner-assessments", { page: 0, size: 20 }])).toBeUndefined();
   });
 
@@ -112,12 +112,12 @@ describe("learner Assessment catalog", () => {
     const page = assessmentPage();
     assessmentHttp((config) => ok(config, config.url === "/me/assessments" ? page : assessmentDetail()));
     const { client, router } = mountAssessmentApp("/my-learning/assessments");
-    await user.click(await screen.findByRole("link", { name: "View assessment" }));
-    await screen.findByRole("heading", { name: "Writing" });
+    await user.click(await screen.findByRole("link", { name: "Xem bài đánh giá" }));
+    await screen.findByRole("heading", { name: "Viết" });
     expect(router.state.location.pathname).toBe(`/my-learning/assessments/${ASSESSMENT_ID}`);
     expect(client.getQueryData(["learner-assessments", { page: 0, size: 20 }])).toEqual(page);
     expect(client.getQueryData(["learner-assessment", ASSESSMENT_ID])).toEqual(assessmentDetail());
-    const detail = screen.getByRole("region", { name: "Assessment detail" });
-    expect(await within(detail).findByRole("button", { name: "Start Assessment" })).toBeInTheDocument();
+    const detail = screen.getByRole("region", { name: "Chi tiết bài đánh giá" });
+    expect(await within(detail).findByRole("button", { name: "Bắt đầu bài đánh giá" })).toBeInTheDocument();
   });
 });
