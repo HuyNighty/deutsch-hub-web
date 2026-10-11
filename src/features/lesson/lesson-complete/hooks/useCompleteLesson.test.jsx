@@ -36,9 +36,9 @@ describe("Complete Lesson cache coherence", () => {
       path: "/lesson", client: cache.client,
     });
     expect(http).not.toHaveBeenCalled();
-    await userEvent.setup().click(screen.getByRole("button", { name: "Complete lesson" }));
-    await screen.findByText("Lesson completed");
-    expect(screen.getByText("You have completed this lesson.")).toBeVisible();
+    await userEvent.setup().click(screen.getByRole("button", { name: "Hoàn thành bài học" }));
+    await screen.findByText("Đã hoàn thành bài học");
+    expect(screen.getByText("Bạn đã hoàn thành bài học này.")).toBeVisible();
     expect(onCompleted).toHaveBeenCalledTimes(1);
     expectCourseState(cache, true);
     expect(router.state.location.pathname).toBe("/lesson");
@@ -60,10 +60,10 @@ describe("Complete Lesson cache coherence", () => {
     await act(async () => {
       expect(completion.handleComplete(10)).toBeUndefined();
     });
-    expect(await screen.findByRole("alert")).toHaveTextContent("You do not have permission to complete this lesson.");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Bạn không có quyền hoàn thành bài học này.");
     expect(completion.error).toMatchObject({ status: 403 });
     expect(console.log).not.toHaveBeenCalled();
-    expect(screen.queryByText("Lesson completed")).not.toBeInTheDocument();
+    expect(screen.queryByText("Đã hoàn thành bài học")).not.toBeInTheDocument();
     expectCourseState(cache);
     expect(router.state.location.pathname).toBe("/lesson");
     expect(http.mock.calls.map(([config]) => [config.method, config.url])).toEqual([["post", completeUrl]]);

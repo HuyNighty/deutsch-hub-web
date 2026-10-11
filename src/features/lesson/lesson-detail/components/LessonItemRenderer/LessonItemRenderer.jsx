@@ -29,7 +29,7 @@ export default function LessonItemRenderer({ courseId, lessonId, items = [] }) {
           default:
             return (
               <div key={item.id} className={cx("unsupported")}>
-                Unsupported lesson item: {item.type}
+                Loại nội dung bài học chưa được hỗ trợ: {item.type}
               </div>
             );
         }

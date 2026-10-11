@@ -9,15 +9,15 @@ import { nextActivityKey } from "@/features/my-learning/guidance/hooks/useNextAc
 import { getLessonDetail } from "../../lesson-detail/services/lesson-detail.service";
 import { completeLesson } from "../services/lesson-complete.service";
 
-const uncertainMessage = "We couldn't confirm completion. It may still complete. Check completion status again.";
+const uncertainMessage = "Chưa thể xác nhận bài học đã hoàn thành. Yêu cầu có thể đã được ghi nhận. Vui lòng kiểm tra trạng thái hoàn thành.";
 
 function failureMessage(error) {
-  if (error.status === 401) return "Your session could not be verified. Please sign in again.";
-  if (error.status === 403) return "You do not have permission to complete this lesson.";
-  if (error.status === 404 || error.status === 410) return "This lesson is unavailable.";
-  if (error.status === 409 && error.code === 8005) return "Your enrollment is not active. This lesson cannot be completed.";
-  if (error.status === 409) return "Completion could not be recorded because the lesson or enrollment state changed.";
-  return "Failed to complete lesson. Please check the lesson and try again.";
+  if (error.status === 401) return "Không thể xác minh phiên đăng nhập của bạn. Vui lòng đăng nhập lại.";
+  if (error.status === 403) return "Bạn không có quyền hoàn thành bài học này.";
+  if (error.status === 404 || error.status === 410) return "Bài học này không còn khả dụng.";
+  if (error.status === 409 && error.code === 8005) return "Đăng ký khóa học của bạn không còn hiệu lực. Không thể hoàn thành bài học này.";
+  if (error.status === 409) return "Không thể ghi nhận hoàn thành vì trạng thái bài học hoặc đăng ký khóa học đã thay đổi.";
+  return "Không thể hoàn thành bài học. Vui lòng kiểm tra bài học và thử lại.";
 }
 
 function useCompleteLesson(courseId, lessonId, onCompleted) {

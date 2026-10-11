@@ -7,7 +7,7 @@ export default function LessonHeader({ lesson }) {
   return (
     <header className={cx("header")}>
       <div className={cx("eyebrow")}>
-        <span>LEARNING</span>
+        <span>BÀI HỌC</span>
 
         <span className={cx("separator")}>/</span>
 
@@ -21,11 +21,11 @@ export default function LessonHeader({ lesson }) {
       )}
 
       <div className={cx("meta")}>
-        <span>{lesson.estimatedMinutes} min</span>
+        <span>{lesson.estimatedMinutes} phút</span>
 
         <span className={cx("separator")}>•</span>
 
-        <span>Lesson {lesson.orderIndex}</span>
+        <span>Bài học {lesson.orderIndex}</span>
       </div>
     </header>
   );
