@@ -9,6 +9,7 @@ import { assessmentTitle } from "../shared/assessment-presentation";
 import { useAssessmentAttempt } from "./hooks/useAssessmentAttempt";
 import { attemptStatusLabels, formatAttemptTimestamp } from "./attempt-presentation";
 import styles from "../shared/Assessment.module.scss";
+import taskStyles from "../task/Task.module.scss";
 
 const cx = classNames.bind(styles);
 
@@ -20,23 +21,23 @@ export default function AssessmentAttempt() {
   const { assessmentAttemptId } = useParams();
   const { attempt, definition, error, isLoading, refetch } = useAssessmentAttempt(assessmentAttemptId);
   return (
-    <section className={cx("page")} aria-label="Assessment attempt">
-      <AppLink to="/my-learning">Back to My Learning</AppLink>
+    <section className={`${cx("page")} ${taskStyles.executionPage}`} aria-label="Lượt làm bài đánh giá">
+      <AppLink lang="vi" to="/my-learning">Quay lại việc học của tôi</AppLink>
       <ResourceState loading={isLoading} error={error} errorProps={{
         onRetry: refetch,
         actions: {
-          notFound: { to: "/my-learning", label: "Back to My Learning" },
-          forbidden: { to: "/my-learning", label: "Back to My Learning" },
+          notFound: { to: "/my-learning", label: "Quay lại việc học của tôi" },
+          forbidden: { to: "/my-learning", label: "Quay lại việc học của tôi" },
         },
       }}>
         {!error && attempt && definition && (
           <>
             <header className={cx("header")}>
               <h1 className={cx("title")}>{assessmentTitle(definition.title)}</h1>
-              <p className={cx("metadata")}>Target level: {definition.targetLevel}</p>
-              <p className={cx("metadata")}>Status: {attemptStatusLabels[attempt.status]}</p>
-              <p className={cx("metadata")}>Started: <AttemptTime value={attempt.startedAt} fallback="Not started" /></p>
-              <p className={cx("metadata")}>Deadline: <AttemptTime value={attempt.expiresAt} fallback="No time limit" /></p>
+              <p lang="vi" className={cx("metadata")}>Trình độ mục tiêu: {definition.targetLevel}</p>
+              <p lang="vi" className={cx("metadata")}>Trạng thái: {attemptStatusLabels[attempt.status]}</p>
+              <p lang="vi" className={cx("metadata")}>Bắt đầu: <AttemptTime value={attempt.startedAt} fallback="Chưa bắt đầu" /></p>
+              <p lang="vi" className={cx("metadata")}>Hạn kết thúc: <AttemptTime value={attempt.expiresAt} fallback="Không giới hạn thời gian" /></p>
             </header>
             <AssessmentStructure components={definition.components} renderTaskAction={attempt.status === "IN_PROGRESS"
               ? (task) => <TaskEntry

@@ -1,6 +1,7 @@
 import classNames from "classnames/bind";
 import { Button } from "@/shared/ui/components/button";
 import { useTaskAnswer } from "./hooks/useTaskAnswer";
+import { assessmentExecutionError } from "../shared/assessment-execution-error";
 import styles from "./Task.module.scss";
 
 const cx = classNames.bind(styles);
@@ -23,7 +24,7 @@ export default function TaskQuestion({ runtime, question }) {
     <fieldset className={cx("question")}
       disabled={!editable || mutation.isPending || mutation.isSubmitting}
       aria-busy={mutation.isPending || mutation.isSubmitting}>
-      <legend className={cx("legend")}>Question {question.order}</legend>
+      <legend lang="vi" className={cx("legend")}>Câu hỏi {question.order}</legend>
       <p className={cx("content")}>{question.content}</p>
       <div className={cx("options")}>
         {question.options.map((option) => (
@@ -39,9 +40,9 @@ export default function TaskQuestion({ runtime, question }) {
         ))}
       </div>
       {editable && question.selectedAnswerIds.length > 0 && (
-        <Button onClick={() => mutation.save([])} disabled={mutation.isPending || mutation.isSubmitting}>Clear answer</Button>
+        <Button lang="vi" onClick={() => mutation.save([])} disabled={mutation.isPending || mutation.isSubmitting}>Xóa câu trả lời</Button>
       )}
-      {mutation.error && <p role="alert">{mutation.error.message}</p>}
+      {mutation.error && <p lang="vi" role="alert">{assessmentExecutionError(mutation.error, "answer")}</p>}
     </fieldset>
   );
 }

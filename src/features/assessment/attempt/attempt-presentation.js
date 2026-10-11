@@ -1,11 +1,11 @@
 export const attemptStatusLabels = {
-  CREATED: "Created",
-  IN_PROGRESS: "In progress",
-  COMPLETED: "Completed",
-  EXPIRED: "Expired",
-  CANCELLED: "Cancelled",
+  CREATED: "Đã tạo",
+  IN_PROGRESS: "Đang thực hiện",
+  COMPLETED: "Đã hoàn thành",
+  EXPIRED: "Hết hạn",
+  CANCELLED: "Đã hủy",
 };
 
 export function formatAttemptTimestamp(value) {
-  return new Date(value).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+  return new Date(value).toLocaleString("vi-VN", { dateStyle: "medium", timeStyle: "short" });
 }

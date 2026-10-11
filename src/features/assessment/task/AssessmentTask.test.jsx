@@ -27,16 +27,16 @@ describe("Assessment Task runtime", () => {
     expect(screen.getByRole("radio", { name: "Guten Tag" })).toBeChecked();
     expect(screen.getByRole("checkbox", { name: "Haus" })).toBeChecked();
     expect(screen.getByRole("radio", { name: "Das stimmt" })).not.toBeChecked();
-    const region = screen.getByRole("region", { name: "Assessment task" });
+    const region = screen.getByRole("region", { name: "Bài tập đánh giá" });
     expect(within(region).getByRole("heading", { name: "B1 Placement Assessment" })).toBeInTheDocument();
     expect(within(region).getByText("Viết")).toBeInTheDocument();
-    expect(within(region).getByRole("heading", { name: "Task 4" })).toBeInTheDocument();
-    expect(within(region).getByText("Status: In progress")).toBeInTheDocument();
+    expect(within(region).getByRole("heading", { name: "Bài tập 4" })).toBeInTheDocument();
+    expect(within(region).getByText("Trạng thái: Đang thực hiện")).toBeInTheDocument();
     const time = region.querySelector("time");
     expect(time.dateTime).toBe(TASK_DEADLINE);
     expect(time.textContent.trim()).not.toBe("");
     expect(within(region).getAllByRole("group").map((group) => group.querySelector("legend").textContent))
-      .toEqual(["Question 3", "Question 1", "Question 2"]);
+      .toEqual(["Câu hỏi 3", "Câu hỏi 1", "Câu hỏi 2"]);
     expect(within(region).getAllByRole("radio").map((input) => input.closest("label").textContent))
       .toEqual(["Guten Tag", "Hallo", "Das stimmt", "Das stimmt nicht"]);
     expect(within(region).getAllByRole("checkbox").map((input) => input.closest("label").textContent))
@@ -45,7 +45,7 @@ describe("Assessment Task runtime", () => {
       ...runtime.questions.flatMap((question) => [question.questionId, ...question.options.map((option) => option.answerId)])];
     for (const id of ids) expect(region.textContent).not.toContain(id);
     expect(region.textContent).not.toMatch(/correct|incorrect|score|passed|failed|pass\/fail|percentage/i);
-    expect(within(region).getByRole("button", { name: "Submit task" })).toBeEnabled();
+    expect(within(region).getByRole("button", { name: "Nộp bài tập" })).toBeEnabled();
     expect(within(region).queryByRole("button", { name: /finish|next task/i })).not.toBeInTheDocument();
     expect(http.mock.calls.map(([config]) => config.url)).toEqual([TASK_URL, `${attemptUrl}/assessment`]);
     expect(client.getQueryData(TASK_KEY)).toEqual(runtime);
@@ -54,18 +54,18 @@ describe("Assessment Task runtime", () => {
     expect(client.getQueryData(["quiz", runtime.quizAttemptId])).toBeUndefined();
   });
 
-  it.each([["SUBMITTED", "Submitted"], ["EXPIRED", "Expired"], ["CANCELLED", "Cancelled"]])(
+  it.each([["SUBMITTED", "Đã nộp"], ["EXPIRED", "Hết hạn"], ["CANCELLED", "Đã hủy"]])(
     "renders child %s questions and saved selections readonly, without mutation or redirect", async (status, label) => {
       const user = userEvent.setup();
       const http = runtimeHttp(taskRuntime({ status, expiresAt: null }), assessmentDetail({ title: null }));
       const { router } = mountAssessmentApp(TASK_PATH);
-      await screen.findByText(`Status: ${label}`);
+      await screen.findByText(`Trạng thái: ${label}`);
       expect(screen.getByRole("heading", { name: "Bài đánh giá chưa có tên" })).toBeInTheDocument();
-      expect(screen.getByText("Deadline: No time limit")).toBeInTheDocument();
+      expect(screen.getByText("Hạn kết thúc: Không giới hạn thời gian")).toBeInTheDocument();
       for (const input of [...screen.getAllByRole("radio"), ...screen.getAllByRole("checkbox")]) expect(input).toBeDisabled();
       expect(screen.getByRole("radio", { name: "Guten Tag" })).toBeChecked();
       await user.click(screen.getByRole("radio", { name: "Hallo" }));
-      expect(screen.queryByRole("button", { name: /clear|submit|finish|next/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /clear|submit|finish|next|xóa|nộp/i })).not.toBeInTheDocument();
       expect(router.state.location.pathname).toBe(TASK_PATH);
       expect(http.mock.calls.every(([config]) => config.method === "get")).toBe(true);
     },
@@ -124,8 +124,9 @@ describe("Assessment Task runtime", () => {
       await screen.findByText(copy);
       expect(auth.current.status).toBe("AUTHENTICATED");
       expect(screen.queryByRole("radio")).not.toBeInTheDocument();
-      await user.click(screen.getByRole("link", { name: "Return to Assessment" }));
-      await screen.findByText("Status: In progress");
+      // The page back link and error action now share the approved Vietnamese label.
+      await user.click(screen.getAllByRole("link", { name: "Quay lại bài đánh giá" })[1]);
+      await screen.findByText("Trạng thái: Đang thực hiện");
       expect(router.state.location.pathname).toBe(attemptPath);
       expect(http.mock.calls.every(([config]) => config.method === "get")).toBe(true);
     },

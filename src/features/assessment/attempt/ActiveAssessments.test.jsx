@@ -31,7 +31,7 @@ describe("My Learning active assessment boundary", () => {
     expect(client.getQueryData(["learner-learning-journey"])).toEqual(snapshot);
     expect(http.mock.calls.map(([config]) => config.url).sort()).toEqual([journeyUrl, directionUrl, nextActivityUrl].sort());
     await user.click(links[0]);
-    await screen.findByText("Status: In progress");
+    await screen.findByText("Trạng thái: Đang thực hiện");
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(http.mock.calls.map(([config]) => config.url).sort()).toEqual([journeyUrl, directionUrl, nextActivityUrl, attemptUrl, attemptUrl + "/assessment"].sort());
     expect(http.mock.calls.every(([config]) => config.method === "get")).toBe(true);

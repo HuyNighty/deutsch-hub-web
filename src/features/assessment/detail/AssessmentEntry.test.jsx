@@ -55,7 +55,7 @@ describe("Assessment entry and Start", () => {
     expect(screen.queryByRole("button", { name: "Bắt đầu bài đánh giá" })).not.toBeInTheDocument();
     expect(client.getQueryData(["learner-learning-journey"]).assessmentAttempts).toHaveLength(2);
     await user.click(link);
-    await screen.findByText("Status: In progress");
+    await screen.findByText("Trạng thái: Đang thực hiện");
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(posts(http)).toHaveLength(0);
   });
@@ -97,7 +97,7 @@ describe("Assessment entry and Start", () => {
     expect(posts(http)[0][0]).toMatchObject({ url: startUrl, method: "post", data: undefined });
     expect(client.getQueryData(["learner-assessment-attempt", ATTEMPT_ID])).toBeUndefined();
     await act(async () => { response.resolve(); });
-    await screen.findByText("Status: In progress");
+    await screen.findByText("Trạng thái: Đang thực hiện");
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(posts(http)).toHaveLength(1);
     direction(true);
@@ -171,7 +171,7 @@ describe("Start conflict recovery", () => {
       const activity = seedNextActivity(client);
       await user.click(await screen.findByRole("button", { name: "Bắt đầu bài đánh giá" }));
       if (outcome === "match") {
-        await screen.findByText("Status: In progress");
+        await screen.findByText("Trạng thái: Đang thực hiện");
         expect(router.state.location.pathname).toBe(attemptPath);
         expect(client.getQueryData(["learner-learning-journey"])).toEqual(fresh);
         expect(client.getQueryState(["learner-learning-journey"]).isInvalidated).toBe(false);

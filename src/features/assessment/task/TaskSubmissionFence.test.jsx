@@ -13,7 +13,7 @@ import {
 } from "../test/task-fixtures";
 
 function clearButton() {
-  return within(screen.getByRole("group", { name: "Question 3" })).getByRole("button", { name: "Clear answer" });
+  return within(screen.getByRole("group", { name: "Câu hỏi 3" })).getByRole("button", { name: "Xóa câu trả lời" });
 }
 
 describe("Task-local answer / submit fences", () => {
@@ -24,7 +24,7 @@ describe("Task-local answer / submit fences", () => {
     const { client } = mountAssessmentApp(TASK_PATH);
     const activity = seedNextActivity(client);
     const direction = seedDirection(client);
-    const submit = await screen.findByRole("button", { name: "Submit task" });
+    const submit = await screen.findByRole("button", { name: "Nộp bài tập" });
     act(() => {
       fireEvent.click(method === "put" ? screen.getByRole("radio", { name: "Hallo" }) : clearButton());
       fireEvent.click(submit);
@@ -48,7 +48,7 @@ describe("Task-local answer / submit fences", () => {
     const { client } = mountAssessmentApp(TASK_PATH);
     const activity = seedNextActivity(client);
     const direction = seedDirection(client);
-    const submit = await screen.findByRole("button", { name: "Submit task" });
+    const submit = await screen.findByRole("button", { name: "Nộp bài tập" });
     const clear = clearButton();
     act(() => {
       fireEvent.click(submit);
@@ -64,7 +64,7 @@ describe("Task-local answer / submit fences", () => {
     for (const input of [...screen.getAllByRole("radio"), ...screen.getAllByRole("checkbox")]) expect(input).toBeDisabled();
     expect(client.getQueryData(TASK_KEY)).toEqual(taskRuntime());
     await act(async () => { response.resolve(); });
-    await screen.findByText("Status: Submitted");
+    await screen.findByText("Trạng thái: Đã nộp");
     activity(true);
     direction(false);
     expect(answerRequests(http)).toHaveLength(0);
@@ -80,7 +80,7 @@ describe("Task-local answer / submit fences", () => {
         ? savedAnswer("question-boolean", ["answer-stimmt"]) : savedAnswer("question-single", ["answer-hallo"])));
     });
     mountAssessmentApp(TASK_PATH);
-    const submit = await screen.findByRole("button", { name: "Submit task" });
+    const submit = await screen.findByRole("button", { name: "Nộp bài tập" });
     act(() => {
       fireEvent.click(screen.getByRole("radio", { name: "Hallo" }));
       fireEvent.click(screen.getByRole("radio", { name: "Das stimmt" }));
@@ -114,10 +114,10 @@ describe("Task-local answer / submit fences", () => {
     await user.click(await screen.findByRole("radio", { name: "Hallo" }));
     await waitFor(() => expect(answerRequests(http)).toHaveLength(1));
     await act(async () => { await router.navigate(otherPath); });
-    await screen.findByRole("heading", { name: "Task 2" });
-    expect(screen.getByRole("button", { name: "Submit task" })).toBeEnabled();
-    await user.click(screen.getByRole("button", { name: "Submit task" }));
-    await screen.findByText("Status: Submitted");
+    await screen.findByRole("heading", { name: "Bài tập 2" });
+    expect(screen.getByRole("button", { name: "Nộp bài tập" })).toBeEnabled();
+    await user.click(screen.getByRole("button", { name: "Nộp bài tập" }));
+    await screen.findByText("Trạng thái: Đã nộp");
     expect(client.getQueryData(otherKey).status).toBe("SUBMITTED");
     await act(async () => { response.resolve(); });
     await waitFor(() => expect(client.getQueryData(TASK_KEY).questions[0].selectedAnswerIds).toEqual(["answer-hallo"]));
@@ -136,16 +136,16 @@ describe("Task-local answer / submit fences", () => {
       runtimeRead: (config) => ok(config, ++reads === 1 ? taskRuntime() : terminal),
     });
     const { client } = mountAssessmentApp(TASK_PATH);
-    await screen.findByRole("button", { name: "Submit task" });
+    await screen.findByRole("button", { name: "Nộp bài tập" });
     await user.click(method === "put" ? screen.getByRole("radio", { name: "Hallo" }) : clearButton());
     await waitFor(() => expect(answerRequests(http)).toHaveLength(1));
     await act(async () => { await client.refetchQueries({ queryKey: TASK_KEY, exact: true }); });
-    await screen.findByText("Status: Submitted");
+    await screen.findByText("Trạng thái: Đã nộp");
     await act(async () => { response.resolve(); });
     await waitFor(() => expect(client.isMutating()).toBe(0));
     expect(client.getQueryData(TASK_KEY)).toEqual(terminal);
     expect(screen.getByRole("radio", { name: "Guten Tag" })).toBeChecked();
-    expect(screen.getByRole("link", { name: "Continue assessment" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Tiếp tục bài đánh giá" })).toBeInTheDocument();
     expect(submitRequests(http)).toHaveLength(0);
   });
 });

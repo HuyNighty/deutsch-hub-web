@@ -14,7 +14,7 @@ describe("Assessment integrated entry and recovery", () => {
     const server = journeyServer({ active: true, bound: ["task-writing-4"] });
     const { router, client } = mountAssessmentApp(detailPath);
     await user.click(await screen.findByRole("link", { name: "Tiếp tục bài đánh giá" }));
-    await screen.findByText("Status: In progress");
+    await screen.findByText("Trạng thái: Đang thực hiện");
     expect(screen.queryByRole("button", { name: "Bắt đầu bài đánh giá" })).not.toBeInTheDocument();
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(client.getQueryData(PARENT_KEY)).toEqual(server.parent());
@@ -35,7 +35,7 @@ describe("Assessment integrated entry and recovery", () => {
     const server = journeyServer({ conflict: true });
     const { router } = mountAssessmentApp(detailPath);
     await server.clickWrite(user, await screen.findByRole("button", { name: "Bắt đầu bài đánh giá" }), "post", startUrl);
-    await screen.findByText("Status: In progress");
+    await screen.findByText("Trạng thái: Đang thực hiện");
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(writes(server.http)).toEqual([["post", startUrl]]);
     expect(requestSequence(server.http)).toEqual([
@@ -52,24 +52,24 @@ describe("Assessment integrated entry and recovery", () => {
     const remaining = tasks.at(-1);
     const server = journeyServer({ active: true, submitted: tasks.slice(0, -1).map((item) => item.taskId), bound: [remaining.taskId] });
     const { client, router } = mountAssessmentApp(attemptPath);
-    await screen.findByText("Status: In progress");
+    await screen.findByText("Trạng thái: Đang thực hiện");
     // Every Task is bound, but one child is still IN_PROGRESS: bindings are not completion evidence.
     expect(server.parent().taskAttempts).toHaveLength(tasks.length);
     expect(server.runtimes.get(remaining.taskId).status).toBe("IN_PROGRESS");
     const before = server.http.mock.calls.length;
-    await server.clickWrite(user, screen.getByRole("button", { name: "Submit assessment" }), "post", FINAL_URL);
-    await within(screen.getByRole("region", { name: "Assessment finalization" })).findByText("HTTP failure");
+    await server.clickWrite(user, screen.getByRole("button", { name: "Nộp bài đánh giá" }), "post", FINAL_URL);
+    await within(screen.getByRole("region", { name: "Hoàn tất bài đánh giá" })).findByText("Máy chủ từ chối yêu cầu hoàn tất bài đánh giá. Vui lòng kiểm tra lại trạng thái trước khi thử lại.");
     expect(requestSequence(server.http).slice(before)).toEqual([["post", FINAL_URL], ["get", attemptUrl]]);
     expect(client.getQueryData(PARENT_KEY).status).toBe("IN_PROGRESS");
     expect(router.state.location.pathname).toBe(attemptPath);
-    expect(screen.queryByText("Assessment finalized successfully.")).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "View result" })).not.toBeInTheDocument();
+    expect(screen.queryByText("Thao tác hoàn tất bài đánh giá đã thành công.")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Xem kết quả" })).not.toBeInTheDocument();
     expect(writes(server.http)).toEqual([["post", FINAL_URL]]);
     await openTask(user, server, remaining, { bound: true });
     await submitAndReturn(user, server, remaining, router);
     const beforeRetry = server.http.mock.calls.length;
-    await server.clickWrite(user, screen.getByRole("button", { name: "Submit assessment" }), "post", FINAL_URL);
-    await screen.findByText("Assessment finalized successfully.");
+    await server.clickWrite(user, screen.getByRole("button", { name: "Nộp bài đánh giá" }), "post", FINAL_URL);
+    await screen.findByText("Thao tác hoàn tất bài đánh giá đã thành công.");
     expect(requestSequence(server.http).slice(beforeRetry)).toEqual([["post", FINAL_URL], ["get", attemptUrl]]);
     expect(client.getQueryData(PARENT_KEY).status).toBe("COMPLETED");
     expect(router.state.location.pathname).toBe(attemptPath);
@@ -84,13 +84,13 @@ describe("Assessment integrated entry and recovery", () => {
     definition.components[1].tasks.push(later);
     const server = journeyServer({ active: true, definition, denyTaskId: later.taskId });
     const { router } = mountAssessmentApp(attemptPath);
-    await screen.findByText("Status: In progress");
+    await screen.findByText("Trạng thái: Đang thực hiện");
     const row = screen.getByText("Bài tập 6").closest("li");
-    const start = within(row).getByRole("button", { name: "Start task" });
+    const start = within(row).getByRole("button", { name: "Bắt đầu bài tập" });
     expect(start).toBeEnabled();
     expect(server.parent().taskAttempts).toEqual([]);
     await server.clickWrite(user, start, "post", taskUrl(later));
-    expect(await within(row).findByRole("alert")).toHaveTextContent("HTTP failure");
+    expect(await within(row).findByRole("alert")).toHaveTextContent("Máy chủ từ chối yêu cầu bắt đầu bài tập. Vui lòng kiểm tra lại trạng thái trước khi thử lại.");
     expect(router.state.location.pathname).toBe(attemptPath);
     await openTask(user, server, server.tasks[0]);
     expect(router.state.location.pathname).toBe(taskPath(server.tasks[0]));
@@ -102,15 +102,15 @@ describe("Assessment integrated entry and recovery", () => {
     const server = journeyServer({ active: true, malformedFinal: true,
       submitted: assessmentDetail().components.flatMap((item) => item.tasks.map((task) => task.taskId)) });
     const { router, client } = mountAssessmentApp(attemptPath);
-    await screen.findByText("Status: In progress");
+    await screen.findByText("Trạng thái: Đang thực hiện");
     const before = server.http.mock.calls.length;
-    await server.clickWrite(user, screen.getByRole("button", { name: "Submit assessment" }), "post", FINAL_URL);
-    await screen.findByText("The server returned an invalid assessment final submit response.");
+    await server.clickWrite(user, screen.getByRole("button", { name: "Nộp bài đánh giá" }), "post", FINAL_URL);
+    await screen.findByText("Máy chủ trả về phản hồi hoàn tất bài đánh giá không hợp lệ. Chưa thể xác nhận kết quả thao tác.");
     expect(requestSequence(server.http).slice(before)).toEqual([["post", FINAL_URL]]);
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(client.getQueryData(PARENT_KEY).status).toBe("IN_PROGRESS");
-    expect(screen.queryByText("Assessment finalized successfully.")).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "View result" })).not.toBeInTheDocument();
+    expect(screen.queryByText("Thao tác hoàn tất bài đánh giá đã thành công.")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Xem kết quả" })).not.toBeInTheDocument();
     expect(writes(server.http)).toEqual([["post", FINAL_URL]]);
   });
 });

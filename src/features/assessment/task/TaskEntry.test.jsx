@@ -25,10 +25,10 @@ describe("Attempt Task Start / Continue", () => {
   it("offers Start for every unbound task without guessing sequential prerequisites or reordering", async () => {
     const http = entryHttp(() => { throw new Error("No task request expected"); });
     mountAssessmentApp(attemptPath);
-    await screen.findByText("Status: In progress");
-    expect(screen.getAllByRole("button", { name: "Start task" })).toHaveLength(5);
-    expect(within(taskRow("Bài tập 3")).getByRole("button", { name: "Start task" })).toBeEnabled();
-    expect(within(screen.getByRole("region", { name: "Assessment attempt" })).getAllByRole("listitem")
+    await screen.findByText("Trạng thái: Đang thực hiện");
+    expect(screen.getAllByRole("button", { name: "Bắt đầu bài tập" })).toHaveLength(5);
+    expect(within(taskRow("Bài tập 3")).getByRole("button", { name: "Bắt đầu bài tập" })).toBeEnabled();
+    expect(within(screen.getByRole("region", { name: "Lượt làm bài đánh giá" })).getAllByRole("listitem")
       .map((el) => el.querySelector("span").textContent))
       .toEqual(["Bài tập 4", "Bài tập 2", "Bài tập 1", "Bài tập 3", "Bài tập 5"]);
     expect(mutations(http)).toHaveLength(0);
@@ -38,9 +38,9 @@ describe("Attempt Task Start / Continue", () => {
     const user = userEvent.setup();
     const http = entryHttp((config) => ok(config, taskRuntime()), resumedAttempt());
     const { router } = mountAssessmentApp(attemptPath);
-    const link = await screen.findByRole("link", { name: "Continue task" });
+    const link = await screen.findByRole("link", { name: "Tiếp tục bài tập" });
     expect(link).toHaveAttribute("href", TASK_PATH);
-    expect(within(taskRow("Bài tập 4")).queryByRole("button", { name: "Start task" })).not.toBeInTheDocument();
+    expect(within(taskRow("Bài tập 4")).queryByRole("button", { name: "Bắt đầu bài tập" })).not.toBeInTheDocument();
     await user.click(link);
     await screen.findByRole("radio", { name: "Hallo" });
     expect(router.state.location.pathname).toBe(TASK_PATH);
@@ -52,8 +52,8 @@ describe("Attempt Task Start / Continue", () => {
     const http = entryHttp(() => { throw new Error("No task request expected"); }, resumedAttempt({ status, taskAttempts: [] }));
     mountAssessmentApp(attemptPath);
     await screen.findByRole("heading", { name: "Viết" });
-    expect(screen.queryByRole("button", { name: "Start task" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Continue task" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Bắt đầu bài tập" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Tiếp tục bài tập" })).not.toBeInTheDocument();
     expect(mutations(http)).toHaveLength(0);
   });
 
@@ -69,14 +69,14 @@ describe("Attempt Task Start / Continue", () => {
       ? post.promise.then(() => ok(config, startedTask()))
       : read.promise.then(() => ok(config, taskRuntime())));
     const { router } = mountAssessmentApp(attemptPath, { client });
-    await screen.findByText("Status: In progress");
-    const button = within(taskRow("Bài tập 4")).getByRole("button", { name: "Start task" });
+    await screen.findByText("Trạng thái: Đang thực hiện");
+    const button = within(taskRow("Bài tập 4")).getByRole("button", { name: "Bắt đầu bài tập" });
     act(() => { fireEvent.click(button); fireEvent.click(button); });
     await waitFor(() => expect(mutations(http)).toHaveLength(1));
     expect(button).toBeDisabled();
     expect(button).toHaveAttribute("aria-busy", "true");
     expect(mutations(http)[0][0]).toMatchObject({ method: "post", url: TASK_URL, data: undefined });
-    expect(within(taskRow("Bài tập 2")).getByRole("button", { name: "Start task" })).toBeEnabled();
+    expect(within(taskRow("Bài tập 2")).getByRole("button", { name: "Bắt đầu bài tập" })).toBeEnabled();
     await act(async () => { post.resolve(); });
     await waitFor(() => expect(router.state.location.pathname).toBe(TASK_PATH));
     expect(client.getQueryData(TASK_KEY)).toBeUndefined();
@@ -99,8 +99,8 @@ describe("Attempt Task Start / Continue", () => {
     const { router, client } = mountAssessmentApp(attemptPath);
     const activity = seedNextActivity(client);
     const direction = seedDirection(client);
-    await screen.findByText("Status: In progress");
-    await user.click(within(taskRow("Bài tập 4")).getByRole("button", { name: "Start task" }));
+    await screen.findByText("Trạng thái: Đang thực hiện");
+    await user.click(within(taskRow("Bài tập 4")).getByRole("button", { name: "Bắt đầu bài tập" }));
     const option = await screen.findByRole("radio", { name: "Hallo" });
     expect(option).toBeDisabled();
     activity(true);
@@ -121,9 +121,9 @@ describe("Attempt Task Start / Continue", () => {
     const { router, client } = mountAssessmentApp(attemptPath);
     const activity = seedNextActivity(client);
     const direction = seedDirection(client);
-    await screen.findByText("Status: In progress");
-    await user.click(within(taskRow("Bài tập 4")).getByRole("button", { name: "Start task" }));
-    await screen.findByText("The server returned an invalid assessment task start response.");
+    await screen.findByText("Trạng thái: Đang thực hiện");
+    await user.click(within(taskRow("Bài tập 4")).getByRole("button", { name: "Bắt đầu bài tập" }));
+    await screen.findByText("Máy chủ trả về phản hồi bắt đầu bài tập không hợp lệ. Chưa thể xác nhận kết quả thao tác.");
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(client.getQueryData(["learner-assessment-attempt", ATTEMPT_ID]).taskAttempts).toEqual([]);
     expect(client.getQueryData(TASK_KEY)).toBeUndefined();
@@ -142,10 +142,10 @@ describe("Attempt Task Start / Continue", () => {
     const { router, client } = mountAssessmentApp(attemptPath);
     const activity = seedNextActivity(client);
     const direction = seedDirection(client);
-    await screen.findByText("Status: In progress");
-    await user.click(within(taskRow("Bài tập 3")).getByRole("button", { name: "Start task" }));
+    await screen.findByText("Trạng thái: Đang thực hiện");
+    await user.click(within(taskRow("Bài tập 3")).getByRole("button", { name: "Bắt đầu bài tập" }));
     const row = taskRow("Bài tập 3");
-    expect(await within(row).findByRole("alert")).toHaveTextContent("HTTP failure");
+    expect(await within(row).findByRole("alert")).toHaveTextContent("Máy chủ từ chối yêu cầu bắt đầu bài tập. Vui lòng kiểm tra lại trạng thái trước khi thử lại.");
     activity(false);
     direction(false);
     expect(router.state.location.pathname).toBe(attemptPath);

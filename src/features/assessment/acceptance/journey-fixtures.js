@@ -147,35 +147,35 @@ export function journeyServer({
 }
 
 export async function openTask(user, server, task, { bound = false } = {}) {
-  const region = screen.getByRole("region", { name: "Assessment attempt" });
+  const region = screen.getByRole("region", { name: "Lượt làm bài đánh giá" });
   const row = within(region).getByText(`Bài tập ${task.order}`).closest("li");
-  if (bound) await user.click(within(row).getByRole("link", { name: "Continue task" }));
-  else await server.clickWrite(user, within(row).getByRole("button", { name: "Start task" }), "post", taskUrl(task));
-  await screen.findByRole("heading", { name: `Task ${task.order}` });
+  if (bound) await user.click(within(row).getByRole("link", { name: "Tiếp tục bài tập" }));
+  else await server.clickWrite(user, within(row).getByRole("button", { name: "Bắt đầu bài tập" }), "post", taskUrl(task));
+  await screen.findByRole("heading", { name: `Bài tập ${task.order}` });
 }
 
 export function expectNoTaskFeedback() {
-  const task = screen.getByRole("region", { name: "Assessment task" });
+  const task = screen.getByRole("region", { name: "Bài tập đánh giá" });
   expect(task.textContent).not.toMatch(/\bscore\b|\bcorrect\b|\bincorrect\b|performance|overall result|current German level|promot|new level/i);
 }
 
 export async function submitAndReturn(user, server, task, router) {
   const before = writes(server.http).length;
-  await server.clickWrite(user, screen.getByRole("button", { name: "Submit task" }), "post", `${taskUrl(task)}/submit`);
-  await screen.findByText("Status: Submitted");
+  await server.clickWrite(user, screen.getByRole("button", { name: "Nộp bài tập" }), "post", `${taskUrl(task)}/submit`);
+  await screen.findByText("Trạng thái: Đã nộp");
   expect(router.state.location.pathname).toBe(taskPath(task));
   for (const input of screen.getAllByRole("radio")) expect(input).toBeDisabled();
-  expect(screen.queryByRole("button", { name: "Clear answer" })).not.toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: "Xóa câu trả lời" })).not.toBeInTheDocument();
   expectNoTaskFeedback();
   expect(server.state.status).toBe("IN_PROGRESS");
   expect(server.state.settled).toBe(false);
   expect(writes(server.http)).toHaveLength(before + 1);
   expect(server.http.mock.calls.some(([config]) => [RESULT_URL, COMPETENCY_URL].includes(config.url))).toBe(false);
-  await user.click(screen.getByRole("link", { name: "Continue assessment" }));
-  await screen.findByText("Status: In progress");
+  await user.click(screen.getByRole("link", { name: "Tiếp tục bài đánh giá" }));
+  await screen.findByText("Trạng thái: Đang thực hiện");
   expect(router.state.location.pathname).toBe(attemptPath);
-  expect(screen.getByRole("button", { name: "Submit assessment" })).toBeEnabled();
-  expect(screen.queryByRole("link", { name: "View result" })).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Nộp bài đánh giá" })).toBeEnabled();
+  expect(screen.queryByRole("link", { name: "Xem kết quả" })).not.toBeInTheDocument();
   expect(writes(server.http)).toHaveLength(before + 1);
 }
 

@@ -115,8 +115,8 @@ describe("Learner dashboard integrated acceptance", () => {
 
     allowDestinationReads();
     await user.click(screen.getByRole("link", { name: "Tiếp tục đánh giá" }));
-    const region = await screen.findByRole("region", { name: "Assessment attempt" });
-    expect(await within(region).findByText("Status: In progress")).toBeVisible();
+    const region = await screen.findByRole("region", { name: "Lượt làm bài đánh giá" });
+    expect(await within(region).findByText("Trạng thái: Đang thực hiện")).toBeVisible();
     expect(within(region).getByRole("heading", { name: definition.title })).toBeVisible();
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(client.getQueryData(["learner-assessment-attempt", attempt.assessmentAttemptId])).toEqual(attempt);

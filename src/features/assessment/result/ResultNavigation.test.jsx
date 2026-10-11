@@ -15,10 +15,10 @@ describe("Read-only View result entry", () => {
     mountAssessmentApp(attemptPath);
     await screen.findByRole("heading", { name: "Viết" });
     if (["COMPLETED", "EXPIRED"].includes(status)) {
-      expect(screen.getByRole("link", { name: "View result" })).toHaveAttribute("href", RESULT_PATH);
-      if (status === "EXPIRED") expect(screen.getByRole("button", { name: "Finalize expired assessment" })).toBeEnabled();
-      else expect(screen.queryByRole("button", { name: "Submit assessment" })).not.toBeInTheDocument();
-    } else expect(screen.queryByRole("link", { name: "View result" })).not.toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "Xem kết quả" })).toHaveAttribute("href", RESULT_PATH);
+      if (status === "EXPIRED") expect(screen.getByRole("button", { name: "Hoàn tất bài đánh giá đã hết hạn" })).toBeEnabled();
+      else expect(screen.queryByRole("button", { name: "Nộp bài đánh giá" })).not.toBeInTheDocument();
+    } else expect(screen.queryByRole("link", { name: "Xem kết quả" })).not.toBeInTheDocument();
     expect(http).toHaveBeenCalledTimes(2);
   });
 
@@ -33,9 +33,9 @@ describe("Read-only View result entry", () => {
       },
     });
     const { router } = mountAssessmentApp(attemptPath);
-    await user.click(await screen.findByRole("button", { name: "Submit assessment" }));
-    await screen.findByText("Assessment finalized successfully.");
-    expect(screen.getByRole("link", { name: "View result" })).toHaveAttribute("href", RESULT_PATH);
+    await user.click(await screen.findByRole("button", { name: "Nộp bài đánh giá" }));
+    await screen.findByText("Thao tác hoàn tất bài đánh giá đã thành công.");
+    expect(screen.getByRole("link", { name: "Xem kết quả" })).toHaveAttribute("href", RESULT_PATH);
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(http).toHaveBeenCalledTimes(4);
   });
@@ -54,22 +54,22 @@ describe("Read-only View result entry", () => {
     const { client, auth, router } = mountAssessmentApp(attemptPath);
     const otherResult = ["learner-assessment-result", "other-attempt"];
     client.setQueryData(otherResult, { unchanged: true });
-    const view = await screen.findByRole("link", { name: "View result" });
+    const view = await screen.findByRole("link", { name: "Xem kết quả" });
     await user.click(view);
     await screen.findByText("Kết quả đánh giá chưa có.");
     expect(auth.current.status).toBe("AUTHENTICATED");
     expect(http.mock.calls.filter(([config]) => config.method !== "get")).toHaveLength(0);
     expect(within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).getByText("A2")).toBeInTheDocument();
     await user.click(screen.getByRole("link", { name: "Quay lại bài đánh giá" }));
-    await user.click(await screen.findByRole("button", { name: "Finalize expired assessment" }));
-    await screen.findByText("Assessment finalized successfully.");
+    await user.click(await screen.findByRole("button", { name: "Hoàn tất bài đánh giá đã hết hạn" }));
+    await screen.findByText("Thao tác hoàn tất bài đánh giá đã thành công.");
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(client.getQueryState(RESULT_KEY).isInvalidated).toBe(true);
     expect(client.getQueryState(["learner-competency"]).isInvalidated).toBe(true);
     expect(client.getQueryData(["learner-competency"])).toEqual(competency()); // No local level patch from Result.
     expect(client.getQueryState(otherResult).isInvalidated).toBe(false);
     expect(client.getQueryState(["learner-assessment-attempt-definition", ATTEMPT_ID]).isInvalidated).toBe(false);
-    await user.click(screen.getByRole("link", { name: "View result" }));
+    await user.click(screen.getByRole("link", { name: "Xem kết quả" }));
     await screen.findByText("Kết quả tổng thể: Đạt");
     await within(screen.getByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).findByText("B2");
     expect(http.mock.calls.filter(([config]) => config.url === RESULT_URL)).toHaveLength(2);
@@ -84,7 +84,7 @@ describe("Read-only View result entry", () => {
       return ok(config, config.url === RESULT_URL ? resultFixture() : competency());
     }, { allowResultReads: true });
     const { router } = mountAssessmentApp(attemptPath);
-    await user.click(await screen.findByRole("link", { name: "View result" }));
+    await user.click(await screen.findByRole("link", { name: "Xem kết quả" }));
     await screen.findByText("Kết quả tổng thể: Chưa đạt");
     await waitFor(() => expect(http.mock.calls.some(([config]) => config.url === COMPETENCY_URL)).toBe(true));
     expect(router.state.location.pathname).toBe(RESULT_PATH);
