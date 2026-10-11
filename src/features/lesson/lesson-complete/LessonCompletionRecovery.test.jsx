@@ -80,23 +80,23 @@ function setup({ complete = (config) => ok(config, { completedLessons: 1 }),
 }
 
 async function clickComplete(app) {
-  await app.user.click(await screen.findByRole("button", { name: "Complete lesson" }));
+  await app.user.click(await screen.findByRole("button", { name: "Hoàn thành bài học" }));
 }
 
 async function expectUncertain(app) {
-  expect(await screen.findByRole("alert")).toHaveTextContent("We couldn't confirm completion. It may still complete.");
+  expect(await screen.findByRole("alert")).toHaveTextContent("Chưa thể xác nhận bài học đã hoàn thành. Yêu cầu có thể đã được ghi nhận. Vui lòng kiểm tra trạng thái hoàn thành.");
   await waitFor(() => expect(app.client.isMutating()).toBe(0));
-  expect(screen.getByRole("button", { name: "Complete lesson" })).toBeDisabled();
-  expect(screen.getByRole("button", { name: "Check completion status" })).toBeEnabled();
-  expect(screen.queryByText("Lesson completed")).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Hoàn thành bài học" })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Kiểm tra trạng thái hoàn thành" })).toBeEnabled();
+  expect(screen.queryByText("Đã hoàn thành bài học")).not.toBeInTheDocument();
   expect(app.router.state.location.pathname).toBe(lessonPath());
 }
 
 function expectContentAndNavigation() {
   expect(screen.getByRole("heading", { name: "Greetings", level: 1 })).toBeVisible();
   expect(screen.getByRole("article").querySelector("div").innerHTML).toBe("<p>Hallo <strong>zusammen</strong>.</p>");
-  expect(screen.getByRole("button", { name: "Previous lesson" })).toBeDisabled();
-  expect(screen.getByRole("button", { name: "Next lesson" })).toBeEnabled();
+  expect(screen.getByRole("button", { name: "Bài học trước" })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Bài học tiếp theo" })).toBeEnabled();
 }
 
 describe("Learner lesson completion recovery", () => {
@@ -110,7 +110,7 @@ describe("Learner lesson completion recovery", () => {
     app.client.setQueryData(["courses", COURSE_ID, "lessons", "other"], unrelated);
     app.client.setQueryData(["courses", COURSE_ID], { id: COURSE_ID });
     await clickComplete(app);
-    expect(await screen.findByText("Lesson completed")).toBeVisible();
+    expect(await screen.findByText("Đã hoàn thành bài học")).toBeVisible();
     expectContentAndNavigation();
     expectCourseState(app.cache, true);
     expect(app.client.getQueryData(lessonKey)).toEqual({ ...original, completed: true });
@@ -121,12 +121,12 @@ describe("Learner lesson completion recovery", () => {
     expect(app.client.getQueryState(["courses", COURSE_ID, "lessons", "other"]).isInvalidated).toBe(false);
     expect(requests(app.http)).toEqual([["get", lessonUrl], ["post", completeUrl]]);
     expect(app.router.state.location.pathname).toBe(lessonPath());
-    await app.user.click(screen.getByRole("button", { name: "Next lesson" }));
+    await app.user.click(screen.getByRole("button", { name: "Bài học tiếp theo" }));
     await screen.findByRole("heading", { name: "Next lesson" });
-    await app.user.click(screen.getByRole("button", { name: "Previous lesson" }));
+    await app.user.click(screen.getByRole("button", { name: "Bài học trước" }));
     await screen.findByRole("heading", { name: "Greetings" });
     await waitFor(() => expect(requests(app.http).filter(([method, url]) => method === "get" && url === lessonUrl)).toHaveLength(2));
-    expect(screen.getByText("Lesson completed")).toBeVisible();
+    expect(screen.getByText("Đã hoàn thành bài học")).toBeVisible();
     expect(posts(app.http)).toHaveLength(1);
   });
 
@@ -135,7 +135,7 @@ describe("Learner lesson completion recovery", () => {
     const app = setup({ complete: (config) => { started.resolve(); return response.promise.then(() => ok(config)); } });
     await clickComplete(app);
     await started.promise;
-    const button = screen.getByRole("button", { name: "Completing lesson…" });
+    const button = screen.getByRole("button", { name: "Đang ghi nhận hoàn thành…" });
     expect(button).toBeDisabled();
     expect(button).toHaveAttribute("aria-busy", "true");
     expectContentAndNavigation();
@@ -143,7 +143,7 @@ describe("Learner lesson completion recovery", () => {
     expect(posts(app.http)).toHaveLength(1);
     expect(app.router.state.location.pathname).toBe(lessonPath());
     await act(async () => response.resolve());
-    await screen.findByText("Lesson completed");
+    await screen.findByText("Đã hoàn thành bài học");
   });
 
   it("locks direct same-tick handler calls before pending UI renders", async () => {
@@ -173,7 +173,7 @@ describe("Learner lesson completion recovery", () => {
       return ok(config, lesson(true));
     } });
     await clickComplete(app);
-    await screen.findByText("Lesson completed");
+    await screen.findByText("Đã hoàn thành bài học");
     expectContentAndNavigation();
     expectCourseState(app.cache, true);
     expect(app.client.getQueryData(lessonKey).completed).toBe(true);
@@ -193,7 +193,7 @@ describe("Learner lesson completion recovery", () => {
   it.each([AxiosError.ERR_NETWORK, "ECONNABORTED", 408, 500, 502, 503, 504])("recovers uncertain outcome %s using canonical completion without a second POST", async (outcome) => {
     const app = setup({ complete: (config) => unknown(config, outcome) });
     await clickComplete(app);
-    await screen.findByText("Lesson completed");
+    await screen.findByText("Đã hoàn thành bài học");
     expectContentAndNavigation();
     expectCourseState(app.cache, true);
     expect(requests(app.http)).toEqual([["get", lessonUrl], ["post", completeUrl], ["get", lessonUrl]]);
@@ -220,7 +220,7 @@ describe("Learner lesson completion recovery", () => {
     expect(app.client.getQueryData(lessonKey).completed).toBe(false);
     expect(app.client.getQueryState(lessonKey).isInvalidated).toBe(false);
     expectCourseState(app.cache);
-    await app.user.click(screen.getByRole("button", { name: "Complete lesson" }));
+    await app.user.click(screen.getByRole("button", { name: "Hoàn thành bài học" }));
     expect(requests(app.http)).toEqual([["get", lessonUrl], ["post", completeUrl], ["get", lessonUrl]]);
   });
 
@@ -243,8 +243,8 @@ describe("Learner lesson completion recovery", () => {
     await clickComplete(app);
     await started.promise;
     act(() => app.client.setQueryData(lessonKey, lesson(true)));
-    expect(screen.queryByText("Lesson completed")).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Completing lesson…" })).toBeDisabled();
+    expect(screen.queryByText("Đã hoàn thành bài học")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Đang ghi nhận hoàn thành…" })).toBeDisabled();
     await act(async () => response.resolve());
     await expectUncertain(app);
     expect(posts(app.http)).toHaveLength(1);
@@ -260,13 +260,13 @@ describe("Learner lesson completion recovery", () => {
     } });
     await clickComplete(app);
     await expectUncertain(app);
-    await app.user.dblClick(screen.getByRole("button", { name: "Check completion status" }));
+    await app.user.dblClick(screen.getByRole("button", { name: "Kiểm tra trạng thái hoàn thành" }));
     await started.promise;
-    expect(screen.getByRole("button", { name: "Checking completion…" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Đang kiểm tra trạng thái hoàn thành…" })).toBeDisabled();
     expect(posts(app.http)).toHaveLength(1);
     expect(reads).toBe(2);
     await act(async () => response.resolve());
-    await screen.findByText("Lesson completed");
+    await screen.findByText("Đã hoàn thành bài học");
     expect(app.client.getQueryData(lessonKey).completed).toBe(true);
     expectCourseState(app.cache, true);
     expect(requests(app.http)).toEqual([["get", lessonUrl], ["post", completeUrl], ["get", lessonUrl], ["get", lessonUrl]]);
@@ -282,10 +282,10 @@ describe("Learner lesson completion recovery", () => {
       await clickComplete(app);
       const message = await screen.findByRole("alert");
       expect(message).not.toHaveTextContent("Private backend detail");
-      if (code === 8005) expect(message).toHaveTextContent("Your enrollment is not active.");
-      expect(screen.getByRole("button", { name: "Complete lesson" })).toBeEnabled();
-      expect(screen.queryByRole("button", { name: "Check completion status" })).not.toBeInTheDocument();
-      expect(screen.queryByText("Lesson completed")).not.toBeInTheDocument();
+      if (code === 8005) expect(message).toHaveTextContent("Đăng ký khóa học của bạn không còn hiệu lực.");
+      expect(screen.getByRole("button", { name: "Hoàn thành bài học" })).toBeEnabled();
+      expect(screen.queryByRole("button", { name: "Kiểm tra trạng thái hoàn thành" })).not.toBeInTheDocument();
+      expect(screen.queryByText("Đã hoàn thành bài học")).not.toBeInTheDocument();
       expect(app.client.getQueryData(lessonKey).completed).toBe(false);
       expectCourseState(app.cache);
       expect(requests(app.http)).toEqual([["get", lessonUrl], ["post", completeUrl]]);
@@ -310,10 +310,10 @@ describe("Learner lesson completion recovery", () => {
     act(() => { oldRead = app.client.refetchQueries({ queryKey: lessonKey, exact: true }); });
     await started.promise;
     await clickComplete(app);
-    await screen.findByText("Lesson completed");
+    await screen.findByText("Đã hoàn thành bài học");
     await act(async () => { response.resolve(); await oldRead; });
     expect(app.client.getQueryData(lessonKey).completed).toBe(true);
-    expect(screen.getByText("Lesson completed")).toBeVisible();
+    expect(screen.getByText("Đã hoàn thành bài học")).toBeVisible();
     expectContentAndNavigation();
     expectCourseState(app.cache, true);
     expect(posts(app.http)).toHaveLength(1);
@@ -338,7 +338,7 @@ describe("Learner lesson completion recovery", () => {
     expect(app.client.getQueryState(lessonKey).isInvalidated).toBe(false);
     expect(app.onCompleted).not.toHaveBeenCalled();
     expect(invalidate).not.toHaveBeenCalled();
-    expect(screen.queryByText("Lesson completed")).not.toBeInTheDocument();
+    expect(screen.queryByText("Đã hoàn thành bài học")).not.toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(requests(app.http)).toEqual([["post", completeUrl]]);
     expect(app.router.state.location.pathname).toBe(lessonPath());
@@ -363,7 +363,7 @@ describe("Learner lesson completion recovery", () => {
     expect(app.client.getQueryState(lessonKey).isInvalidated).toBe(false);
     expect(app.onCompleted).not.toHaveBeenCalled();
     expect(invalidate).not.toHaveBeenCalled();
-    expect(screen.queryByText("Lesson completed")).not.toBeInTheDocument();
+    expect(screen.queryByText("Đã hoàn thành bài học")).not.toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(requests(app.http)).toEqual([["post", completeUrl], ["get", lessonUrl]]);
   });
@@ -424,7 +424,7 @@ describe("Learner lesson completion recovery", () => {
     expect(app.client.getQueryData(lessonKey).completed).toBe(false);
     expect(app.client.getQueryState(lessonKey).isInvalidated).toBe(false);
     expect(invalidate).not.toHaveBeenCalled();
-    expect(screen.queryByText("Lesson completed")).not.toBeInTheDocument();
+    expect(screen.queryByText("Đã hoàn thành bài học")).not.toBeInTheDocument();
     expectCourseState(app.cache);
     expect(posts(app.http)).toHaveLength(1);
   });
@@ -447,7 +447,7 @@ describe("Learner lesson completion recovery", () => {
     expect(app.client.getQueryData(lessonKey).completed).toBe(false);
     expect(app.client.getQueryState(lessonKey).isInvalidated).toBe(false);
     expect(invalidate).not.toHaveBeenCalled();
-    expect(screen.queryByText("Lesson completed")).not.toBeInTheDocument();
+    expect(screen.queryByText("Đã hoàn thành bài học")).not.toBeInTheDocument();
     expectCourseState(app.cache);
     expect(posts(app.http)).toHaveLength(1);
   });
@@ -491,7 +491,7 @@ describe("Learner lesson completion recovery", () => {
     await waitFor(() => expect(app.auth.current.isAuthenticated).toBe(false));
     expect(app.onCompleted).not.toHaveBeenCalled();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-    expect(screen.queryByText("Lesson completed")).not.toBeInTheDocument();
+    expect(screen.queryByText("Đã hoàn thành bài học")).not.toBeInTheDocument();
     expect(requests(app.http)).toEqual([["post", completeUrl], ["post", "/auth/refresh"]]);
   });
 
@@ -501,7 +501,7 @@ describe("Learner lesson completion recovery", () => {
     await clickComplete(app);
     await waitFor(() => expect(app.auth.current.isAuthenticated).toBe(false));
     expect(app.onCompleted).not.toHaveBeenCalled();
-    expect(screen.queryByText("Lesson completed")).not.toBeInTheDocument();
+    expect(screen.queryByText("Đã hoàn thành bài học")).not.toBeInTheDocument();
     expect(requests(app.http)).toEqual([["post", completeUrl], ["post", "/auth/refresh"], ["post", completeUrl]]);
   });
 });

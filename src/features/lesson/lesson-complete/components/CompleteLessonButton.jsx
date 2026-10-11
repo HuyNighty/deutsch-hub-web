@@ -23,9 +23,9 @@ export default function CompleteLessonButton({
         </span>
 
         <div className={cx("content")}>
-          <strong>Lesson completed</strong>
+          <strong>Đã hoàn thành bài học</strong>
 
-          <span>You have completed this lesson.</span>
+          <span>Bạn đã hoàn thành bài học này.</span>
         </div>
       </div>
     );
@@ -34,7 +34,7 @@ export default function CompleteLessonButton({
   return (
     <div className={cx("wrapper")}>
       <Button fullWidth loading={loading} disabled={uncertain} onClick={() => handleComplete(estimatedMinutes)}>
-        {phase === "checking" ? "Checking completion…" : loading ? "Completing lesson…" : "Complete lesson"}
+        {phase === "checking" ? "Đang kiểm tra trạng thái hoàn thành…" : loading ? "Đang ghi nhận hoàn thành…" : "Hoàn thành bài học"}
       </Button>
 
       {error && (
@@ -44,7 +44,7 @@ export default function CompleteLessonButton({
       )}
       {uncertain && (
         <Button fullWidth variant="outline" onClick={checkCompletion}>
-          Check completion status
+          Kiểm tra trạng thái hoàn thành
         </Button>
       )}
     </div>

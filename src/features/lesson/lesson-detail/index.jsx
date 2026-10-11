@@ -31,7 +31,7 @@ function LessonDetail() {
       }}
     >
       {lesson && (
-        <main className={cx("page")}>
+        <main className={cx("page")} lang="vi">
           <LessonHeader lesson={lesson} />
 
           <section className={cx("content")}>

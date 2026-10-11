@@ -29,18 +29,18 @@ export default function LessonNavigation({
   };
 
   return (
-    <nav className={cx("navigation")} aria-label="Lesson navigation">
+    <nav className={cx("navigation")} aria-label="Điều hướng bài học">
       <Button
         variant="outline"
         disabled={!previousLessonId}
         onClick={handlePrevious}
       >
         <span aria-hidden="true">←</span>
-        <span>Previous lesson</span>
+        <span>Bài học trước</span>
       </Button>
 
       <Button disabled={!nextLessonId} onClick={handleNext}>
-        <span>Next lesson</span>
+        <span>Bài học tiếp theo</span>
         <span aria-hidden="true">→</span>
       </Button>
     </nav>

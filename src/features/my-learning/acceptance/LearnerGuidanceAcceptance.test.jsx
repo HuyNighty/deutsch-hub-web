@@ -171,11 +171,11 @@ describe("Learner Guidance integrated acceptance", () => {
       expect(requestWindow(server.http, lessonWindow)).toEqual([["get", lessonUrl(id), undefined]]);
       const beforeComplete = captureGuidance(app.client);
       const body = { studyMinutes: server.lessons[index].estimatedMinutes };
-      const completeWindow = await server.clickWrite(user, screen.getByRole("button", { name: "Complete lesson" }),
+      const completeWindow = await server.clickWrite(user, screen.getByRole("button", { name: "Hoàn thành bài học" }),
         `${lessonUrl(id)}/complete`, { body });
-      await screen.findByText("Lesson completed");
+      await screen.findByText("Đã hoàn thành bài học");
       await waitFor(() => expect(app.client.isMutating()).toBe(0));
-      expect(screen.getByText("You have completed this lesson.")).toBeVisible();
+      expect(screen.getByText("Bạn đã hoàn thành bài học này.")).toBeVisible();
       expect(server.state.progress).toEqual({
         completedLessons: index + 1, totalLessons: 2, completionPercentage: (index + 1) * 50,
         totalStudyMinutes: index === 0 ? 10 : 25,

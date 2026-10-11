@@ -134,19 +134,19 @@ describe("Course detail enrollment actions", () => {
     await screen.findByRole("heading", { name: "Greetings", level: 1 });
     expect(router.state.location.pathname).toBe(lessonPath("lesson-1"));
     expect(within(screen.getByRole("article")).getByText("Greetings content.")).toBeVisible();
-    expect(screen.getByText("You have completed this lesson.")).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Complete lesson" })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Previous lesson" })).toBeDisabled();
+    expect(screen.getByText("Bạn đã hoàn thành bài học này.")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Hoàn thành bài học" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Bài học trước" })).toBeDisabled();
 
-    await user.click(screen.getByRole("button", { name: "Next lesson" }));
+    await user.click(screen.getByRole("button", { name: "Bài học tiếp theo" }));
     await screen.findByRole("heading", { name: "Farewells", level: 1 });
     expect(router.state.location.pathname).toBe(lessonPath("lesson-2"));
     expect(screen.getByText("Farewells content.")).toBeVisible();
-    expect(screen.getByText("You have completed this lesson.")).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Complete lesson" })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Next lesson" })).toBeDisabled();
+    expect(screen.getByText("Bạn đã hoàn thành bài học này.")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Hoàn thành bài học" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Bài học tiếp theo" })).toBeDisabled();
 
-    await user.click(screen.getByRole("button", { name: "Previous lesson" }));
+    await user.click(screen.getByRole("button", { name: "Bài học trước" }));
     await screen.findByRole("heading", { name: "Greetings", level: 1 });
     expect(router.state.location.pathname).toBe(lessonPath("lesson-1"));
     expect(requests(http)).toEqual([

@@ -47,29 +47,36 @@ describe("Learner lesson TEXT display and navigation", () => {
   it("loads persisted content safely while previous/next navigation and boundary buttons remain functional", async () => {
     const { user, router, http } = setup();
     await screen.findByRole("heading", { name: "First lesson", level: 1 });
+    expect(screen.getByRole("main")).toHaveAttribute("lang", "vi");
+    expect(screen.getByText("BÀI HỌC")).toBeVisible();
+    expect(screen.getByText("A1", { exact: true })).toBeVisible();
+    expect(screen.getByText("10 phút", { exact: true })).toBeVisible();
+    expect(screen.getByText("Bài học 1", { exact: true })).toBeVisible();
+    expect(screen.getByText("Learn everyday German.")).toBeVisible();
+    expect(screen.getByRole("navigation", { name: "Điều hướng bài học" })).toBeVisible();
     expect(screen.getByRole("article")).toHaveTextContent("Hallo zusammen.");
     expect(screen.getByText("zusammen")).toBeVisible();
     expect(screen.getByText("zusammen").tagName).toBe("STRONG");
-    expect(screen.getByRole("button", { name: "Previous lesson" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Bài học trước" })).toBeDisabled();
 
-    await user.click(screen.getByRole("button", { name: "Next lesson" }));
+    await user.click(screen.getByRole("button", { name: "Bài học tiếp theo" }));
     await screen.findByRole("heading", { name: "Second lesson", level: 1 });
     expect(router.state.location.pathname).toBe(path("second"));
     expect(screen.getByRole("article").querySelector("div").innerHTML).toBe("<p>Persisted lesson.</p>");
 
-    await user.click(screen.getByRole("button", { name: "Previous lesson" }));
+    await user.click(screen.getByRole("button", { name: "Bài học trước" }));
     await screen.findByRole("heading", { name: "First lesson", level: 1 });
     expect(router.state.location.pathname).toBe(path("first"));
     expect(screen.getByRole("article")).toHaveTextContent("Hallo zusammen.");
 
-    await user.click(screen.getByRole("button", { name: "Next lesson" }));
+    await user.click(screen.getByRole("button", { name: "Bài học tiếp theo" }));
     await screen.findByRole("heading", { name: "Second lesson", level: 1 });
-    await user.click(screen.getByRole("button", { name: "Next lesson" }));
+    await user.click(screen.getByRole("button", { name: "Bài học tiếp theo" }));
     await screen.findByRole("heading", { name: "Third lesson", level: 1 });
     expect(router.state.location.pathname).toBe(path("third"));
     expect(screen.getByText("Auf Wiedersehen.")).toBeVisible();
-    expect(screen.getByRole("button", { name: "Next lesson" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Previous lesson" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Bài học tiếp theo" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Bài học trước" })).toBeEnabled();
     expect(http.mock.calls.every(([config]) => config.method === "get")).toBe(true);
     expect(http.mock.calls.map(([config]) => config.url)).toEqual(expect.arrayContaining(lessons.map((lesson) => url(lesson.id))));
   });
@@ -77,10 +84,10 @@ describe("Learner lesson TEXT display and navigation", () => {
   it("preserves completion and sanitized content on a lesson loaded from the backend", async () => {
     const { user, router, http } = setup("second");
     await screen.findByRole("heading", { name: "Second lesson", level: 1 });
-    await user.click(screen.getByRole("button", { name: "Complete lesson" }));
+    await user.click(screen.getByRole("button", { name: "Hoàn thành bài học" }));
 
-    expect(await screen.findByText("Lesson completed")).toBeVisible();
-    expect(screen.getByText("You have completed this lesson.")).toBeVisible();
+    expect(await screen.findByText("Đã hoàn thành bài học")).toBeVisible();
+    expect(screen.getByText("Bạn đã hoàn thành bài học này.")).toBeVisible();
     expect(within(screen.getByRole("article")).getByText("Persisted lesson.")).toBeVisible();
     expect(screen.getByRole("article").querySelector("div").innerHTML).toBe("<p>Persisted lesson.</p>");
     expect(router.state.location.pathname).toBe(path("second"));

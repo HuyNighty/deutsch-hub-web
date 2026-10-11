@@ -27,7 +27,7 @@ function LessonMediaRenderer({
           {description && <p className={cx("description")}>{description}</p>}
         </div>
 
-        <div className={cx("loading")}>Loading media...</div>
+        <div className={cx("loading")}>Đang tải tài liệu...</div>
       </article>
     );
   }
@@ -41,7 +41,7 @@ function LessonMediaRenderer({
           {description && <p className={cx("description")}>{description}</p>}
         </div>
 
-        <div className={cx("error")}>Unable to load this lesson material.</div>
+        <div className={cx("error")}>Không thể tải tài liệu bài học này.</div>
       </article>
     );
   }
@@ -61,7 +61,7 @@ function LessonMediaRenderer({
           <img
             className={cx("image")}
             src={objectUrl}
-            alt={title || "Lesson material"}
+            alt={title || "Tài liệu bài học"}
             loading="lazy"
           />
         )}
@@ -82,14 +82,14 @@ function LessonMediaRenderer({
           <iframe
             className={cx("pdf")}
             src={objectUrl}
-            title={title || "PDF lesson material"}
+            title={title || "Tài liệu PDF của bài học"}
           />
         )}
 
         {isDocument(mimeType) && (
           <div className={cx("document")}>
             <p className={cx("document-message")}>
-              Preview is not available for this document.
+              Không thể xem trước tài liệu này.
             </p>
 
             <a
@@ -97,13 +97,13 @@ function LessonMediaRenderer({
               href={objectUrl}
               download={title}
             >
-              Download document
+              Tải tài liệu
             </a>
           </div>
         )}
 
         {!isSupported(mimeType) && (
-          <div className={cx("unsupported")}>Unsupported media type.</div>
+          <div className={cx("unsupported")}>Định dạng tài liệu không được hỗ trợ.</div>
         )}
       </div>
     </article>
