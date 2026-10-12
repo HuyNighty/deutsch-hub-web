@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { useParams } from "react-router-dom";
 import classNames from "classnames/bind";
 import ResourceState from "@/shared/ui/state/ResourceState";
@@ -18,16 +19,17 @@ function AttemptTime({ value, fallback }) {
 }
 
 export default function AssessmentAttempt() {
+  const regionLabelId = useId();
   const { assessmentAttemptId } = useParams();
   const { attempt, definition, error, isLoading, refetch } = useAssessmentAttempt(assessmentAttemptId);
   return (
-    <section className={`${cx("page")} ${taskStyles.executionPage}`} aria-label="Lượt làm bài đánh giá">
+    <section className={`${cx("page")} ${taskStyles.executionPage}`} aria-labelledby={regionLabelId}>
       <AppLink lang="vi" to="/my-learning">Quay lại việc học của tôi</AppLink>
       <ResourceState loading={isLoading} error={error} errorProps={{
         onRetry: refetch,
         actions: {
-          notFound: { to: "/my-learning", label: "Quay lại việc học của tôi" },
-          forbidden: { to: "/my-learning", label: "Quay lại việc học của tôi" },
+          notFound: { to: "/my-learning", label: <span lang="vi">Quay lại việc học của tôi</span> },
+          forbidden: { to: "/my-learning", label: <span lang="vi">Quay lại việc học của tôi</span> },
         },
       }}>
         {!error && attempt && definition && (
@@ -50,6 +52,7 @@ export default function AssessmentAttempt() {
           </>
         )}
       </ResourceState>
+      <span id={regionLabelId} lang="vi" hidden>Lượt làm bài đánh giá</span>
     </section>
   );
 }

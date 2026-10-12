@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { useParams } from "react-router-dom";
 import classNames from "classnames/bind";
 import ResourceState from "@/shared/ui/state/ResourceState";
@@ -14,17 +15,18 @@ import taskStyles from "./Task.module.scss";
 const cx = classNames.bind(styles);
 
 export default function AssessmentTask() {
+  const regionLabelId = useId();
   const { assessmentAttemptId, taskId } = useParams();
   const { runtime, definition, component, task, error, isLoading, refetch } = useAssessmentTask(assessmentAttemptId, taskId);
   const parentRoute = `/my-learning/assessment-attempts/${encodeURIComponent(assessmentAttemptId)}`;
   return (
-    <section className={`${cx("page")} ${taskStyles.executionPage}`} aria-label="Bài tập đánh giá">
+    <section className={`${cx("page")} ${taskStyles.executionPage}`} aria-labelledby={regionLabelId}>
       <AppLink lang="vi" to={parentRoute}>Quay lại bài đánh giá</AppLink>
       <ResourceState loading={isLoading} error={error} errorProps={{
         onRetry: refetch,
         actions: {
-          notFound: { to: parentRoute, label: "Quay lại bài đánh giá" },
-          forbidden: { to: parentRoute, label: "Quay lại bài đánh giá" },
+          notFound: { to: parentRoute, label: <span lang="vi">Quay lại bài đánh giá</span> },
+          forbidden: { to: parentRoute, label: <span lang="vi">Quay lại bài đánh giá</span> },
         },
       }}>
         {!error && runtime && definition && task && (
@@ -47,6 +49,7 @@ export default function AssessmentTask() {
           </>
         )}
       </ResourceState>
+      <span id={regionLabelId} lang="vi" hidden>Bài tập đánh giá</span>
     </section>
   );
 }
