@@ -10,6 +10,19 @@ import { ATTEMPT_ID, STARTED_AT, EXPIRES_AT, resumedAttempt, attemptPath, attemp
 import { useAssessmentAttempt } from "./hooks/useAssessmentAttempt";
 import { formatAttemptTimestamp } from "./attempt-presentation";
 
+function expectVietnameseRegionName() {
+  const region = screen.getByRole("region", { name: "Lượt làm bài đánh giá" });
+  const labelId = region.getAttribute("aria-labelledby");
+  expect(labelId).toBeTruthy();
+  const label = document.getElementById(labelId);
+  expect(label).toHaveAttribute("lang", "vi");
+  expect(label).toHaveAttribute("hidden");
+  expect(label).toHaveTextContent(/^Lượt làm bài đánh giá$/);
+  expect([...document.querySelectorAll("[id]")].filter((element) => element.id === labelId)).toHaveLength(1);
+  expect(region.closest('[lang="vi"]')).toBeNull();
+  return labelId;
+}
+
 describe("owned Assessment Attempt runtime", () => {
   it("resumes an archived definition using only the two canonical GETs, presents readonly structure and hides technical IDs", async () => {
     const attempt = resumedAttempt();
@@ -23,16 +36,18 @@ describe("owned Assessment Attempt runtime", () => {
     });
     const { client } = mountAssessmentApp(attemptPath);
     const heading = await screen.findByRole("heading", { name: definition.title });
-    const region = screen.getByRole("region", { name: "Assessment attempt" });
+    const region = screen.getByRole("region", { name: "Lượt làm bài đánh giá" });
     expect(heading).toBeInTheDocument();
-    expect(within(region).getByText("Target level: B1")).toBeInTheDocument();
-    expect(within(region).getByText("Status: In progress")).toBeInTheDocument();
+    expectVietnameseRegionName();
+    expect(heading.closest('[lang="vi"]')).toBeNull();
+    expect(within(region).getByText("Trình độ mục tiêu: B1")).toBeInTheDocument();
+    expect(within(region).getByText("Trạng thái: Đang thực hiện")).toBeInTheDocument();
     const times = region.querySelectorAll("time");
     expect([...times].map((time) => time.dateTime)).toEqual([STARTED_AT, EXPIRES_AT]);
     for (const time of times) expect(time.textContent.trim()).not.toBe("");
     expect(formatAttemptTimestamp(STARTED_AT).trim()).not.toBe("");
-    expect(within(region).getByText(/Started:/)).toBeInTheDocument();
-    expect(within(region).getByText(/Deadline:/)).toBeInTheDocument();
+    expect(within(region).getByText(/Bắt đầu:/)).toBeInTheDocument();
+    expect(within(region).getByText(/Hạn kết thúc:/)).toBeInTheDocument();
     expect(within(region).getAllByRole("heading", { level: 2 }).map((el) => el.textContent))
       .toEqual(["Viết", "Nghe", "Đọc", "Nói"]);
     expect(within(region).getAllByText("Cách thực hiện: Độc lập")).toHaveLength(2);
@@ -43,8 +58,8 @@ describe("owned Assessment Attempt runtime", () => {
       ...definition.components.flatMap((component) => [component.componentId,
         ...component.tasks.flatMap((task) => [task.taskId, task.quizRevisionId])])];
     for (const identity of identities) expect(region.textContent).not.toContain(identity);
-    expect(within(region).getAllByRole("button", { name: "Start task" })).toHaveLength(4);
-    expect(within(region).getByRole("link", { name: "Continue task" })).toBeInTheDocument();
+    expect(within(region).getAllByRole("button", { name: "Bắt đầu bài tập" })).toHaveLength(4);
+    expect(within(region).getByRole("link", { name: "Tiếp tục bài tập" })).toBeInTheDocument();
     expect(http.mock.calls.map(([config]) => config.url)).toEqual([attemptUrl, `${attemptUrl}/assessment`]);
     expect(client.getQueryData(["learner-assessment-attempt", ATTEMPT_ID])).toEqual(attempt);
     expect(client.getQueryData(["learner-assessment-attempt-definition", ATTEMPT_ID])).toEqual(definition);
@@ -52,20 +67,21 @@ describe("owned Assessment Attempt runtime", () => {
   });
 
   it.each([
-    ["CREATED", "Created"], ["COMPLETED", "Completed"], ["EXPIRED", "Expired"], ["CANCELLED", "Cancelled"],
+    ["CREATED", "Đã tạo"], ["COMPLETED", "Đã hoàn thành"], ["EXPIRED", "Hết hạn"], ["CANCELLED", "Đã hủy"],
   ])("renders %s without redirect, replacement, execution or result actions", async (status, label) => {
     const http = assessmentHttp((config) => ok(config, config.url === attemptUrl
       ? resumedAttempt({ status, startedAt: null, expiresAt: null })
       : assessmentDetail({ title: null, timeLimitMinutes: null })));
     const { router } = mountAssessmentApp(attemptPath);
-    await screen.findByText(`Status: ${label}`);
+    await screen.findByText(`Trạng thái: ${label}`);
     expect(screen.getByRole("heading", { name: "Bài đánh giá chưa có tên" })).toBeInTheDocument();
-    expect(screen.getByText("Started: Not started")).toBeInTheDocument();
-    expect(screen.getByText("Deadline: No time limit")).toBeInTheDocument();
+    expect(screen.getByText("Bắt đầu: Chưa bắt đầu")).toBeInTheDocument();
+    expect(screen.getByText("Hạn kết thúc: Không giới hạn thời gian")).toBeInTheDocument();
     expect(router.state.location.pathname).toBe(attemptPath);
-    const region = screen.getByRole("region", { name: "Assessment attempt" });
+    const region = screen.getByRole("region", { name: "Lượt làm bài đánh giá" });
+    expectVietnameseRegionName();
     if (status === "EXPIRED") {
-      expect(within(region).getByRole("button", { name: "Finalize expired assessment" })).toBeEnabled();
+      expect(within(region).getByRole("button", { name: "Hoàn tất bài đánh giá đã hết hạn" })).toBeEnabled();
     } else {
       expect(within(region).queryByRole("button")).not.toBeInTheDocument();
     }
@@ -83,9 +99,11 @@ describe("owned Assessment Attempt runtime", () => {
     const completedKey = pending === "attempt" ? "learner-assessment-attempt-definition" : "learner-assessment-attempt";
     await waitFor(() => expect(client.getQueryData([completedKey, ATTEMPT_ID])).toBeDefined());
     expect(screen.getByText("Đang tải...")).toBeInTheDocument();
+    const labelId = expectVietnameseRegionName();
     expect(screen.queryByRole("heading", { name: "Viết" })).not.toBeInTheDocument();
     await act(async () => { read.resolve(); });
-    await screen.findByText("Status: In progress");
+    await screen.findByText("Trạng thái: Đang thực hiện");
+    expect(expectVietnameseRegionName()).toBe(labelId);
   });
 
   it.each([
@@ -101,7 +119,8 @@ describe("owned Assessment Attempt runtime", () => {
       : (boundary === "definition" ? invalid : assessmentDetail())));
     const { router, client } = mountAssessmentApp(attemptPath);
     await screen.findByText("Đã xảy ra lỗi");
-    expect(screen.queryByText("Status: In progress")).not.toBeInTheDocument();
+    expectVietnameseRegionName();
+    expect(screen.queryByText("Trạng thái: Đang thực hiện")).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Viết" })).not.toBeInTheDocument();
     expect(router.state.location.pathname).toBe(attemptPath);
     if (boundary === "attempt") expect(client.getQueryData(["learner-assessment-attempt", ATTEMPT_ID])).toBeUndefined();
@@ -116,6 +135,10 @@ describe("owned Assessment Attempt runtime", () => {
       });
       const { auth } = mountAssessmentApp(attemptPath);
       await screen.findByText(copy);
+      expectVietnameseRegionName();
+      const recovery = screen.getAllByRole("link", { name: "Quay lại việc học của tôi" })[1];
+      expect(recovery).toHaveAttribute("href", "/my-learning");
+      expect(within(recovery).getByText("Quay lại việc học của tôi")).toHaveAttribute("lang", "vi");
       expect(auth.current.status).toBe("AUTHENTICATED");
       expect(screen.queryByRole("heading", { name: "Viết" })).not.toBeInTheDocument();
     },
@@ -131,7 +154,7 @@ describe("owned Assessment Attempt runtime", () => {
     await screen.findByText("Đã xảy ra lỗi");
     failed = false;
     await user.click(screen.getByRole("button", { name: "Thử lại" }));
-    await screen.findByText("Status: In progress");
+    await screen.findByText("Trạng thái: Đang thực hiện");
     expect(http).toHaveBeenCalledTimes(4);
   });
 
@@ -162,7 +185,7 @@ describe("owned Assessment Attempt runtime", () => {
     await user.type(screen.getByLabelText("Tên đăng nhập hoặc email"), "learner");
     await user.type(screen.getByLabelText("Mật khẩu"), "password");
     await user.click(screen.getByRole("button", { name: /Đăng nhập vào DeutschHub/ }));
-    await screen.findByText("Status: In progress");
+    await screen.findByText("Trạng thái: Đang thực hiện");
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(http.mock.calls.map(([config]) => config.url)).toEqual(["/auth/login", attemptUrl, `${attemptUrl}/assessment`]);
   });

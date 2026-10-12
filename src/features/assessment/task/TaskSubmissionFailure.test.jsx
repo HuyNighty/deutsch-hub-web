@@ -39,28 +39,28 @@ describe("Submit failure canonical reconciliation", () => {
     const direction = seedDirection(client);
     client.setQueryData(["learner-learning-journey"], { unchanged: true });
     client.setQueryData(["learner-assessment-attempt", ATTEMPT_ID], resumedAttempt());
-    await user.click(await screen.findByRole("button", { name: "Submit task" }));
+    await user.click(await screen.findByRole("button", { name: "Nộp bài tập" }));
     await waitFor(() => expect(reads).toBe(2));
     // Reconciliation is still part of the Task-local submit fence.
-    expect(screen.getByRole("button", { name: "Submit task" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Nộp bài tập" })).toBeDisabled();
     expect(screen.getByRole("radio", { name: "Das stimmt" })).toBeDisabled();
     await act(async () => { refresh.resolve(); });
-    await screen.findByText("Submission rejected");
+    await screen.findByText("Máy chủ từ chối yêu cầu nộp bài tập. Vui lòng kiểm tra lại trạng thái trước khi thử lại.");
     expect(client.getQueryData(TASK_KEY)).toEqual(stored);
     activity(false);
     direction(false);
     expect(router.state.location.pathname).toBe(TASK_PATH);
     expect(submitRequests(http)).toHaveLength(1);
     expect(runtimeReads(http)).toHaveLength(2);
-    expect(screen.getByRole("button", { name: "Submit task" })).toBeEnabled();
-    expect(screen.getByRole("region", { name: "Assessment task" }).textContent).not.toMatch(/required|all answered|eligible/i);
+    expect(screen.getByRole("button", { name: "Nộp bài tập" })).toBeEnabled();
+    expect(screen.getByRole("region", { name: "Bài tập đánh giá" }).textContent).not.toMatch(/required|all answered|eligible/i);
     await user.click(screen.getByRole("radio", { name: "Das stimmt" }));
     await waitFor(() => expect(client.getQueryData(TASK_KEY).questions[2].selectedAnswerIds).toEqual(["answer-stimmt"]));
     expect(answerRequests(http)).toHaveLength(1);
     failed = false;
-    await user.click(screen.getByRole("button", { name: "Submit task" }));
-    await screen.findByText("Status: Submitted");
-    expect(screen.queryByText("Submission rejected")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Nộp bài tập" }));
+    await screen.findByText("Trạng thái: Đã nộp");
+    expect(screen.queryByText("Máy chủ từ chối yêu cầu nộp bài tập. Vui lòng kiểm tra lại trạng thái trước khi thử lại.")).not.toBeInTheDocument();
     expect(screen.getByRole("radio", { name: "Das stimmt" })).toBeChecked();
     activity(true);
     direction(false);
@@ -83,18 +83,18 @@ describe("Submit failure canonical reconciliation", () => {
     const direction = seedDirection(client);
     client.setQueryData(["learner-learning-journey"], { unchanged: true });
     client.setQueryData(["learner-assessment-attempt", ATTEMPT_ID], resumedAttempt());
-    await user.click(await screen.findByRole("button", { name: "Submit task" }));
+    await user.click(await screen.findByRole("button", { name: "Nộp bài tập" }));
     if (status === "IN_PROGRESS") {
-      await screen.findByText("Original submit failure");
-      expect(screen.getByRole("button", { name: "Submit task" })).toBeEnabled();
+      await screen.findByText("Máy chủ từ chối yêu cầu nộp bài tập. Vui lòng kiểm tra lại trạng thái trước khi thử lại.");
+      expect(screen.getByRole("button", { name: "Nộp bài tập" })).toBeEnabled();
       expect(screen.getByRole("radio", { name: "Hallo" })).toBeEnabled();
     } else {
-      await screen.findByText(`Status: ${status === "EXPIRED" ? "Expired" : status === "CANCELLED" ? "Cancelled" : "Submitted"}`);
-      expect(screen.queryByRole("button", { name: /submit|clear/i })).not.toBeInTheDocument();
+      await screen.findByText(`Trạng thái: ${status === "EXPIRED" ? "Hết hạn" : status === "CANCELLED" ? "Đã hủy" : "Đã nộp"}`);
+      expect(screen.queryByRole("button", { name: /submit|clear|xóa|nộp/i })).not.toBeInTheDocument();
       expect(screen.getByRole("radio", { name: "Hallo" })).toBeDisabled();
       expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-      if (status === "SUBMITTED") expect(screen.getByRole("link", { name: "Continue assessment" })).toBeInTheDocument();
-      else expect(screen.queryByRole("link", { name: "Continue assessment" })).not.toBeInTheDocument();
+      if (status === "SUBMITTED") expect(screen.getByRole("link", { name: "Tiếp tục bài đánh giá" })).toBeInTheDocument();
+      else expect(screen.queryByRole("link", { name: "Tiếp tục bài đánh giá" })).not.toBeInTheDocument();
     }
     await waitFor(() => expect(client.isMutating()).toBe(0));
     expect(client.getQueryData(TASK_KEY)).toEqual(fresh);
@@ -122,15 +122,15 @@ describe("Submit failure canonical reconciliation", () => {
     const { client } = mountAssessmentApp(TASK_PATH);
     const activity = seedNextActivity(client);
     const direction = seedDirection(client);
-    await user.click(await screen.findByRole("button", { name: "Submit task" }));
-    const boundary = screen.getByRole("region", { name: "Task submission" });
-    expect(await within(boundary).findByRole("alert")).toHaveTextContent("Original submit failure");
+    await user.click(await screen.findByRole("button", { name: "Nộp bài tập" }));
+    const boundary = screen.getByRole("region", { name: "Nộp bài tập" });
+    expect(await within(boundary).findByRole("alert")).toHaveTextContent("Máy chủ từ chối yêu cầu nộp bài tập. Vui lòng kiểm tra lại trạng thái trước khi thử lại.");
     expect(client.getQueryData(TASK_KEY)).toEqual(taskRuntime());
     activity(false);
     direction(false);
     expect(screen.getByRole("radio", { name: "Guten Tag" })).toBeChecked();
     expect(screen.getByRole("radio", { name: "Hallo" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Submit task" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Nộp bài tập" })).toBeEnabled();
     expect(screen.queryByText("Refresh failed")).not.toBeInTheDocument();
     expect(screen.queryByText("Đã xảy ra lỗi")).not.toBeInTheDocument();
     expect(runtimeReads(http)).toHaveLength(2);
@@ -143,12 +143,12 @@ describe("Submit failure canonical reconciliation", () => {
       config.method === "put" ? "Question save failed" : "Task submit failed"));
     mountAssessmentApp(TASK_PATH);
     await user.click(await screen.findByRole("radio", { name: "Hallo" }));
-    await screen.findByText("Question save failed");
-    await user.click(screen.getByRole("button", { name: "Submit task" }));
-    expect(await within(screen.getByRole("region", { name: "Task submission" })).findByRole("alert"))
-      .toHaveTextContent("Task submit failed");
-    expect(within(screen.getByRole("group", { name: "Question 3" })).getByRole("alert"))
-      .toHaveTextContent("Question save failed");
+    await screen.findByText("Máy chủ từ chối yêu cầu cập nhật câu trả lời. Vui lòng kiểm tra lại trạng thái trước khi thử lại.");
+    await user.click(screen.getByRole("button", { name: "Nộp bài tập" }));
+    expect(await within(screen.getByRole("region", { name: "Nộp bài tập" })).findByRole("alert"))
+      .toHaveTextContent("Máy chủ từ chối yêu cầu nộp bài tập. Vui lòng kiểm tra lại trạng thái trước khi thử lại.");
+    expect(within(screen.getByRole("group", { name: "Câu hỏi 3" })).getByRole("alert"))
+      .toHaveTextContent("Máy chủ từ chối yêu cầu cập nhật câu trả lời. Vui lòng kiểm tra lại trạng thái trước khi thử lại.");
     expect(screen.getAllByRole("alert")).toHaveLength(2);
     expect(submitRequests(http)).toHaveLength(1);
     expect(runtimeReads(http)).toHaveLength(2);

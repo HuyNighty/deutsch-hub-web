@@ -14,7 +14,7 @@ import { useTaskAnswer } from "../task/hooks/useTaskAnswer";
 import { useSubmitTask } from "../task/hooks/useSubmitTask";
 
 function startButton() {
-  return within(screen.getByText("Bài tập 2").closest("li")).getByRole("button", { name: "Start task" });
+  return within(screen.getByText("Bài tập 2").closest("li")).getByRole("button", { name: "Bắt đầu bài tập" });
 }
 
 describe("Attempt-scoped final submission fences", () => {
@@ -23,16 +23,16 @@ describe("Attempt-scoped final submission fences", () => {
     const url = `${attemptUrl}/tasks/task-writing-2/quiz-attempt`;
     const http = finalHttp((config) => response.promise.then(() => fail(config, 409)), { allowTaskExecution: true });
     const { client } = mountAssessmentApp(attemptPath);
-    await screen.findByRole("button", { name: "Submit assessment" });
-    act(() => { fireEvent.click(startButton()); fireEvent.click(screen.getByRole("button", { name: "Submit assessment" })); });
+    await screen.findByRole("button", { name: "Nộp bài đánh giá" });
+    act(() => { fireEvent.click(startButton()); fireEvent.click(screen.getByRole("button", { name: "Nộp bài đánh giá" })); });
     await waitFor(() => expect(http.mock.calls.filter(([config]) => config.method === "post")).toHaveLength(1));
     expect(http.mock.calls.find(([config]) => config.method === "post")[0].url).toBe(url);
     expect(finalRequests(http)).toHaveLength(0);
-    expect(screen.getByRole("button", { name: "Submit assessment" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Nộp bài đánh giá" })).toBeDisabled();
     expect(client.getMutationCache().getAll().find((mutation) => mutation.state.status === "pending").options.mutationKey)
       .toEqual(["learner-assessment-task-start", ATTEMPT_ID, "task-writing-2"]);
     await act(async () => { response.resolve(); });
-    await waitFor(() => expect(screen.getByRole("button", { name: "Submit assessment" })).toBeEnabled());
+    await waitFor(() => expect(screen.getByRole("button", { name: "Nộp bài đánh giá" })).toBeEnabled());
     expect(finalRequests(http)).toHaveLength(0);
   });
 
@@ -44,15 +44,15 @@ describe("Attempt-scoped final submission fences", () => {
       allowTaskExecution: true,
     });
     mountAssessmentApp(attemptPath);
-    const submit = await screen.findByRole("button", { name: "Submit assessment" });
+    const submit = await screen.findByRole("button", { name: "Nộp bài đánh giá" });
     const start = startButton();
     act(() => { fireEvent.click(submit); fireEvent.click(start); fireEvent.click(submit); });
     await waitFor(() => expect(finalRequests(http)).toHaveLength(1));
-    for (const button of screen.getAllByRole("button", { name: "Start task" })) expect(button).toBeDisabled();
-    expect(screen.getByRole("link", { name: "Continue task" })).toHaveAttribute("href", TASK_PATH);
+    for (const button of screen.getAllByRole("button", { name: "Bắt đầu bài tập" })) expect(button).toBeDisabled();
+    expect(screen.getByRole("link", { name: "Tiếp tục bài tập" })).toHaveAttribute("href", TASK_PATH);
     expect(http.mock.calls.filter(([config]) => config.method === "post").map(([config]) => config.url)).toEqual([FINAL_URL]);
     await act(async () => { response.resolve(); });
-    await screen.findByText("Assessment finalized successfully.");
+    await screen.findByText("Thao tác hoàn tất bài đánh giá đã thành công.");
   });
 
   it.each(["put", "delete", "task submit"])("a lingering %s still blocks Final Submit after navigating back to parent", async (method) => {
@@ -64,13 +64,13 @@ describe("Attempt-scoped final submission fences", () => {
         : method === "put" ? savedAnswer("question-single", ["answer-hallo"]) : clearedAnswer("question-single")));
     }, { allowTaskExecution: true, allowTaskSubmit: method === "task submit" });
     const { client, router } = mountAssessmentApp(TASK_PATH);
-    await screen.findByRole("button", { name: "Submit task" });
+    await screen.findByRole("button", { name: "Nộp bài tập" });
     await user.click(method === "put" ? screen.getByRole("radio", { name: "Hallo" })
-      : method === "delete" ? within(screen.getByRole("group", { name: "Question 3" })).getByRole("button", { name: "Clear answer" })
-      : screen.getByRole("button", { name: "Submit task" }));
+      : method === "delete" ? within(screen.getByRole("group", { name: "Câu hỏi 3" })).getByRole("button", { name: "Xóa câu trả lời" })
+      : screen.getByRole("button", { name: "Nộp bài tập" }));
     await waitFor(() => expect(client.isMutating()).toBe(1));
     await act(async () => { await router.navigate(attemptPath); });
-    const final = await screen.findByRole("button", { name: "Submit assessment" });
+    const final = await screen.findByRole("button", { name: "Nộp bài đánh giá" });
     expect(final).toBeDisabled();
     fireEvent.click(final);
     expect(finalRequests(http)).toHaveLength(0);
@@ -90,13 +90,13 @@ describe("Attempt-scoped final submission fences", () => {
       allowTaskExecution: true, allowTaskSubmit: true,
     });
     const { client, router } = mountAssessmentApp(attemptPath);
-    await user.click(await screen.findByRole("button", { name: "Submit assessment" }));
+    await user.click(await screen.findByRole("button", { name: "Nộp bài đánh giá" }));
     await waitFor(() => expect(finalRequests(http)).toHaveLength(1));
     await act(async () => { await router.navigate(TASK_PATH); });
-    await screen.findByRole("heading", { name: "Task 4" });
+    await screen.findByRole("heading", { name: "Bài tập 4" });
     for (const input of [...screen.getAllByRole("radio"), ...screen.getAllByRole("checkbox")]) expect(input).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Submit task" })).toBeDisabled();
-    const clear = within(screen.getByRole("group", { name: "Question 3" })).getByRole("button", { name: "Clear answer" });
+    expect(screen.getByRole("button", { name: "Nộp bài tập" })).toBeDisabled();
+    const clear = within(screen.getByRole("group", { name: "Câu hỏi 3" })).getByRole("button", { name: "Xóa câu trả lời" });
     expect(clear).toBeDisabled();
     // Call real hooks' synchronous handlers as well as checking disabled DOM controls.
     const runtime = client.getQueryData(TASK_KEY);
@@ -128,14 +128,14 @@ describe("Attempt-scoped final submission fences", () => {
       return response.promise.then(() => ok(config, method === "put" ? savedAnswer("question-single", ["answer-hallo"]) : submittedTask()));
     }, { allowTaskExecution: true, allowTaskSubmit: method === "task submit" });
     const { router, client } = mountAssessmentApp(TASK_PATH);
-    await screen.findByRole("button", { name: "Submit task" });
-    await user.click(method === "put" ? screen.getByRole("radio", { name: "Hallo" }) : screen.getByRole("button", { name: "Submit task" }));
+    await screen.findByRole("button", { name: "Nộp bài tập" });
+    await user.click(method === "put" ? screen.getByRole("radio", { name: "Hallo" }) : screen.getByRole("button", { name: "Nộp bài tập" }));
     await waitFor(() => expect(client.isMutating()).toBe(1));
     await act(async () => { await router.navigate(otherPath); });
-    const final = await screen.findByRole("button", { name: "Submit assessment" });
+    const final = await screen.findByRole("button", { name: "Nộp bài đánh giá" });
     expect(final).toBeEnabled();
     await user.click(final);
-    await screen.findByText("Assessment finalized successfully.");
+    await screen.findByText("Thao tác hoàn tất bài đánh giá đã thành công.");
     expect(client.getQueryData(["learner-assessment-attempt", otherId]).status).toBe("COMPLETED");
     expect(client.isMutating()).toBe(1); // Attempt A still pending independently.
     await act(async () => { response.resolve(); });

@@ -29,7 +29,7 @@ async function openParent(user, server, app) {
   const from = server.http.mock.calls.length;
   server.allowReads([attemptUrl, DEFINITION_URL]);
   await user.click(guidanceLink("Xem bài đánh giá"));
-  await screen.findByText("Status: In progress");
+  await screen.findByText("Trạng thái: Đang thực hiện");
   expect(app.router.state.location.pathname).toBe(attemptPath);
   expect(app.client.getQueryData(["learner-assessment-attempt", ATTEMPT_ID])).toEqual(server.parent());
   expect(requestWindow(server.http, from).sort()).toEqual([
@@ -50,7 +50,7 @@ describe("Learner Guidance integrated acceptance", () => {
     await openParent(user, server, app);
     const beforeStart = captureGuidance(app.client);
     const row = screen.getByText("Bài tập 4").closest("li");
-    const startWindow = await server.clickWrite(user, within(row).getByRole("button", { name: "Start task" }), TASK_URL, {
+    const startWindow = await server.clickWrite(user, within(row).getByRole("button", { name: "Bắt đầu bài tập" }), TASK_URL, {
       reads: [TASK_URL, DEFINITION_URL],
     });
     await screen.findByRole("radio", { name: "Hallo" });
@@ -75,7 +75,7 @@ describe("Learner Guidance integrated acceptance", () => {
     const resumeWindow = server.http.mock.calls.length;
     server.allowReads([TASK_URL, DEFINITION_URL]);
     await user.click(guidanceLink("Tiếp tục bài tập"));
-    await screen.findByRole("button", { name: "Submit task" });
+    await screen.findByRole("button", { name: "Nộp bài tập" });
     await waitFor(() => expect(app.client.getQueryState(TASK_KEY).fetchStatus).toBe("idle"));
     expect(app.router.state.location.pathname).toBe(TASK_PATH);
     expect(app.client.getQueryData(TASK_KEY)).toEqual(server.runtimes.get(TASK_ID));
@@ -84,8 +84,8 @@ describe("Learner Guidance integrated acceptance", () => {
     ].sort());
 
     const beforeSubmit = captureGuidance(app.client);
-    const submitWindow = await server.clickWrite(user, screen.getByRole("button", { name: "Submit task" }), TASK_SUBMIT_URL);
-    await screen.findByText("Status: Submitted");
+    const submitWindow = await server.clickWrite(user, screen.getByRole("button", { name: "Nộp bài tập" }), TASK_SUBMIT_URL);
+    await screen.findByText("Trạng thái: Đã nộp");
     await waitFor(() => expect(app.client.isMutating()).toBe(0));
     expect(server.runtimes.get(TASK_ID).status).toBe("SUBMITTED");
     expect(server.parent().status).toBe("IN_PROGRESS");
@@ -123,10 +123,10 @@ describe("Learner Guidance integrated acceptance", () => {
     await openParent(user, server, app);
     expect(server.parent().taskAttempts).toHaveLength(server.tasks.length);
     const beforeFinal = captureGuidance(app.client);
-    const finalWindow = await server.clickWrite(user, screen.getByRole("button", { name: "Submit assessment" }), FINAL_URL, {
+    const finalWindow = await server.clickWrite(user, screen.getByRole("button", { name: "Nộp bài đánh giá" }), FINAL_URL, {
       reads: [attemptUrl],
     });
-    await screen.findByText("Assessment finalized successfully.");
+    await screen.findByText("Thao tác hoàn tất bài đánh giá đã thành công.");
     await waitFor(() => expect(app.client.isMutating()).toBe(0));
     expect(server.parent().status).toBe("COMPLETED");
     expect(app.client.getQueryData(["learner-assessment-attempt", ATTEMPT_ID]).status).toBe("COMPLETED");

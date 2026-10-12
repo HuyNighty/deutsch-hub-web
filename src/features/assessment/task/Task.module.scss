@@ -1,3 +1,7 @@
+:global(html):has(.executionPage) {
+  scroll-behavior: auto;
+}
+
 .submission {
   display: flex;
   flex-direction: column;
@@ -11,6 +15,27 @@
   margin-inline-start: 0.75rem;
   max-width: 100%;
   vertical-align: middle;
+}
+
+@media (max-width: 360px) {
+  :global(li):has(> .taskAction) {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  :global(li):has(> .taskAction) > :global(span):first-child {
+    flex: 1 0 3ch;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .taskAction {
+    flex: 0 1 auto;
+    min-width: 0;
+    margin-inline-start: 0;
+    overflow-wrap: anywhere;
+  }
 }
 
 .question {

@@ -31,7 +31,7 @@ describe("Learner Assessment integrated journey", () => {
     ]);
     expect(writes(server.http)).toEqual([]);
     await server.clickWrite(user, screen.getByRole("button", { name: "Bắt đầu bài đánh giá" }), "post", startUrl);
-    await screen.findByText("Status: In progress");
+    await screen.findByText("Trạng thái: Đang thực hiện");
     expect(router.state.location.pathname).toBe(attemptPath);
     expect(client.getQueryData(PARENT_KEY)).toEqual(server.parent());
     expect(client.getQueryData(DEFINITION_KEY)).toEqual(server.definition);
@@ -52,7 +52,7 @@ describe("Learner Assessment integrated journey", () => {
     await act(async () => { answerGate.resolve(); });
     await waitFor(() => expect(screen.getByRole("radio", { name: "Hallo" })).toBeChecked());
     expect(client.getQueryData(taskKey(first)).questions[0].selectedAnswerIds).toEqual(["answer-hallo"]);
-    await server.clickWrite(user, screen.getByRole("button", { name: "Clear answer" }), "delete", answerUrl);
+    await server.clickWrite(user, screen.getByRole("button", { name: "Xóa câu trả lời" }), "delete", answerUrl);
     await waitFor(() => expect(screen.getByRole("radio", { name: "Hallo" })).not.toBeChecked());
     expect(client.getQueryData(taskKey(first)).questions[0].selectedAnswerIds).toEqual([]);
     await server.clickWrite(user, screen.getByRole("radio", { name: "Hallo" }), "put", answerUrl, { selectedAnswerIds: ["answer-hallo"] });
@@ -92,11 +92,11 @@ describe("Learner Assessment integrated journey", () => {
     const activity = seedNextActivity(client);
     const definitionBefore = client.getQueryState(DEFINITION_KEY);
     const beforeFinal = server.http.mock.calls.length;
-    await server.clickWrite(user, screen.getByRole("button", { name: "Submit assessment" }), "post", FINAL_URL);
-    await screen.findByText("Assessment finalized successfully.");
+    await server.clickWrite(user, screen.getByRole("button", { name: "Nộp bài đánh giá" }), "post", FINAL_URL);
+    await screen.findByText("Thao tác hoàn tất bài đánh giá đã thành công.");
     expect(requestSequence(server.http).slice(beforeFinal)).toEqual([["post", FINAL_URL], ["get", attemptUrl]]);
     expect(router.state.location.pathname).toBe(attemptPath);
-    expect(screen.getByText("Status: Completed")).toBeInTheDocument();
+    expect(screen.getByText("Trạng thái: Đã hoàn thành")).toBeInTheDocument();
     expect(client.getQueryData(PARENT_KEY)).toEqual(server.parent());
     expect(screen.queryByRole("region", { name: "Kết quả đánh giá chính thức" })).not.toBeInTheDocument();
     expect(screen.queryByRole("region", { name: "Trình độ tiếng Đức hiện tại" })).not.toBeInTheDocument();
@@ -115,7 +115,7 @@ describe("Learner Assessment integrated journey", () => {
       expect(client.getQueryData(key)).toEqual({ untouched: true });
     }
     const beforeResult = server.http.mock.calls.length;
-    await user.click(screen.getByRole("link", { name: "View result" }));
+    await user.click(screen.getByRole("link", { name: "Xem kết quả" }));
     await expectOfficialResult(server, client);
     expect(router.state.location.pathname).toBe(RESULT_PATH);
     expect(requestSequence(server.http).slice(beforeResult).sort()).toEqual([

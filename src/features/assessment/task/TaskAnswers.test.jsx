@@ -70,7 +70,7 @@ describe("server-authoritative Task answers", () => {
     });
     expect(screen.getByRole("checkbox", { name: "Haus" })).not.toBeChecked();
     expect(selections(client, "question-single")).toEqual(["answer-guten-tag"]);
-    expect(within(group("Question 1")).queryByRole("button", { name: "Clear answer" })).not.toBeInTheDocument();
+    expect(within(group("Câu hỏi 1")).queryByRole("button", { name: "Xóa câu trả lời" })).not.toBeInTheDocument();
   });
 
   it("explicit Clear answer sends bodyless DELETE and clears only the saved radio Question", async () => {
@@ -78,7 +78,7 @@ describe("server-authoritative Task answers", () => {
     const http = answerHttp((config) => ok(config, clearedAnswer("question-single")));
     const { client } = mountAssessmentApp(TASK_PATH);
     await screen.findByRole("radio", { name: "Hallo" });
-    await user.click(within(group("Question 3")).getByRole("button", { name: "Clear answer" }));
+    await user.click(within(group("Câu hỏi 3")).getByRole("button", { name: "Xóa câu trả lời" }));
     await waitFor(() => expect(selections(client, "question-single")).toEqual([]));
     expect(mutations(http)[0][0]).toMatchObject({
       method: "delete", url: `${TASK_URL}/answers/question-single`, data: undefined,
@@ -95,14 +95,14 @@ describe("server-authoritative Task answers", () => {
     const { client } = mountAssessmentApp(TASK_PATH);
     await screen.findByRole("radio", { name: "Hallo" });
     const target = method === "put" ? screen.getByRole("radio", { name: "Hallo" })
-      : within(group("Question 3")).getByRole("button", { name: "Clear answer" });
+      : within(group("Câu hỏi 3")).getByRole("button", { name: "Xóa câu trả lời" });
     act(() => {
       fireEvent.click(target);
-      fireEvent.click(within(group("Question 3")).getByRole("button", { name: "Clear answer" }));
+      fireEvent.click(within(group("Câu hỏi 3")).getByRole("button", { name: "Xóa câu trả lời" }));
     });
     await waitFor(() => expect(mutations(http)).toHaveLength(1));
-    for (const input of within(group("Question 3")).getAllByRole("radio")) expect(input).toBeDisabled();
-    expect(within(group("Question 3")).getByRole("button", { name: "Clear answer" })).toBeDisabled();
+    for (const input of within(group("Câu hỏi 3")).getAllByRole("radio")) expect(input).toBeDisabled();
+    expect(within(group("Câu hỏi 3")).getByRole("button", { name: "Xóa câu trả lời" })).toBeDisabled();
     expect(screen.getByRole("checkbox", { name: "Baum" })).toBeEnabled();
     expect(selections(client, "question-single")).toEqual(["answer-guten-tag"]);
     expect(screen.getByRole("radio", { name: "Guten Tag" })).toBeChecked();
@@ -126,7 +126,7 @@ describe("server-authoritative Task answers", () => {
     answerHttp((config) => ok(config, savedAnswer("question-single", ["answer-hallo"], overrides)));
     const { client, router } = mountAssessmentApp(TASK_PATH);
     await user.click(await screen.findByRole("radio", { name: "Hallo" }));
-    expect(await within(group("Question 3")).findByRole("alert")).toHaveTextContent("invalid assessment task answer");
+    expect(await within(group("Câu hỏi 3")).findByRole("alert")).toHaveTextContent("Máy chủ trả về phản hồi cập nhật câu trả lời không hợp lệ. Chưa thể xác nhận kết quả thao tác.");
     expect(client.getQueryData(TASK_KEY)).toEqual(taskRuntime());
     expect(screen.getByRole("radio", { name: "Guten Tag" })).toBeChecked();
     expect(router.state.location.pathname).toBe(TASK_PATH);
@@ -143,8 +143,8 @@ describe("server-authoritative Task answers", () => {
     answerHttp((config) => ok(config, clearedAnswer("question-single", overrides)));
     const { client } = mountAssessmentApp(TASK_PATH);
     await screen.findByRole("radio", { name: "Hallo" });
-    await user.click(within(group("Question 3")).getByRole("button", { name: "Clear answer" }));
-    expect(await within(group("Question 3")).findByRole("alert")).toHaveTextContent("invalid assessment task clear");
+    await user.click(within(group("Câu hỏi 3")).getByRole("button", { name: "Xóa câu trả lời" }));
+    expect(await within(group("Câu hỏi 3")).findByRole("alert")).toHaveTextContent("Máy chủ trả về phản hồi cập nhật câu trả lời không hợp lệ. Chưa thể xác nhận kết quả thao tác.");
     expect(client.getQueryData(TASK_KEY)).toEqual(taskRuntime());
     expect(screen.getByRole("radio", { name: "Guten Tag" })).toBeChecked();
   });
@@ -157,9 +157,9 @@ describe("server-authoritative Task answers", () => {
     const { client, router } = mountAssessmentApp(TASK_PATH);
     await screen.findByRole("radio", { name: "Hallo" });
     const interact = () => user.click(method === "put" ? screen.getByRole("radio", { name: "Hallo" })
-      : within(group("Question 3")).getByRole("button", { name: "Clear answer" }));
+      : within(group("Câu hỏi 3")).getByRole("button", { name: "Xóa câu trả lời" }));
     await interact();
-    expect(await within(group("Question 3")).findByRole("alert")).toHaveTextContent("HTTP failure");
+    expect(await within(group("Câu hỏi 3")).findByRole("alert")).toHaveTextContent("Máy chủ từ chối yêu cầu cập nhật câu trả lời. Vui lòng kiểm tra lại trạng thái trước khi thử lại.");
     expect(client.getQueryData(TASK_KEY)).toEqual(taskRuntime());
     expect(router.state.location.pathname).toBe(TASK_PATH);
     expect(mutations(http)).toHaveLength(1);
@@ -212,7 +212,7 @@ describe("server-authoritative Task answers", () => {
     await user.click(await screen.findByRole("radio", { name: "Hallo" }));
     await waitFor(() => expect(mutations(http)).toHaveLength(1));
     await act(async () => { await router.navigate(secondPath); });
-    await screen.findByRole("heading", { name: "Task 2" });
+    await screen.findByRole("heading", { name: "Bài tập 2" });
     await act(async () => { response.resolve(); });
     await waitFor(() => expect(selections(client, "question-single")).toEqual(["answer-hallo"]));
     expect(client.getQueryData(secondKey)).toEqual(secondRuntime);
@@ -236,7 +236,7 @@ describe("server-authoritative Task answers", () => {
     await user.click(await screen.findByRole("radio", { name: "Hallo" }));
     await waitFor(() => expect(mutations(http)).toHaveLength(1));
     await act(async () => { await client.refetchQueries({ queryKey: TASK_KEY, exact: true }); });
-    await screen.findByText("Status: Expired");
+    await screen.findByText("Trạng thái: Hết hạn");
     await act(async () => { response.resolve(); });
     expect(client.getQueryData(TASK_KEY)).toEqual(terminal);
     expect(screen.getByRole("radio", { name: "Hallo" })).toBeChecked();
