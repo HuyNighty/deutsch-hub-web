@@ -1,0 +1,19 @@
+.participant :focus-visible, .participant [tabindex="-1"]:focus {
+  outline: 3px solid #354c2b;
+  outline-offset: 3px;
+}
+.participant button { cursor: pointer; }
+.participant button[aria-disabled="true"] { cursor: default; border-style: dashed; }
+.setup, .introduction { width: min(100% - 3rem, 1120px); margin-inline: auto; padding-block: 1.5rem; }
+.setup { display: grid; gap: 1rem; }
+.setup form { display: grid; gap: 1rem; }
+.setup label { display: grid; gap: 0.35rem; }
+.setup select, .setup input { min-height: 44px; max-width: 100%; width: 100%; color: inherit; padding: 0.5rem; }
+.introduction { font-size: 0.8rem; }
+.cue { margin-top: 1.5rem; display: grid; gap: 0.75rem; justify-items: start; }
+@media (max-width: 720px) {
+  .setup, .introduction { width: calc(100% - 2rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .participant *, .participant *::before, .participant *::after { animation: none; transition: none; scroll-behavior: auto; }
+}

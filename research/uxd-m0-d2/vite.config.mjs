@@ -25,6 +25,7 @@ export default defineConfig({
     rolldownOptions: { input: {
       static: path.join(root, "index.html"),
       interaction: path.join(root, "interaction.html"),
+      participant: path.join(root, "participant.html"),
     } },
   },
   test: {

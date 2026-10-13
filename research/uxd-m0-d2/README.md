@@ -298,3 +298,77 @@ browser/accessibility.e2e-check.js
 
 D2 remains OPEN. This research does not select a model, authorize production
 redesign, begin P3-C or authorize user pilot sessions.
+
+## V1.7-C2 single-machine participant presentation
+
+The additional `participant.html` entrypoint uses private setup, ready, task
+and pause stages. Setup controls are unmounted before handoff. No model
+labels, scenario codes or predetermined outcomes appear during a participant
+task. This is presentation isolation, not Windows security isolation: Alt+Tab,
+browser controls and screen-reader application switching remain available.
+The facilitator must not operate the computer during a task.
+
+Procedure: configure privately; choose **Chuẩn bị bàn giao**; hand over keyboard
+and mouse; participant chooses **Bắt đầu tình huống**. The participant can use
+**Tạm dừng và bàn giao** at any time. Only after handoff may the moderator choose
+**Bàn giao cho người điều phối** and configure the next task. Resetting a task
+unmounts its state and cancels scheduled work. Model selection is retained in
+private setup; keep it fixed across a Returning block. Changing it starts a new
+block. Order counterbalancing remains part of the approved moderator protocol,
+not an automatically inferred winner or order-selection algorithm.
+
+- S1 imports the original static specimens and surface manifest unchanged.
+  The existing disabled static controls remain disabled. The new notice supplies
+  their explanatory note reference. Inherited static limitations remain: the
+  question paragraph is not associated with its fieldset, and letter-only saved
+  summaries require interpretation. No static screen-reader acceptance is claimed.
+- S2 imports the unchanged Assessment reducer. Draft changes do not silently
+  save. A research-only cue starts exactly one predetermined synthetic operation.
+  It is explicitly not a production Save button. The immutable payload/ticket,
+  duplicate/stale rejection, saved/draft, unresolved locking, Task/parent and
+  absent official Result semantics remain those of P3-B.
+- Preloaded Assessment states are read-only comprehension cases, constructed
+  through the same reducer. They schedule no operation and cannot establish
+  live-transition or screen-reader announcement acceptance.
+- Live cases require the moderator to enter a pending interval in milliseconds
+  (100–60000); there is deliberately no default or accepted final duration.
+  This range is only a configuration bound. Calibrate the interval through
+  manual accessibility validation and use identical values in comparable cases.
+  Automation's short intervals are test inputs, not a pilot recommendation.
+  Error and uncertain cases do not retry; pause/unmount cancels settlement.
+- S3 uses unchanged canonical R1/R2/R3 fixtures and exact destination identities.
+  The simulated destination heading receives focus. Back restores focus to the
+  specific triggering action and retains the surface. A placeholder destination
+  does not establish resumed learning, retention or Belonging.
+
+New participant Assessment markup associates the full German question with
+the group, uses authored option text in saved/draft summaries and keeps stable
+polite-status and error-alert containers. Confirmation distinguishes selection
+from Task submission. No authored content or original specimen is translated.
+Native checkbox state is independent of focus. Scoped styles provide real
+keyboard focus for controls and deliberate destination/Back focus.
+
+Verification commands use the existing research Vite/Vitest/Playwright
+configurations. The participant research check and browser check are discovered
+by the existing explicit patterns. Production discovery must continue to exclude
+all research checks. Native zoom/text tests use disposable Chromium profiles;
+no exploratory CSS or page-scale substitute is used.
+
+Manual screen-reader acceptance: **NOT RUN** until a real session is recorded.
+Required manual tasks: keyboard isolation; German question and checked-option
+announcements; full saved versus draft selections; live pending, confirmed,
+error and uncertain announcements; Task versus parent and absent Result;
+Returning destination announcement and Back focus; interruption-free handoff.
+Record Windows/browser/AT versions, voice/language configuration, navigation
+mode, keystrokes, observed speech and focus. Browser accessibility trees and
+axe do not certify speech delivery. Confirmed screenshots or loaded states
+cannot replace live-announcement checks. Pilot recruitment remains blocked
+pending protocol/ethics approval and manual accessibility/calibration evidence.
+
+The C2 deliverable is limited to two existing research files (this README and
+the research Vite build entry) and nine new participant entry/component/style/
+scenario/check files. Original P3-A/P3-B fixtures, reducer, surface manifest,
+specimens, styles and tests must retain their accepted Git content. A fresh
+Windows worktree may use checkout CRLF line endings; those are not source edits.
+The original checkout's file bytes must remain unchanged. No new dependencies,
+storage, analytics, transport, production UI or Backend behavior is introduced.
