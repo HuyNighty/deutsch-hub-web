@@ -1,0 +1,31 @@
+.controls { grid-template-columns: 1fr; }
+.selectors { display: flex; flex-wrap: wrap; align-items: start; gap: 1rem 1.5rem; }
+.selectors label { min-width: 0; max-width: 100%; }
+.selectors select { width: 100%; }
+.facilitator { margin: 0; padding: 1rem; border: 1px solid #677660; border-radius: 5px; min-width: 0; }
+.facilitator legend { font-weight: 600; font-size: 0.88rem; padding-inline: 0.4rem; }
+.buttons { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-block: 0.65rem; }
+.buttons button { min-height: 44px; padding: 0.5rem 0.75rem; max-width: 100%; border: 1px solid #677660; border-radius: 4px; background: #fafaf7; color: #20331b; font: inherit; line-height: 1.4; cursor: pointer; }
+.buttons button:disabled { color: #354c2b; cursor: default; border-style: dashed; }
+.diagnostic { font-size: 0.82rem; color: #354c2b; }
+.controls :focus-visible, .option input:focus-visible, .controls ~ main button:focus-visible {
+  outline: 3px solid #354c2b; outline-offset: 3px;
+}
+.option input { cursor: pointer; }
+.option:focus-within { outline: 2px solid #354c2b; outline-offset: 2px; }
+.selections { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-block: 1.5rem; }
+.selections div { border-left: 2px solid #677660; padding-left: 0.8rem; }
+.selections dt { font-size: 0.85rem; color: #354c2b; }
+.selections dd { margin: 0.4rem 0 0; font-weight: 650; }
+.feedback { border: 1px solid #677660; padding: 1rem; border-radius: 5px; color: #20331b; }
+.returningSection { display: grid; justify-items: start; gap: 1rem; margin-block: 2rem; }
+/* These buttons are research destinations, unlike the static P3-A actions. */
+.returningSection button, .returningSection ~ button { cursor: pointer; }
+@media (max-width: 720px) {
+  .selectors { flex-direction: column; align-items: stretch; }
+  .selections { grid-template-columns: 1fr; }
+  .buttons button { text-align: start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .controls *, .option, .feedback, .returningSection * { animation: none; transition: none; scroll-behavior: auto; }
+}

@@ -19,7 +19,14 @@ export default defineConfig({
     fs: { strict: true, allow: [root, path.resolve(root, "../../node_modules")] },
   },
   preview: { host: "127.0.0.1", port: 5180, strictPort: true },
-  build: { outDir: artifact("site"), emptyOutDir: true },
+  build: {
+    outDir: artifact("site"),
+    emptyOutDir: true,
+    rolldownOptions: { input: {
+      static: path.join(root, "index.html"),
+      interaction: path.join(root, "interaction.html"),
+    } },
+  },
   test: {
     environment: "jsdom",
     include: ["src/**/*.research-check.{js,jsx}"],

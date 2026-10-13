@@ -1,4 +1,4 @@
-# DeutschHub — P3-A static surface research
+# DeutschHub — isolated surface and interaction research
 
 Research only. Synthetic content, experimental design, no live API or production
 application behavior. D2 remains OPEN. Neither model is approved or selected.
@@ -69,7 +69,7 @@ Backend contract baseline: 4b9e623b30ae1f0554bc1aafc3e4ed342db91762.
   this does not represent backend eligibility or a terminal runtime status.
   Only context/model research controls interact. Nothing navigates or saves.
   No artificial focus outline is applied to B. Actual focus/selection transition
-  acceptance belongs to P3-B, which is not implemented.
+  acceptance belongs to the independent P3-B entrypoint described below.
 
 ## Verification procedure and boundaries
 
@@ -130,4 +130,171 @@ read-only scope. These tooling limitations do not establish extra acceptance.
 
 No full production Vitest suite, production build, participant pilot, native
 zoom, screen-reader session or P3-B interaction/Returning acceptance was run.
-Those results must not be inferred from this isolated static harness.
+These are the original P3-A results; later P3-B verification is recorded below.
+
+## P3-B independent interaction entrypoint
+
+Approved starting commit: `ea980059447384f5063d3c63b9765851bf9fd3b4`.
+Branch: `research/uxd-m0-d2-p3b-interaction-quality`.
+Open `/interaction.html` on the research development or compiled-preview server.
+`index.html` remains the static P3-A entrypoint, with disabled specimen actions.
+Neither entrypoint imports production application components.
+
+Assessment starts with saved A and draft A, with B unchecked. Tab/Shift+Tab move
+real browser focus independently. Space changes the local draft. Facilitator
+controls outside the specimen start a synthetic operation with a frozen payload.
+Pending blocks edits and duplicate operations. Confirmation applies the saved
+payload; definite failure preserves saved evidence; uncertainty remains unknown
+and prevents automatic retry. Reset restores A and advances the research epoch.
+The facilitator can explicitly replay the last invalidated ticket to demonstrate
+stale rejection; it is diagnostic memory, not an active operation or tracking.
+Scripted Task submission changes only its QuizAttempt to SUBMITTED. The parent
+AssessmentAttempt remains IN_PROGRESS and no official Result is inferred.
+
+Returning destinations stay in memory and never load production routes:
+
+- R1 reuses the immutable 3/8, 37.5% course fixture. Course and next-lesson
+  destinations are distinct; the eligible incomplete lesson has the same course.
+- R2 has one eligible active child. Its Task destination preserves all three
+  assessmentAttemptId/taskId/quizAttemptId fields. Assessment direction uses the
+  parent identity separately. No prioritization algorithm is introduced.
+- R3 has no active learning, DISCOVER_COURSE/null and NONE/null. Guidance is
+  neutral discovery, with a null-target catalog destination.
+
+Changing model, mode or scenario resets local state. Returning Study keeps the
+My Learning surface context fixed across R1–R3. Compare equivalent A/B blocks
+separately from Returning scenarios; only the approved reading fill varies.
+There are no API operations, authentication, persistence, automatic timers,
+analytics, grading, participant retention or model selection.
+
+## P3-B quality tooling and reproduction
+
+Only `@playwright/test@1.64.0` and `@axe-core/playwright@4.13.0` were added as exact
+devDependencies. Playwright requires Node >=20; Node 22.19.0 and npm 11.5.2 were
+used. Existing locked versions/integrities and root scripts are unchanged. The
+five new lock entries are those two tools, playwright, playwright-core and
+axe-core. Chromium 156.0.8078.4 (Playwright revision 1248) was installed locally.
+
+Use the committed lockfile installation. Keep browser downloads and reports in
+ignored artifacts; do not redirect them into production or commit them:
+
+```powershell
+$env:ComSpec = Join-Path $env:SystemRoot 'System32\cmd.exe'
+$env:PLAYWRIGHT_BROWSERS_PATH = Join-Path (Get-Location).Path 'research/uxd-m0-d2/.artifacts/playwright-browsers'
+node .\node_modules\playwright\cli.js install chromium # only if absent
+node .\node_modules\vitest\vitest.mjs run --config research/uxd-m0-d2/vite.config.mjs --reporter=verbose
+node .\node_modules\vite\bin\vite.js build --config research/uxd-m0-d2/vite.config.mjs
+```
+
+Browser regression requires an immutable P3-A extraction in artifacts, built
+with the same installed tools. Prepare it without switching the working tree:
+
+```powershell
+@'
+const fs = require('node:fs');
+const path = require('node:path');
+const cp = require('node:child_process');
+const prefix = 'research/uxd-m0-d2/';
+const ref = 'ea980059447384f5063d3c63b9765851bf9fd3b4';
+const dest = path.resolve(prefix, '.artifacts/p3b/static-baseline');
+const files = cp.execFileSync('git', ['ls-tree','-r','--name-only',ref,'--',prefix], {encoding:'utf8'}).trim().split('\n');
+for (const file of files) {
+  const target = path.join(dest, file.slice(prefix.length));
+  fs.mkdirSync(path.dirname(target), {recursive:true});
+  fs.writeFileSync(target, cp.execFileSync('git', ['show', `${ref}:${file}`]));
+}
+'@ | node
+node .\node_modules\vite\bin\vite.js build --config research/uxd-m0-d2/.artifacts/p3b/static-baseline/vite.config.mjs
+node .\node_modules\playwright\cli.js test --config research/uxd-m0-d2/playwright.config.mjs
+node .\node_modules\oxlint\bin\oxlint research/uxd-m0-d2 --format json
+git diff --check
+```
+
+The Playwright configuration starts compiled previews at loopback ports 5180
+(combined research build) and 5181 (immutable P3-A). It uses explicit
+`*.e2e-check.js` discovery, zero retries, and at most two workers. Vitest's
+research pattern excludes browser files; production discovery matches neither
+research checks nor browser checks. Builds, caches, browser profiles, downloads,
+HTML/JSON reports, screenshots and traces remain under `.artifacts/`.
+
+## P3-B executed evidence
+
+- Research Vitest: 43 PASS / 0 FAIL / 0 SKIP across five files: original P3-A 23
+  and new P3-B 20. Research build: PASS, 32 modules and both HTML entrypoints.
+- Chromium: 57 distinct checks PASS / 0 FAIL / 0 SKIP. First run: 53 PASS;
+  subsequent native-enlargement/preference selection: five PASS, including one
+  already-passing reduced-motion check and four new checks. No automatic retries.
+  Four native checks were rerun after a lint-only fixture-binding cleanup.
+- The 12 static regression checks compare both models against an immutable
+  P3-A build at 1440x1000, 375x1000 and 320x1000: 24 paired rendered instances.
+  Content, bounds, typography, wrapping, borders, fills, native checked/disabled
+  controls and overflow matched. There were no page errors or production requests.
+- Both models passed Tab/Shift+Tab/Space, pending/error/confirmed/uncertain,
+  duplicate prevention, reset/stale rejection, parent/Result separation and
+  R1–R3 destination identity. Initial A/B specimen geometry and semantic styling
+  matched. Both models passed 320 CSS-pixel reflow and visible keyboard focus.
+- Axe: 24 full-page audits, zero violations for the selected WCAG A/AA tags,
+  covering both models, six Assessment states, and R1–R3 before/after navigation.
+  This does not establish complete WCAG compliance or screen-reader acceptance.
+- Native 200% zoom: PASS in both models, with isolated Chromium preferences.
+  The same 1280x900 outer window changed content width 1262→631 CSS pixels and
+  devicePixelRatio 1→2; visualViewport.scale remained 1. No CSS transform,
+  page-scale/pinch or device-scale override substituted for browser zoom.
+- Native text enlargement: PASS in both models, default font 16→32px, computed
+  root/harness font 16→32px, unchanged CSS viewport width and devicePixelRatio.
+  Assessment and R1–R3 reflow/focused-control activation passed under both native
+  enlargement conditions. Profiles are disposable artifacts, not user settings.
+- Reduced-motion preference emulation: PASS; media query matched and computed
+  animation names were none, transition durations zero. Assistive technology:
+  NOT RUN; no screen-reader session or participant pilot was conducted.
+- Research Oxlint: PASS, 28 files, zero warnings/errors. Configured repository
+  Oxlint: PASS, 389 files, the same five warnings in unchanged production files.
+- Relevant unchanged production Assessment Vitest: 834 PASS / 0 FAIL / 0 SKIP,
+  34 files, four fork workers, 51.20s. The complete production suite was not run.
+  Production build: PASS, 439 modules; existing large-chunk warning and an
+  informational CSS-plugin timing notice were recorded.
+
+Production verification used installed Vite/Vitest APIs to contain output/cache
+paths in `.artifacts/p3b/`. The existing root configuration was loaded using the
+runner loader with process-local `globalThis.__dirname = process.cwd()` (the
+repository dirname normally supplied by the bundle loader). Initial attempts
+without that binding failed before testing/building; both initial logs remain.
+No production configuration, dependency or assertion was edited for this.
+
+Native profile keys follow Chromium's [zoom preferences](https://chromium.googlesource.com/chromium/src/+/lkgr/chrome/browser/ui/zoom/chrome_zoom_level_prefs.cc)
+and [font preference definitions](https://chromium.googlesource.com/chromium/src/+/8115afe5c79963325c7ef8eebb733ecc3b4dd0fc/chrome/common/pref_names.h).
+The browser evidence verifies their actual effect on this Chromium runtime.
+
+All 15 preserved P3-A files and all 477 original tracked files outside the four
+approved modifications remain byte-identical. Dependency and whitespace audits
+are required before delivery. Local detailed evidence is in `.artifacts/p3b/`.
+
+## Exact P3-B changed-file manifest
+
+Modified: `package.json`, `package-lock.json`, `research/uxd-m0-d2/README.md`,
+`research/uxd-m0-d2/vite.config.mjs`.
+
+Added, relative to `research/uxd-m0-d2/`:
+
+```text
+interaction.html
+playwright.config.mjs
+src/interaction-main.jsx
+src/InteractionHarness.jsx
+src/InteractionSpecimen.jsx
+src/interaction-fixtures.js
+src/interaction-state.js
+src/interaction.module.css
+src/probes/AssessmentProbe.jsx
+src/probes/ReturningProbe.jsx
+src/interaction-fixtures.research-check.js
+src/interaction-state.research-check.js
+src/InteractionHarness.research-check.jsx
+browser/assessment.e2e-check.js
+browser/returning.e2e-check.js
+browser/static-regression.e2e-check.js
+browser/accessibility.e2e-check.js
+```
+
+D2 remains OPEN. This research does not select a model, authorize production
+redesign, begin P3-C or authorize user pilot sessions.
