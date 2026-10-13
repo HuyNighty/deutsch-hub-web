@@ -1,0 +1,99 @@
+.harness {
+  min-height: 100vh;
+  color: #20331b;
+  background: #f7f7f2;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.harness *, .harness *::before, .harness *::after { box-sizing: border-box; }
+.harness h1, .harness h2, .harness p { margin: 0; }
+.harness button, .harness input, .harness select { font: inherit; }
+.controls {
+  width: min(100% - 3rem, 1120px);
+  margin-inline: auto;
+  padding-block: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.25rem 2rem;
+}
+.brand { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; }
+.brand span { display: inline-block; margin-left: 0.75rem; color: #354c2b; font-weight: 500; }
+.controlTitle { font-size: 1.25rem; font-weight: 650; margin-top: 0.25rem !important; }
+.controlFields { display: flex; align-items: start; gap: 1.5rem; }
+.contextControl { display: grid; gap: 0.35rem; font-size: 0.82rem; font-weight: 600; }
+.contextControl select { min-height: 42px; max-width: 100%; padding: 0.45rem 2rem 0.45rem 0.65rem; border: 1px solid #677660; border-radius: 4px; color: #20331b; background: #fff; }
+.modelControl { margin: 0; padding: 0; border: 0; min-width: 0; }
+.modelControl legend { font-size: 0.82rem; font-weight: 600; margin-bottom: 0.35rem; }
+.modelControl label { display: inline-flex; align-items: center; gap: 0.45rem; padding-block: 0.45rem; margin-right: 1rem; }
+.modelControl input { accent-color: #354c2b; width: 1.1rem; height: 1.1rem; margin: 0; }
+.controls :focus-visible { outline: 3px solid #354c2b; outline-offset: 3px; }
+.notice { grid-column: 1 / -1; border-left: 3px solid #677660; padding-left: 0.85rem; font-size: 0.8rem; color: #354c2b; }
+.notice p + p { margin-top: 0.2rem; }
+.modelDescription { grid-column: 1 / -1; font-size: 0.75rem; color: #354c2b; }
+.canvas {
+  padding: 3.5rem 1.5rem;
+  background: var(--research-canvas);
+  color: var(--research-foreground);
+}
+.readingPanel {
+  width: min(100%, 920px);
+  min-height: 540px;
+  margin-inline: auto;
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  border: 1px solid #bdc1b5;
+  border-radius: 10px;
+  background: var(--research-reading-fill);
+  overflow-wrap: anywhere;
+}
+.eyebrow { color: var(--research-secondary); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; margin-bottom: 1.5rem !important; }
+.title { font-size: clamp(1.9rem, 3.4vw, 2.75rem); line-height: 1.2; font-weight: 650; max-width: 20ch; }
+.lead { font-size: 1.12rem; max-width: 58ch; margin-top: 1.25rem !important; }
+.editorialNote { margin-block: 2.5rem; border-left: 2px solid #8b957f; padding-left: 1.25rem; }
+.editorialNote p + p { margin-top: 0.5rem; }
+.secondary { color: var(--research-secondary); }
+.action, .secondaryAction {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  min-height: 46px;
+  max-width: 100%;
+  padding: 0.65rem 1.15rem;
+  border: 1px solid #354c2b;
+  border-radius: 5px;
+  font-weight: 600 !important;
+  line-height: 1.45;
+  white-space: normal;
+  opacity: 1;
+  cursor: default;
+}
+.action { color: #fafaf7; background: #354c2b; }
+.secondaryAction { background: #fafaf7; color: #354c2b; }
+.course { margin-top: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid #bdc1b5; }
+.courseHeading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+.readingPanel h2 { font-size: 1.2rem; line-height: 1.4; font-weight: 650; }
+.stateLabel { border: 1px solid #677660; border-radius: 4px; padding: 0.2rem 0.55rem; font-size: 0.8rem; color: var(--research-secondary); }
+.progressCaption { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.25rem; font-size: 0.9rem; }
+.progress { display: block; width: 100%; height: 10px; margin-block: 0.6rem 1.5rem; appearance: none; border: 0; border-radius: 0; background: #d1d5c8; }
+.progress::-webkit-progress-bar { background: #d1d5c8; }
+.progress::-webkit-progress-value { background: #354c2b; }
+.progress::-moz-progress-bar { background: #354c2b; }
+.nextLesson { display: grid; justify-items: start; gap: 0.65rem; margin-top: 1.5rem; }
+.nextLesson .action { margin-top: 0.5rem; }
+.question { padding: 1.5rem 0 0; margin: 2rem 0 0; border: 0; min-width: 0; }
+.question legend { font-size: 0.9rem; font-weight: 650; }
+.questionText { font-size: 1.12rem; margin-bottom: 1rem !important; }
+.options { display: grid; gap: 0.75rem; margin-block: 1.25rem; }
+.option { display: flex; align-items: start; gap: 0.8rem; border: 1px solid #677660; border-radius: 5px; padding: 0.95rem 1rem; }
+.option input { accent-color: #354c2b; width: 1.15rem; height: 1.15rem; margin: 0.25rem 0 0; flex-shrink: 0; }
+@media (max-width: 720px) {
+  .controls { width: calc(100% - 2rem); grid-template-columns: 1fr; gap: 1rem; }
+  .controlFields { flex-wrap: wrap; gap: 1rem; }
+  .brand span { display: block; margin-left: 0; margin-top: 0.2rem; }
+  .canvas { padding: 1.5rem 1rem; }
+  .readingPanel { min-height: 540px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .harness *, .harness *::before, .harness *::after { animation: none; transition: none; scroll-behavior: auto; }
+}
