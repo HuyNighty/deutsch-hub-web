@@ -20,7 +20,7 @@
     text-underline-offset: 0.2em;
     &:hover { color: var(--color-brand-hover); }
   }
-  a, h2, .tableScroll {
+  a, h1, h2, .tableScroll {
     scroll-margin-top: calc(72px + var(--space-4));
     &:focus-visible { outline: 3px solid var(--color-brand); outline-offset: 4px; }
   }
@@ -70,7 +70,7 @@
 @media (max-width: 768px) {
   .page {
     padding-top: calc(64px + var(--space-6));
-    a, h2, .tableScroll { scroll-margin-top: calc(64px + var(--space-4)); }
+    a, h1, h2, .tableScroll { scroll-margin-top: calc(64px + var(--space-4)); }
   }
   .entrances { grid-template-columns: 1fr; }
   .unit { padding: var(--space-5); }
