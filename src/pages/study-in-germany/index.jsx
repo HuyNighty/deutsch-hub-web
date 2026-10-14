@@ -78,14 +78,12 @@ export default function StudyInGermany() {
             <UnitLinks units={unit.related} />
           </nav>
           <div className={styles.sources}>
-            <h3>Nguồn tham khảo và phạm vi hỗ trợ</h3>
+            <h3>Nguồn tham khảo</h3>
             <ul>{unit.sources.map(source => (
               <li key={source.url}>
                 <a href={source.url}>{source.title} <span aria-hidden="true">↗</span></a>
-                <p lang="en">{source.applicability}</p>
               </li>
             ))}</ul>
-            {unit.sourceNote && <p lang="en">{unit.sourceNote}</p>}
           </div>
         </section>
       ))}

@@ -5,6 +5,7 @@ import StudyInGermany from "./index";
 import { router } from "@/app/router/routes";
 import { mountSession, seedSession } from "@/test/session-fixtures";
 import { setHttpHandler } from "@/test/http";
+import { studyContent } from "@/features/study-in-germany/content/studyContent";
 
 const units = [
   ["higher-education", "Học đại học tại Đức"],
@@ -104,7 +105,7 @@ describe("Study in Germany approved public content", () => {
     expect(table.parentElement).toHaveAccessibleDescription("Cuộn ngang để đọc đầy đủ bảng so sánh.");
   });
 
-  it("associates correctly scoped authoritative links with each content unit", () => {
+  it("preserves visible authoritative source attribution for each content unit", () => {
     render(<StudyInGermany />);
     const expected = [
       ["higher-education", ["daad.de", "hochschulkompass.de"]],
@@ -118,10 +119,30 @@ describe("Study in Germany approved public content", () => {
       const links = within(section).getAllByRole("link").filter(link => link.getAttribute("href").startsWith("https:"));
       expect(links.map(link => new URL(link.href).hostname.replace(/^www\./, ""))).toEqual(domains);
       for (const link of links) {
-        expect(link.parentElement.querySelector("p")).not.toBeNull();
+        const source = studyContent.units.find(unit => unit.id === id).sources.find(source => source.url === link.href);
+        expect(link).toHaveAccessibleName(source.title);
+        expect(link).toBeVisible();
+        expect(link.parentElement.querySelector("p")).toBeNull();
         expect(link).not.toHaveAttribute("target");
       }
     }
+  });
+
+  it("keeps source review metadata in the canonical pack without exposing reviewer instructions", () => {
+    render(<StudyInGermany />);
+    expect(screen.getAllByRole("heading", { name: "Nguồn tham khảo", level: 3 })).toHaveLength(5);
+    for (const unit of studyContent.units) {
+      for (const source of unit.sources) {
+        expect(source.applicability).toEqual(expect.any(String));
+        expect(source.applicability.length).toBeGreaterThan(0);
+        expect(document.body).not.toHaveTextContent(source.applicability);
+      }
+      for (const note of [unit.sourceNote, unit.editorialBoundary, unit.reviewTriggers].filter(Boolean)) {
+        expect(document.body).not.toHaveTextContent(note);
+      }
+    }
+    expect(document.body).not.toHaveTextContent(studyContent.metadata.editorialStatus);
+    expect(document.body).not.toHaveTextContent(studyContent.metadata.publicationStatus);
   });
 
   it("keeps entrance links and the overflow region in native keyboard order", async () => {
