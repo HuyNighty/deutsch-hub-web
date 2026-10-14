@@ -1,5 +1,5 @@
 import { withNoActivity, nextActivityUrl } from "@/test/next-activity-fixtures";
-import { describe, it, expect, vi } from "vitest";
+import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
 import { act, fireEvent, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ok } from "@/test/http";
@@ -8,6 +8,13 @@ import { withDiscoverDirection, directionUrl } from "@/test/direction-fixtures";
 import { journey, journeyUrl } from "@/features/assessment/test/attempt-fixtures";
 import { assessmentPage } from "@/features/assessment/test/fixtures";
 import styles from "./Header.module.scss";
+
+const originalScroll = HTMLElement.prototype.scrollIntoView;
+beforeEach(() => { HTMLElement.prototype.scrollIntoView = vi.fn(); });
+afterEach(() => {
+  if (originalScroll) HTMLElement.prototype.scrollIntoView = originalScroll;
+  else delete HTMLElement.prototype.scrollIntoView;
+});
 
 function header() {
   return within(screen.getByRole("banner"));
@@ -18,6 +25,57 @@ function rejectUnexpectedRequest(config) {
 }
 
 describe("authenticated learning Header IA", () => {
+  it.each([true, false])("opens the same public links and closes with Escape without requests (anonymous=%s)", async (anonymous) => {
+    const http = assessmentHttp(rejectUnexpectedRequest);
+    mountAssessmentApp("/experiences", { anonymous });
+    const user = userEvent.setup();
+    const trigger = header().getByRole("button", { name: "Điều hướng công khai" });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(header().queryByRole("navigation", { name: "Điều hướng chính trên thiết bị di động" })).toBeNull();
+    await user.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    const mobile = header().getByRole("navigation", { name: "Điều hướng chính trên thiết bị di động" });
+    expect(mobile.id).toBe(trigger.getAttribute("aria-controls"));
+    expect(within(mobile).getAllByRole("link").map(link => [link.textContent, link.getAttribute("href")]))
+      .toEqual([["Học tiếng Đức", "/learn-german"], ["Khám phá nước Đức", "/explore-germany"],
+        ["Du học Đức", "/study-in-germany"], ["Giao lưu", "/experiences"]]);
+    await user.tab();
+    expect(within(mobile).getAllByRole("link")[0]).toHaveFocus();
+    await user.keyboard("{Escape}");
+    expect(trigger).toHaveFocus();
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(mobile).not.toBeVisible();
+    expect(http).not.toHaveBeenCalled();
+  });
+
+  it("closes on selection and route changes without stealing destination focus", async () => {
+    const http = assessmentHttp(rejectUnexpectedRequest);
+    const { router } = mountAssessmentApp("/experiences", { anonymous: true });
+    const scroll = vi.spyOn(HTMLElement.prototype, "scrollIntoView").mockImplementation(() => {});
+    const user = userEvent.setup();
+    const trigger = header().getByRole("button", { name: "Điều hướng công khai" });
+    await user.click(trigger);
+    await user.click(within(header().getByRole("navigation", { name: "Điều hướng chính trên thiết bị di động" }))
+      .getByRole("link", { name: "Du học Đức" }));
+    expect(router.state.location.pathname).toBe("/study-in-germany");
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveFocus();
+    expect(scroll).toHaveBeenCalledWith({ block: "start", behavior: "instant" });
+    const previousKey = router.state.location.key;
+    await user.click(trigger);
+    await user.click(within(header().getByRole("navigation", { name: "Điều hướng chính trên thiết bị di động" }))
+      .getByRole("link", { name: "Du học Đức" }));
+    expect(router.state.historyAction).toBe("PUSH");
+    expect(router.state.location.key).not.toBe(previousKey);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveFocus();
+    await user.click(trigger);
+    const restoreFocus = vi.spyOn(trigger, "focus");
+    await act(async () => { await router.navigate("/experiences"); });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(restoreFocus).not.toHaveBeenCalled();
+    expect(http).not.toHaveBeenCalled();
+  });
+
   it("preserves public navigation and orders My Learning, Assessments, Notifications and Account outside it", () => {
     const http = assessmentHttp(rejectUnexpectedRequest);
     const { router } = mountAssessmentApp("/experiences");
@@ -142,6 +200,12 @@ describe("authenticated learning Header IA", () => {
     for (const name of ["Trang chủ DeutschHub", "Học tiếng Đức", "Khám phá nước Đức", "Du học Đức", "Giao lưu", "Học tập của tôi", "Bài đánh giá"]) {
       await user.tab();
       expect(header().getByRole("link", { name, exact: true })).toHaveFocus();
+      // JSDOM does not apply the desktop media rule that hides the mobile trigger.
+      if (name === "Trang chủ DeutschHub") {
+        await user.tab();
+        expect(header().getByRole("button", { name: "Điều hướng công khai" })).toHaveFocus();
+        expect(header().getByRole("button", { name: "Điều hướng công khai" })).toHaveAttribute("aria-expanded", "false");
+      }
     }
     expect(http).not.toHaveBeenCalled();
     await user.keyboard("{Enter}");

@@ -1,6 +1,8 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { StrictMode } from "react";
+import { createMemoryRouter, MemoryRouter, RouterProvider } from "react-router-dom";
 import StudyInGermany from "./index";
 import { router } from "@/app/router/routes";
 import { mountSession, seedSession } from "@/test/session-fixtures";
@@ -15,15 +17,79 @@ const units = [
   ["learning-and-working", "Vừa học vừa làm có phải lúc nào cũng giống nhau?"],
 ];
 const sessions = [];
+const originalScroll = HTMLElement.prototype.scrollIntoView;
+beforeEach(() => { HTMLElement.prototype.scrollIntoView = vi.fn(); });
 afterEach(() => {
   for (const session of sessions.splice(0)) {
     session.unmount();
     session.router.dispose();
     session.client.clear();
   }
+  if (originalScroll) HTMLElement.prototype.scrollIntoView = originalScroll;
+  else delete HTMLElement.prototype.scrollIntoView;
 });
 
+function renderStudy() {
+  return render(<MemoryRouter initialEntries={["/study-in-germany" + window.location.hash]}>
+    <StudyInGermany />
+  </MemoryRouter>);
+}
+
 describe("Study in Germany approved public content", () => {
+  it("owns document metadata on direct StrictMode entry and restores preceding values on exit", () => {
+    const language = document.documentElement.lang;
+    const title = document.title;
+    document.documentElement.lang = "en";
+    document.title = "Previous collection";
+    try {
+      const view = render(<StrictMode><MemoryRouter><StudyInGermany /></MemoryRouter></StrictMode>);
+      expect(document.documentElement.lang).toBe("vi");
+      expect(document.title).toBe(studyContent.introduction.title + " | DeutschHub");
+      expect(HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
+      view.unmount();
+      expect(document.documentElement.lang).toBe("en");
+      expect(document.title).toBe("Previous collection");
+    } finally {
+      document.documentElement.lang = language;
+      document.title = title;
+    }
+  });
+
+  it("focuses explicit no-hash PUSH entries including same-route navigation, preserves POP and cleans metadata", async () => {
+    const language = document.documentElement.lang;
+    const title = document.title;
+    const localRouter = createMemoryRouter([
+      { path: "/", element: <h1>Previous page</h1> },
+      { path: "/study-in-germany", element: <StudyInGermany /> },
+    ]);
+    const view = render(<StrictMode><RouterProvider router={localRouter} /></StrictMode>);
+    const scroll = HTMLElement.prototype.scrollIntoView;
+    try {
+      await act(async () => { await localRouter.navigate("/study-in-germany"); });
+      const heading = screen.getByRole("heading", { level: 1 });
+      expect(heading).toHaveFocus();
+      expect(scroll).toHaveBeenCalledWith({ block: "start", behavior: "instant" });
+      scroll.mockClear();
+      heading.blur();
+      await act(async () => { await localRouter.navigate("/study-in-germany"); });
+      expect(heading).toHaveFocus();
+      expect(scroll).toHaveBeenCalledTimes(1);
+      scroll.mockClear();
+      await act(async () => { await localRouter.navigate("/study-in-germany#dual-studies"); });
+      expect(scroll).not.toHaveBeenCalled();
+      heading.blur();
+      await act(async () => { await localRouter.navigate(-1); });
+      expect(scroll).not.toHaveBeenCalled();
+      expect(heading).not.toHaveFocus();
+      await act(async () => { await localRouter.navigate("/"); });
+      expect(document.documentElement.lang).toBe(language);
+      expect(document.title).toBe(title);
+    } finally {
+      view.unmount();
+      localRouter.dispose();
+    }
+  });
+
   it.each(units)("opens guest fragment %s on the production route without a request", async (id, title) => {
     const http = vi.fn(() => { throw new Error("Public study content must not request an API"); });
     setHttpHandler(http);
@@ -60,7 +126,7 @@ describe("Study in Germany approved public content", () => {
   });
 
   it("provides path-first and question-first entrances with all approved targets", () => {
-    render(<StudyInGermany />);
+    renderStudy();
     const paths = screen.getByRole("navigation", { name: "Khám phá theo con đường học tập" });
     const questions = screen.getByRole("navigation", { name: "Khám phá từ câu hỏi" });
     expect(within(paths).getAllByRole("link").map(link => link.hash)).toEqual(units.slice(0, 3).map(([id]) => "#" + id));
@@ -71,7 +137,7 @@ describe("Study in Germany approved public content", () => {
   });
 
   it("keeps question-first discovery static and introduces no response collection", () => {
-    render(<StudyInGermany />);
+    renderStudy();
     const question = screen.getByRole("region", { name: "Bạn muốn học theo cách nào?" });
     expect(within(question).getAllByRole("listitem").some(item => item.textContent === "Mình muốn hiểu sâu lĩnh vực nào?")).toBe(true);
     expect(within(question).getByText("Bạn không cần gửi câu trả lời nào cho DeutschHub. Đây chỉ là những câu hỏi để bạn tự suy ngẫm và lựa chọn điều muốn tìm hiểu tiếp.")).toBeInTheDocument();
@@ -81,7 +147,7 @@ describe("Study in Germany approved public content", () => {
   });
 
   it("retains qualifications about overlapping forms and programme-dependent outcomes", () => {
-    render(<StudyInGermany />);
+    renderStudy();
     expect(screen.getByText("Ba lối vào này giúp bạn khám phá thông tin, không phải ba nhóm tách biệt hoàn toàn: Duales Studium thuộc giáo dục đại học và có mô hình tích hợp cả đào tạo nghề.")).toBeInTheDocument();
     expect(screen.getByText("Vì vậy, không thể suy ra mọi Duales Studium đều cấp thêm một bằng nghề.")).toBeInTheDocument();
     expect(screen.getByText("Ausbildung có nhiều hình thức khác nhau. Không thể suy ra mọi chương trình đều có thù lao đào tạo, cùng yêu cầu đầu vào hoặc cùng cách tổ chức.")).toBeInTheDocument();
@@ -92,7 +158,7 @@ describe("Study in Germany approved public content", () => {
   });
 
   it("preserves all comparison dimensions, credentials and overlap in a semantic table", () => {
-    render(<StudyInGermany />);
+    renderStudy();
     const table = screen.getByRole("table", { name: "Vừa học vừa làm trong Ausbildung và Duales Studium có gì giống, khác và giao nhau?" });
     expect(within(table).getAllByRole("columnheader")).toHaveLength(3);
     expect(within(table).getAllByRole("rowheader").map(cell => cell.textContent)).toEqual([
@@ -106,7 +172,7 @@ describe("Study in Germany approved public content", () => {
   });
 
   it("preserves visible authoritative source attribution for each content unit", () => {
-    render(<StudyInGermany />);
+    renderStudy();
     const expected = [
       ["higher-education", ["daad.de", "hochschulkompass.de"]],
       ["vocational-training", ["arbeitsagentur.de", "make-it-in-germany.com", "make-it-in-germany.com", "hochschulkompass.de"]],
@@ -129,7 +195,7 @@ describe("Study in Germany approved public content", () => {
   });
 
   it("keeps source review metadata in the canonical pack without exposing reviewer instructions", () => {
-    render(<StudyInGermany />);
+    renderStudy();
     expect(screen.getAllByRole("heading", { name: "Nguồn tham khảo", level: 3 })).toHaveLength(5);
     for (const unit of studyContent.units) {
       for (const source of unit.sources) {
@@ -146,7 +212,7 @@ describe("Study in Germany approved public content", () => {
   });
 
   it("keeps entrance links and the overflow region in native keyboard order", async () => {
-    render(<StudyInGermany />);
+    renderStudy();
     const user = userEvent.setup();
     for (const [id] of units) {
       await user.tab();
@@ -163,13 +229,13 @@ describe("Study in Germany approved public content", () => {
     HTMLElement.prototype.scrollIntoView = scroll;
     try {
       window.history.replaceState(null, "", "#dual-studies");
-      const view = render(<StudyInGermany />);
+      const view = renderStudy();
       expect(document.activeElement).toBe(document.getElementById("dual-studies"));
       expect(scroll).toHaveBeenCalledExactlyOnceWith({ block: "start", behavior: "instant" });
       view.unmount();
       scroll.mockClear();
       window.history.replaceState(null, "", "#not-approved");
-      render(<StudyInGermany />);
+      renderStudy();
       expect(scroll).not.toHaveBeenCalled();
       expect(document.activeElement).toBe(document.body);
     } finally {

@@ -5,7 +5,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { AppLink } from "@/shared/ui/components/app-link";
 import { Button } from "@/shared/ui/components/button";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
@@ -44,6 +44,12 @@ export default function Header() {
 
   const [hasHero, setHasHero] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const mobileTrigger = useRef(null);
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.key]);
 
   useEffect(() => {
     const hero = document.querySelector("[data-header-hero]");
@@ -96,11 +102,38 @@ export default function Header() {
           </span>
         </Link>
 
+        <div className={cx("mobile-disclosure")} onKeyDown={(event) => {
+          if (event.key === "Escape" && mobileOpen) {
+            event.preventDefault();
+            setMobileOpen(false);
+            mobileTrigger.current.focus();
+          }
+        }}>
+          <button ref={mobileTrigger} type="button" className={cx("mobile-trigger")}
+            aria-label="Điều hướng công khai" aria-expanded={mobileOpen}
+            aria-controls="mobile-public-navigation" onClick={() => setMobileOpen(open => !open)}>
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24">
+              <path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" strokeWidth="2" />
+            </svg>
+          </button>
+          <nav id="mobile-public-navigation" hidden={!mobileOpen}
+            className={cx("mobile-navigation")} aria-label="Điều hướng chính trên thiết bị di động">
+            {navigationItems.map(item => (
+              <NavLink key={item.path} to={item.path} replace={item.path === "/study-in-germany" ? false : undefined}
+                onClick={() => setMobileOpen(false)}
+                className={({ isActive }) => cx("nav-link", item.color, { active: isActive })}>
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
+        </div>
+
         <nav className={cx("navigation")} aria-label="Điều hướng chính">
           {navigationItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
+              replace={item.path === "/study-in-germany" ? false : undefined}
               className={({ isActive }) =>
                 cx("nav-link", item.color, {
                   active: isActive,

@@ -1,4 +1,5 @@
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useRef } from "react";
+import { useLocation, useNavigationType } from "react-router-dom";
 import { studyContent } from "@/features/study-in-germany/content/studyContent";
 import styles from "./StudyInGermany.module.scss";
 
@@ -36,19 +37,42 @@ function UnitLinks({ units }) {
 
 export default function StudyInGermany() {
   const { introduction, units } = studyContent;
+  const location = useLocation();
+  const navigationType = useNavigationType();
+  const introductionHeading = useRef(null);
+  const initialHash = useRef(location.hash);
+
+  useLayoutEffect(() => {
+    const previousLanguage = document.documentElement.lang;
+    const previousTitle = document.title;
+    document.documentElement.lang = "vi";
+    document.title = `${introduction.title} | DeutschHub`;
+    return () => {
+      document.documentElement.lang = previousLanguage;
+      document.title = previousTitle;
+    };
+  }, [introduction.title]);
+
   useLayoutEffect(() => {
     // The native URL fragment can arrive before the SPA has mounted its heading.
     // Initialize it once; subsequent anchor clicks and history remain browser-owned.
-    const id = window.location.hash.slice(1);
+    const id = initialHash.current.slice(1);
     if (!units.some(unit => unit.id === id)) return;
     const heading = document.getElementById(id);
     heading.focus({ preventScroll: true });
     heading.scrollIntoView({ block: "start", behavior: "instant" });
   }, [units]);
+
+  useLayoutEffect(() => {
+    // Only explicit route entries reset the introduction, never native history.
+    if (navigationType !== "PUSH" || location.hash) return;
+    introductionHeading.current.focus({ preventScroll: true });
+    introductionHeading.current.scrollIntoView({ block: "start", behavior: "instant" });
+  }, [location.key, location.hash, navigationType]);
   return (
     <div className={styles.page} lang="vi">
       <div className={styles.introduction}>
-        <h1>{introduction.title}</h1>
+        <h1 ref={introductionHeading} tabIndex={-1}>{introduction.title}</h1>
         <ContentBlocks blocks={introduction.blocks} />
         <div className={styles.entrances}>
           <nav aria-label="Khám phá theo con đường học tập">
