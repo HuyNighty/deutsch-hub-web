@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "scope": "Study in Germany Introduction only",
+  "combined_font_bytes": 248904,
+  "fonts": [
+    {
+      "family": "Fraunces",
+      "css_family": "DeutschHubStudyFrauncesV1",
+      "file": "fraunces-normal.woff2",
+      "bytes": 195012,
+      "sha256": "7dc0dd18aeeae3204d5cc26679b5f41d8be1e622bd3bd39fef574346c99508e8",
+      "style": "normal",
+      "version": "Version 1.000;[b76b70a41]",
+      "axes": [
+        {
+          "tag": "opsz",
+          "min": 9.0,
+          "default": 9.0,
+          "max": 144.0
+        },
+        {
+          "tag": "wght",
+          "min": 100.0,
+          "default": 900.0,
+          "max": 900.0
+        },
+        {
+          "tag": "SOFT",
+          "min": 0.0,
+          "default": 0.0,
+          "max": 100.0
+        },
+        {
+          "tag": "WONK",
+          "min": 0.0,
+          "default": 1.0,
+          "max": 1.0
+        }
+      ],
+      "source": {
+        "repository": "https://github.com/google/fonts",
+        "distribution_commit": "4024282d9b0cffcdb8e3024560862746178d741f",
+        "filename": "Fraunces[SOFT,WONK,opsz,wght].ttf",
+        "url": "https://raw.githubusercontent.com/google/fonts/4024282d9b0cffcdb8e3024560862746178d741f/ofl/fraunces/Fraunces%5BSOFT%2CWONK%2Copsz%2Cwght%5D.ttf",
+        "bytes": 360440,
+        "sha256": "177ff6c0f14e5550a3c624247cd1189611d4eb65d000b14944c63d967958abbb"
+      },
+      "license": {
+        "id": "OFL-1.1",
+        "file": "public/licenses/study-fonts/v1/fraunces-OFL.txt",
+        "source_url": "https://raw.githubusercontent.com/google/fonts/4024282d9b0cffcdb8e3024560862746178d741f/ofl/fraunces/OFL.txt",
+        "bytes": 4391,
+        "sha256": "bdf4c22802eaf804f998195871c6b8938aac2ac14b2d78a8bd66a6f1eced833b",
+        "reserved_font_names": "None declared in authenticated notice header or source name records",
+        "classification": "Modified Version under OFL 1.1",
+        "copyrights": [
+          "Copyright 2020 The Fraunces Project Authors (github.com/undercasetype/Fraunces)"
+        ]
+      }
+    },
+    {
+      "family": "Manrope",
+      "css_family": "DeutschHubStudyManropeV1",
+      "file": "manrope-normal.woff2",
+      "bytes": 53892,
+      "sha256": "30b83738add8c9edd9e3450b98036a9a8fb5668d0cbd4eb0ce5fe6761197f21f",
+      "style": "normal",
+      "version": "Version 4.505",
+      "axes": [
+        {
+          "tag": "wght",
+          "min": 200.0,
+          "default": 200.0,
+          "max": 800.0
+        }
+      ],
+      "source": {
+        "repository": "https://github.com/google/fonts",
+        "distribution_commit": "b31870aff700ab7a1d74fa0c6887d95beb9e0037",
+        "filename": "Manrope[wght].ttf",
+        "url": "https://raw.githubusercontent.com/google/fonts/b31870aff700ab7a1d74fa0c6887d95beb9e0037/ofl/manrope/Manrope%5Bwght%5D.ttf",
+        "bytes": 164700,
+        "sha256": "3ae11c49db0455a3cc33e37d380f20fdb8c7f8b41dc07625c177e3d87a9d6ae6"
+      },
+      "license": {
+        "id": "OFL-1.1",
+        "file": "public/licenses/study-fonts/v1/manrope-OFL.txt",
+        "source_url": "https://raw.githubusercontent.com/google/fonts/b31870aff700ab7a1d74fa0c6887d95beb9e0037/ofl/manrope/OFL.txt",
+        "bytes": 4387,
+        "sha256": "58172e0c0fac2cda8a37b348164bb55e44b0e69051e557e92b1d3f6910141f7b",
+        "reserved_font_names": "None declared in authenticated notice header or source name records",
+        "classification": "Modified Version under OFL 1.1",
+        "copyrights": [
+          "Copyright 2019 The Manrope Project Authors (https://github.com/googlefonts/manrope)"
+        ]
+      }
+    }
+  ],
+  "qualification": {
+    "source_run": "F2-P0-AQ1-R1-20261018-1051",
+    "browser_follow_up": "F2-P0-AQ1-R2-20261018-1330",
+    "historical_status_preserved": true,
+    "qualification_manifest_sha256": "514e669a865fbbb590155604eaf105d099c38a4c51b362a2328f65f473b874bf"
+  },
+  "transformation": {
+    "encoder": "fontTools.ttLib.woff2.compress",
+    "fonttools_version": "4.67.0",
+    "brotli_version": "1.1.0",
+    "full_repertoire": true,
+    "subsetted": false,
+    "reproducibility": "Two independent encodes per family had identical bytes and SHA-256 in retained qualification evidence",
+    "normalizations": [
+      "Standards-required head checksum and flag bit 11 changes recorded during qualification"
+    ],
+    "fraunces_empty_dsig_exception": {
+      "source_sha256": "177ff6c0f14e5550a3c624247cd1189611d4eb65d000b14944c63d967958abbb",
+      "raw_hex": "0000000100000000",
+      "bytes": 8,
+      "version": 1,
+      "signature_count": 0,
+      "flags": 0,
+      "disposition": "Only this exact empty DSIG may be omitted by the standard encoder; source was not manually stripped"
+    }
+  },
+  "payload_suitability": "PENDING: no approved numeric performance budget"
+}
