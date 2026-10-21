@@ -1,3 +1,19 @@
+@font-face {
+  font-family: "DeutschHubStudyFrauncesV1";
+  src: url("./fonts/fraunces-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DeutschHubStudyManropeV1";
+  src: url("./fonts/manrope-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
+
 .page {
   width: min(1040px, calc(100% - 2rem));
   margin-inline: auto;
@@ -26,16 +42,92 @@
   }
 }
 .introduction {
-  max-width: 80ch;
-  > h1 { margin-bottom: var(--space-6); }
+  // Keep font-swapping content out of viewport scroll-anchor selection.
+  overflow-anchor: none;
+  font-family: "DeutschHubStudyManropeV1", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  max-width: 100%;
+}
+.arrival {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  align-items: start;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  h1 {
+    font-family: "DeutschHubStudyFrauncesV1", Georgia, "Times New Roman", serif;
+    max-inline-size: 16ch;
+    font-size: clamp(2rem, 3.3vw, 2.65rem);
+    line-height: 1.2;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-brand);
+  }
+}
+.arrivalCopy {
+  max-inline-size: 65ch;
+  color: var(--color-text-primary);
+  > p:first-child { font-size: 1.125rem; line-height: 1.6; font-weight: var(--font-weight-medium); }
+  > p:last-child { color: var(--color-text-primary); }
 }
 .entrances {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-6);
   margin-top: var(--space-8);
-  nav { padding: var(--space-5); background: var(--color-brand-light); border-radius: var(--radius-lg); }
-  h2 { margin-bottom: var(--space-4); font-size: 1.2rem; }
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-strong);
+  nav {
+    min-inline-size: 0;
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+  }
+  h2 { font-family: "DeutschHubStudyFrauncesV1", Georgia, "Times New Roman", serif; margin-bottom: var(--space-4); font-size: 1.25rem; line-height: 1.4; font-weight: var(--font-weight-semibold); color: var(--color-brand); }
+  ul { padding: 0; list-style: none; }
+  li + li { margin-top: 0; }
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    width: 100%;
+    min-height: 44px;
+    padding-block: 0.875rem;
+    font-weight: var(--font-weight-medium);
+    &:hover { text-decoration-thickness: 0.12em; }
+  }
+}
+.pathInvitation {
+  background: var(--color-surface);
+  ul { border-inline-start: 1px solid var(--color-border-strong); padding-inline-start: var(--space-5); }
+  li {
+    position: relative;
+    &::before {
+      content: "";
+      position: absolute;
+      inset-inline-start: calc(-1 * var(--space-5) - 3px);
+      top: calc(50% - 3px);
+      inline-size: 6px;
+      block-size: 6px;
+      border-radius: 50%;
+      background: var(--color-brand);
+    }
+  }
+  a { border-bottom: 1px solid var(--color-border); }
+  li:last-child a { border-bottom: 0; }
+}
+.questionInvitation {
+  background: var(--color-brand-light);
+  li + li {
+    padding-top: var(--space-3);
+    &::before { content: ""; display: block; inline-size: var(--space-8); border-top: 1px solid var(--color-border-strong); }
+  }
+  a { align-items: flex-start; line-height: 1.6; }
+  svg { margin-top: 0.25em; }
+}
+.invitationArrow { inline-size: 1.125em; block-size: 1.125em; flex-shrink: 0; }
+.supportingContext {
+  max-inline-size: 72ch;
+  margin-top: var(--space-8);
+  color: var(--color-text-primary);
+  > p:last-child { font-weight: var(--font-weight-medium); color: var(--color-text-primary); }
 }
 .unit {
   margin-top: var(--space-8);
@@ -72,7 +164,15 @@
     padding-top: calc(64px + var(--space-6));
     a, h1, h2, .tableScroll { scroll-margin-top: calc(64px + var(--space-4)); }
   }
-  .entrances { grid-template-columns: 1fr; }
+  .arrival { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); h1 { max-inline-size: 22ch; } }
+  .entrances {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+    margin-top: var(--space-6);
+    padding-top: 0;
+    border-top: 0;
+    nav { padding: var(--space-5); }
+  }
   .unit { padding: var(--space-5); }
 }
 @media (max-width: 375px) {

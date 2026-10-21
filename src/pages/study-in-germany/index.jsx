@@ -3,7 +3,7 @@ import { useLocation, useNavigationType } from "react-router-dom";
 import { studyContent } from "@/features/study-in-germany/content/studyContent";
 import styles from "./StudyInGermany.module.scss";
 
-function ContentBlocks({ blocks, tableCaption }) {
+function ContentBlocks({ blocks, tableCaption, markGermanTerm = false }) {
   return blocks.map((block, index) => {
     if (block.type === "list") {
       return <ul key={index}>{block.items.map(item => <li key={item}>{item}</li>)}</ul>;
@@ -27,12 +27,20 @@ function ContentBlocks({ blocks, tableCaption }) {
         </div>
       );
     }
-    return <p key={index}>{block.text}</p>;
+    return <p key={index}>{markGermanTerm
+      ? block.text.split(/(Duales Studium)/).map((part, partIndex) => part === "Duales Studium"
+        ? <span key={partIndex} lang="de">{part}</span> : part)
+      : block.text}</p>;
   });
 }
 
-function UnitLinks({ units }) {
-  return <ul>{units.map(unit => <li key={unit.id}><a href={`#${unit.id}`}>{unit.label ?? unit.title}</a></li>)}</ul>;
+function UnitLinks({ units, invitation = false }) {
+  return <ul>{units.map(unit => <li key={unit.id}><a href={`#${unit.id}`}>
+    {unit.label ?? unit.title}
+    {invitation && <svg className={styles.invitationArrow} aria-hidden="true" viewBox="0 0 20 20" focusable="false">
+      <path d="M4 5h11v11M15 5 4 16" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    </svg>}
+  </a></li>)}</ul>;
 }
 
 export default function StudyInGermany() {
@@ -72,17 +80,24 @@ export default function StudyInGermany() {
   return (
     <div className={styles.page} lang="vi">
       <div className={styles.introduction}>
-        <h1 ref={introductionHeading} tabIndex={-1}>{introduction.title}</h1>
-        <ContentBlocks blocks={introduction.blocks} />
+        <div className={styles.arrival}>
+          <h1 ref={introductionHeading} tabIndex={-1}>{introduction.title}</h1>
+          <div className={styles.arrivalCopy}>
+            <ContentBlocks blocks={introduction.blocks.slice(0, 3)} markGermanTerm />
+          </div>
+        </div>
         <div className={styles.entrances}>
-          <nav aria-label="Khám phá theo con đường học tập">
+          <nav className={styles.pathInvitation} aria-label="Khám phá theo con đường học tập">
             <h2>Con đường học tập</h2>
-            <UnitLinks units={units.slice(0, 3)} />
+            <UnitLinks units={units.slice(0, 3)} invitation />
           </nav>
-          <nav aria-label="Khám phá từ câu hỏi">
+          <nav className={styles.questionInvitation} aria-label="Khám phá từ câu hỏi">
             <h2>Bắt đầu từ câu hỏi</h2>
-            <UnitLinks units={units.slice(3)} />
+            <UnitLinks units={units.slice(3)} invitation />
           </nav>
+        </div>
+        <div className={styles.supportingContext}>
+          <ContentBlocks blocks={introduction.blocks.slice(3)} />
         </div>
       </div>
       {units.map(unit => (

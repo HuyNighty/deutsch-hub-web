@@ -8,6 +8,7 @@ import { router } from "@/app/router/routes";
 import { mountSession, seedSession } from "@/test/session-fixtures";
 import { setHttpHandler } from "@/test/http";
 import { studyContent } from "@/features/study-in-germany/content/studyContent";
+import styles from "./StudyInGermany.module.scss";
 
 const units = [
   ["higher-education", "Học đại học tại Đức"],
@@ -36,6 +37,42 @@ function renderStudy() {
 }
 
 describe("Study in Germany approved public content", () => {
+  it("preserves all six verbatim introduction paragraphs around the two invitations in DOM order", () => {
+    renderStudy();
+    const introduction = screen.getByRole("heading", { level: 1 }).closest("." + styles.introduction);
+    const paragraphs = [...introduction.querySelectorAll("p")];
+    expect(paragraphs.map(paragraph => paragraph.textContent)).toEqual(studyContent.introduction.blocks.map(block => block.text));
+    expect(paragraphs).toHaveLength(6);
+    expect([...introduction.querySelectorAll("p, nav")].map(element => element.tagName === "NAV"
+      ? element.getAttribute("aria-label") : element.textContent)).toEqual([
+      ...studyContent.introduction.blocks.slice(0, 3).map(block => block.text),
+      "Khám phá theo con đường học tập", "Khám phá từ câu hỏi",
+      ...studyContent.introduction.blocks.slice(3).map(block => block.text),
+    ]);
+    for (const paragraph of paragraphs) expect(paragraph).toBeVisible();
+    expect(paragraphs[2]).toHaveTextContent("không phải ba nhóm tách biệt hoàn toàn");
+    expect(within(paragraphs[2]).getByText("Duales Studium")).toHaveAttribute("lang", "de");
+    expect(paragraphs[5]).toHaveTextContent("không lựa chọn thay bạn");
+  });
+
+  it("keeps both invitations as independently named links without nested controls or answer collection", () => {
+    renderStudy();
+    const introduction = screen.getByRole("heading", { level: 1 }).closest("." + styles.introduction);
+    const invitations = within(introduction).getAllByRole("navigation");
+    expect(invitations).toHaveLength(2);
+    expect(invitations.map(nav => within(nav).getByRole("heading", { level: 2 }).textContent))
+      .toEqual(["Con đường học tập", "Bắt đầu từ câu hỏi"]);
+    const links = within(introduction).getAllByRole("link");
+    expect(links.map(link => link.getAttribute("href"))).toEqual(units.map(([id]) => "#" + id));
+    links.forEach((link, index) => {
+      expect(link).toHaveAccessibleName(studyContent.units[index].label ?? studyContent.units[index].title);
+      expect(link.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
+      expect(link.querySelector("a, button, input")).toBeNull();
+    });
+    expect(introduction.querySelector("form, input, button, details, [hidden], [aria-hidden='true']:not(svg)")).toBeNull();
+    for (const [id] of units) expect(document.getElementById(id).closest("section").querySelector("svg")).toBeNull();
+  });
+
   it("owns document metadata on direct StrictMode entry and restores preceding values on exit", () => {
     const language = document.documentElement.lang;
     const title = document.title;
@@ -148,7 +185,7 @@ describe("Study in Germany approved public content", () => {
 
   it("retains qualifications about overlapping forms and programme-dependent outcomes", () => {
     renderStudy();
-    expect(screen.getByText("Ba lối vào này giúp bạn khám phá thông tin, không phải ba nhóm tách biệt hoàn toàn: Duales Studium thuộc giáo dục đại học và có mô hình tích hợp cả đào tạo nghề.")).toBeInTheDocument();
+    expect(screen.getByText((_, element) => element.tagName === "P" && element.textContent === "Ba lối vào này giúp bạn khám phá thông tin, không phải ba nhóm tách biệt hoàn toàn: Duales Studium thuộc giáo dục đại học và có mô hình tích hợp cả đào tạo nghề.")).toBeInTheDocument();
     expect(screen.getByText("Vì vậy, không thể suy ra mọi Duales Studium đều cấp thêm một bằng nghề.")).toBeInTheDocument();
     expect(screen.getByText("Ausbildung có nhiều hình thức khác nhau. Không thể suy ra mọi chương trình đều có thù lao đào tạo, cùng yêu cầu đầu vào hoặc cùng cách tổ chức.")).toBeInTheDocument();
     expect(screen.getAllByRole("heading", { name: "Cần xác minh khi đi sâu" })).toHaveLength(3);
