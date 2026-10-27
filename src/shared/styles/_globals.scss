@@ -18,13 +18,7 @@ body {
   background: var(--color-background);
   color: var(--color-text-primary);
 
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  font-family: var(--font-body);
 
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -68,4 +62,10 @@ h5,
 h6,
 p {
   margin: 0;
+}
+
+/* Display typography; smaller interface headings keep readable Manrope. */
+h1,
+h2 {
+  font-family: var(--font-display);
 }

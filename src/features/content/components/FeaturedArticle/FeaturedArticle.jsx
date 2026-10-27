@@ -74,6 +74,7 @@ function FeaturedArticle({ article }) {
               to={articleUrl}
               variant="default"
               className={cx("read-more")}
+              appearance="action"
             >
               Đọc câu chuyện
               <span aria-hidden="true">→</span>

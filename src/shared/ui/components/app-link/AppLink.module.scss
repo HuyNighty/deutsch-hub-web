@@ -1,3 +1,4 @@
+/* AppLink A1 — links remain links. appearance="action" is opt-in. */
 .link {
   display: inline-flex;
   align-items: center;
@@ -14,6 +15,7 @@
     transform 160ms ease;
 }
 
+/* Legacy text-link variants: unchanged for existing callers. */
 .default {
   color: var(--color-text-primary);
 
@@ -24,7 +26,6 @@
 
 .primary {
   border: 1px solid var(--color-brand);
-
   background: var(--color-brand);
   color: var(--color-text-inverse);
 
@@ -37,7 +38,6 @@
 
 .outline {
   border: 1px solid var(--color-border-strong);
-
   background: var(--color-surface);
   color: var(--color-text-primary);
 
@@ -69,10 +69,205 @@
 .dark {
   min-height: auto;
   padding-inline: 0;
-
   color: rgb(255 255 255 / 0.68);
 
   &:hover {
     color: var(--color-text-inverse);
+  }
+}
+
+/* ---------- Editorial action presentation (Header CTA C1) ---------- */
+/* .action.default & .action.primary are more specific than base variants. */
+.action {
+  position: relative;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-family: var(--font-body, Manrope, sans-serif);
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color 220ms ease,
+    background-color 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+.action.sm {
+  min-height: 38px;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.8125rem;
+}
+
+.action.md {
+  min-height: 46px;
+  padding: 0.65rem 1.35rem;
+  font-size: 0.88rem;
+}
+
+.action.lg {
+  min-height: 52px;
+  padding: 0.75rem 1.6rem;
+  font-size: 1rem;
+}
+
+/* Primary = the Header's forest green registration button. */
+.action.primary {
+  background-color: #173d36;
+  border-color: #173d36;
+  color: #f7f3eb;
+  box-shadow: 0 6px 18px rgb(7 29 24 / 14%);
+
+  &:hover {
+    background-color: #24564a;
+    border-color: #24564a;
+    color: #fffaf2;
+    box-shadow: 0 9px 24px rgb(7 29 24 / 18%);
+    transform: translateY(-2px);
+  }
+}
+
+/* A1.1 — default: filled warm-paper editorial action. */
+.action.default {
+  color: #173d36;
+  background-color: rgb(247 243 235 / 94%);
+  border-color: rgb(23 61 54 / 21%);
+  box-shadow: 0 3px 14px rgb(7 29 24 / 7%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  &:hover {
+    color: #173d36;
+    background-color: #fffaf1;
+    border-color: #c1f3b7;
+    box-shadow: 0 7px 18px rgb(7 29 24 / 10%);
+    transform: translateY(-1px);
+  }
+}
+
+/* A1.1 — outline: distinct transparent border, not a second filled default.
+   CSS custom properties allow inverse themes on dark photographic surfaces. */
+.action.outline {
+  color: var(--dh-action-outline-ink, #f1f6f5);
+  background-color: var(--dh-action-outline-bg, transparent);
+  border-color: var(--dh-action-outline-border, rgba(244, 245, 245, 0.65));
+  box-shadow: none;
+  backdrop-filter: none;
+
+  &:hover {
+    color: var(--dh-action-outline-hover-ink, #f0f3f2);
+    background-color: var(--dh-action-outline-hover-bg, transparent);
+    border-color: var(--dh-action-outline-hover-border, #c1f3b7);
+    box-shadow: 0 7px 18px rgb(7 29 24 / 10%);
+    transform: translateY(-1px);
+  }
+}
+
+.action.default::after,
+.action.outline::after {
+  content: "";
+  position: absolute;
+  right: 1rem;
+  bottom: 0.36rem;
+  left: 1rem;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 220ms ease;
+  pointer-events: none;
+}
+
+.action.default:hover::after,
+.action.default:focus-visible::after,
+.action.outline:hover::after,
+.action.outline:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.action:active {
+  transform: translateY(0);
+}
+
+.action:focus-visible {
+  outline: 3px solid #d3b28d;
+  outline-offset: 3px;
+}
+
+.actionArrow {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 23px;
+  height: 23px;
+  border: 1px solid rgb(247 243 235 / 40%);
+  border-radius: 50%;
+  color: #fbfafa;
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease;
+}
+
+.actionArrow svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+
+.action.default .actionArrow,
+.action.outline .actionArrow {
+  color: #a85b41;
+  border-color: rgb(23 61 54 / 40%);
+}
+
+.action:hover .actionArrow {
+  border-color: currentColor;
+  transform: translate(2px, -2px);
+}
+
+@media (max-width: 576px) {
+  .action.md {
+    min-height: 44px;
+    padding-inline: 0.7rem;
+    font-size: 0.78rem;
+    gap: 0.4rem;
+  }
+  .actionArrow {
+    width: 19px;
+    height: 19px;
+  }
+}
+
+@media (max-width: 375px) {
+  .action.md {
+    padding-inline: 0.52rem;
+    font-size: 0.75rem;
+  }
+  .action.primary .actionArrow {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .action,
+  .action.default::after,
+  .action.outline::after,
+  .actionArrow {
+    transition: none;
+  }
+  .action:hover,
+  .action:hover .actionArrow {
+    transform: none;
   }
 }

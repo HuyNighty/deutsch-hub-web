@@ -1,0 +1,334 @@
+.hero {
+  --hero-cream: #f7f3eb;
+  --hero-ink: #173d36;
+  --hero-clay: #eac09d;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100svh;
+  overflow: clip;
+  background: #173d36;
+  color: var(--hero-cream);
+  padding: clamp(7.5rem, 22svh, 11rem) max(1.5rem, calc((100vw - 1280px) / 2))
+    6rem;
+}
+.background {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.backgroundImage {
+  position: absolute;
+  inset: -5%;
+  width: 110%;
+  height: 110%;
+  max-width: none;
+  object-fit: cover;
+  filter: saturate(0.8) contrast(1.04);
+  transform-origin: center;
+}
+.imageTint,
+.exitTint,
+.headerLegibility,
+.bottomBlend {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.imageTint {
+  background:
+    linear-gradient(
+      90deg,
+      rgb(8 36 29 / 68%),
+      rgb(8 36 29 / 37%) 57%,
+      rgb(8 36 29 / 43%)
+    ),
+    linear-gradient(
+      180deg,
+      rgb(7 30 25 / 8%) 0%,
+      rgb(7 30 25 / 20%) 58%,
+      rgb(7 30 25 / 65%) 100%
+    );
+}
+.exitTint {
+  background: #143e35;
+}
+/* The existing Header overlay has DARK nav text. Keep the first 72px light. */
+.headerLegibility {
+  background: linear-gradient(
+    180deg,
+    rgb(247 243 235 / 97%) 0%,
+    rgb(247 243 235 / 88%) 70px,
+    rgb(247 243 235 / 36%) 112px,
+    transparent 176px
+  );
+}
+/* The following WorldOpens chapter starts in Soft Stone (#e7e2d6). */
+.bottomBlend {
+  background: linear-gradient(
+    0deg,
+    #e7e2d6 0%,
+    rgb(231 226 214 / 78%) 20px,
+    rgb(231 226 214 / 0%) 124px
+  );
+}
+
+.paperHandoff {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: #e7e2d6;
+  pointer-events: none;
+}
+.arrival {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  flex: 1;
+  min-height: 0;
+}
+.content {
+  width: min(100%, 1000px);
+  padding: clamp(1.5rem, 3vw, 3rem) 0;
+  text-align: center;
+}
+.glassPanel {
+  padding-inline: clamp(1rem, 4vw, 3rem);
+  background: rgb(11 41 33 / 42%);
+  border: 1px solid rgb(255 252 245 / 18%);
+  border-radius: 8px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 24px 65px rgb(0 0 0 / 15%);
+}
+.eyebrow {
+  margin: 0 0 1.8rem;
+  color: #f4d6b8;
+  font: 800 clamp(0.66rem, 0.9vw, 0.78rem)/1.6
+    var(--font-body, Manrope, sans-serif);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 12px rgb(0 0 0 / 45%);
+}
+.title {
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(3.25rem, 6.25vw, 7.3rem);
+  font-weight: 510;
+  letter-spacing: -0.018em;
+  line-height: 1.07;
+  text-wrap: balance;
+  text-shadow: 0 5px 36px rgb(0 0 0 / 38%);
+}
+.title em {
+  display: block;
+  padding-top: 0.07em;
+  font-style: italic;
+  font-weight: 430;
+  color: var(--hero-clay);
+}
+.description {
+  max-width: 640px;
+  margin: 2rem auto 0;
+  font-family: var(--font-body, Manrope, sans-serif);
+  font-size: clamp(0.96rem, 1.2vw, 1.12rem);
+  line-height: 1.8;
+  color: #fbf4e8;
+  text-shadow: 0 2px 14px rgb(0 0 0 / 50%);
+}
+.actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 2.3rem;
+}
+.primaryAction,
+.secondaryAction {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 52px;
+  gap: 1.8rem;
+  padding: 0.82rem 1.15rem;
+  font-family: var(--font-body, Manrope, sans-serif);
+  font-size: 0.84rem;
+  font-weight: 800;
+  line-height: 1.4;
+  text-decoration: none;
+  transition:
+    background 170ms ease,
+    color 170ms ease,
+    border-color 170ms ease;
+}
+.primaryAction {
+  background: #f7f3eb;
+  border: 1px solid #f7f3eb;
+  color: #173d36;
+}
+.primaryAction:hover {
+  background: #e8ccb0;
+  border-color: #e8ccb0;
+  color: #173d36;
+}
+.secondaryAction {
+  background: rgb(10 44 36 / 23%);
+  border: 1px solid rgb(247 243 235 / 83%);
+  color: #fffaf0;
+  backdrop-filter: blur(3px);
+}
+.secondaryAction:hover {
+  background: rgb(247 243 235 / 18%);
+  color: white;
+}
+.primaryAction span,
+.secondaryAction span {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+.studyLink {
+  margin-top: 1.2rem;
+  font-family: var(--font-body, Manrope, sans-serif);
+  font-size: 0.82rem;
+  line-height: 1.8;
+  color: #f1e9db;
+  text-shadow: 0 2px 11px rgb(0 0 0 / 50%);
+}
+.studyLink a {
+  display: inline-flex;
+  gap: 0.35rem;
+  margin-left: 0.3rem;
+  color: white;
+  font-weight: 800;
+  border-bottom: 1px solid #f0d8b8;
+  text-decoration: none;
+}
+.studyLink a:hover {
+  color: var(--hero-clay);
+}
+.hero a:focus-visible {
+  outline: 3px solid #f0c799;
+  outline-offset: 4px;
+}
+.bottomBar {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 0 0.3rem;
+  font-family: var(--font-body, Manrope, sans-serif);
+  color: #ffffff;
+  font-size: 0.69rem;
+  font-weight: 800;
+  letter-spacing: 0.065em;
+  text-transform: uppercase;
+}
+.scrollCue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  text-decoration: none;
+}
+.scrollCue > span {
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+.scrollCue:hover {
+  color: #ffff;
+}
+.edition {
+  text-align: right;
+}
+@media (max-width: 800px) {
+  .hero {
+    min-height: 100svh;
+    padding: 7.25rem 1.5rem 3.5rem;
+  }
+  .title {
+    font-size: clamp(3rem, 9vw, 5.5rem);
+  }
+  .description {
+    max-width: 540px;
+  }
+  .imageTint {
+    background: linear-gradient(0deg, rgb(8 35 29 / 66%), rgb(8 35 29 / 52%));
+  }
+}
+@media (max-width: 580px) {
+  .hero {
+    padding: 6.4rem 1rem 3.4rem;
+  }
+  .content {
+    padding-block: 2rem;
+  }
+  .eyebrow {
+    font-size: 0.59rem;
+    letter-spacing: 0.11em;
+    margin-bottom: 1rem;
+  }
+  .title {
+    font-size: clamp(2.65rem, 11.2vw, 3.9rem);
+    line-height: 1.12;
+  }
+  .description {
+    margin-top: 1.4rem;
+    font-size: 0.92rem;
+    line-height: 1.7;
+  }
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+    margin-top: 1.6rem;
+  }
+  .primaryAction,
+  .secondaryAction {
+    min-height: 48px;
+    width: 100%;
+  }
+  .studyLink {
+    font-size: 0.75rem;
+  }
+  .bottomBar {
+    font-size: 0.59rem;
+  }
+  .edition {
+    display: none;
+  }
+}
+@media (max-height: 680px) and (min-width: 801px) {
+  .hero {
+    padding-top: 7rem;
+    padding-bottom: 3rem;
+  }
+  .content {
+    padding-block: 0.4rem;
+  }
+  .title {
+    font-size: clamp(3.3rem, 5.4vw, 5.7rem);
+  }
+  .description {
+    margin-top: 1rem;
+  }
+  .actions {
+    margin-top: 1.2rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .primaryAction,
+  .secondaryAction {
+    transition: none;
+  }
+  .backgroundImage {
+    filter: saturate(0.8) contrast(1.04);
+  }
+}

@@ -1,0 +1,124 @@
+/* D1-P1: real Content and real Closing in ONE scene, no portal/curtain. */
+.bridge {
+  --color-text-primary: #173d36;
+  --color-text-secondary: #566a5f;
+  --color-feature-content: #a85b41;
+  --color-brand: #173d36;
+  --color-brand-hover: #a85b41;
+  position: relative;
+}
+
+.scrollTrack,
+.stickyViewport,
+.contentLayer,
+.closingLayer {
+  position: relative;
+}
+
+/* The regular two-section flow is a first-class fallback. */
+.bridge[data-mode="natural"] .scrollTrack,
+.bridge[data-mode="natural"] .stickyViewport {
+  height: auto;
+}
+
+@media (min-width: 1021px) and (min-height: 700px) {
+  .bridge[data-mode="pinned"] {
+    /* Preserve JourneyPaths -> Content overlap without Content's native mask. */
+    --seam: clamp(180px, 25svh, 280px);
+    z-index: 3;
+    isolation: isolate;
+    margin-top: calc(-1 * var(--seam));
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 calc(var(--seam) * 0.92)
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 calc(var(--seam) * 0.92)
+    );
+  }
+
+  .bridge[data-mode="pinned"] .scrollTrack {
+    position: relative;
+    height: 260svh;
+  }
+
+  .bridge[data-mode="pinned"] .stickyViewport {
+    position: sticky;
+    top: 72px;
+    height: calc(100svh - 72px);
+    isolation: isolate;
+    overflow: hidden;
+    background-color: #143e35;
+    background-image: url("/images/color/green.jpg");
+    background-size: cover;
+    background-position: center;
+  }
+
+  .bridge[data-mode="pinned"] .contentLayer,
+  .bridge[data-mode="pinned"] .closingLayer {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+  }
+
+  .bridge[data-mode="pinned"] .contentLayer {
+    z-index: 2;
+  }
+
+  .bridge[data-mode="pinned"] .closingLayer {
+    z-index: 1;
+  }
+}
+
+/* J25-D1-P4: section collision correction */
+
+/* Pinned scene begins AFTER Journey Paths, not over its Study card. */
+@media (min-width: 1021px) and (min-height: 700px) {
+  .bridge[data-mode="pinned"] {
+    margin-top: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  /* Also prevent the old Content seam in natural fallback. */
+  .bridge[data-mode="natural"] :global(#home-stories) {
+    margin-top: 0;
+    padding-top: clamp(4.75rem, 8vw, 8rem);
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+/* J2.5-D1-P5 — soften the seam above Content M2 */
+.bridge {
+  position: relative;
+}
+
+.bridge::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: clamp(140px, 18svh, 220px);
+  pointer-events: none;
+  z-index: 1;
+
+  background: linear-gradient(
+    to bottom,
+    rgb(6 36 40 / 0.88) 0%,
+    rgb(9 52 49 / 0.62) 28%,
+    rgb(20 78 61 / 0.28) 58%,
+    rgb(20 78 61 / 0) 100%
+  );
+}
+
+/* Keep content above the soft seam */
+.bridge[data-mode="pinned"] :global(#home-stories),
+.bridge[data-mode="natural"] :global(#home-stories),
+.closingMount {
+  position: relative;
+  z-index: 2;
+}

@@ -102,26 +102,50 @@ export default function Header() {
           </span>
         </Link>
 
-        <div className={cx("mobile-disclosure")} onKeyDown={(event) => {
-          if (event.key === "Escape" && mobileOpen) {
-            event.preventDefault();
-            setMobileOpen(false);
-            mobileTrigger.current.focus();
-          }
-        }}>
-          <button ref={mobileTrigger} type="button" className={cx("mobile-trigger")}
-            aria-label="Điều hướng công khai" aria-expanded={mobileOpen}
-            aria-controls="mobile-public-navigation" onClick={() => setMobileOpen(open => !open)}>
+        <div
+          className={cx("mobile-disclosure")}
+          onKeyDown={(event) => {
+            if (event.key === "Escape" && mobileOpen) {
+              event.preventDefault();
+              setMobileOpen(false);
+              mobileTrigger.current.focus();
+            }
+          }}
+        >
+          <button
+            ref={mobileTrigger}
+            type="button"
+            className={cx("mobile-trigger")}
+            aria-label="Điều hướng công khai"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-public-navigation"
+            onClick={() => setMobileOpen((open) => !open)}
+          >
             <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24">
-              <path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" strokeWidth="2" />
+              <path
+                d="M4 6h16M4 12h16M4 18h16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
             </svg>
           </button>
-          <nav id="mobile-public-navigation" hidden={!mobileOpen}
-            className={cx("mobile-navigation")} aria-label="Điều hướng chính trên thiết bị di động">
-            {navigationItems.map(item => (
-              <NavLink key={item.path} to={item.path} replace={item.path === "/study-in-germany" ? false : undefined}
+          <nav
+            id="mobile-public-navigation"
+            hidden={!mobileOpen}
+            className={cx("mobile-navigation")}
+            aria-label="Điều hướng chính trên thiết bị di động"
+          >
+            {navigationItems.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                replace={item.path === "/study-in-germany" ? false : undefined}
                 onClick={() => setMobileOpen(false)}
-                className={({ isActive }) => cx("nav-link", item.color, { active: isActive })}>
+                className={({ isActive }) =>
+                  cx("nav-link", item.color, { active: isActive })
+                }
+              >
                 {item.label}
               </NavLink>
             ))}
@@ -130,7 +154,7 @@ export default function Header() {
 
         <nav className={cx("navigation")} aria-label="Điều hướng chính">
           {navigationItems.map((item) => (
-            <NavLink
+            <AppLink
               key={item.path}
               to={item.path}
               replace={item.path === "/study-in-germany" ? false : undefined}
@@ -139,20 +163,35 @@ export default function Header() {
                   active: isActive,
                 })
               }
+              variant="defaul"
+              appearance="action"
+              size="sm"
             >
               {item.label}
-            </NavLink>
+            </AppLink>
           ))}
         </nav>
 
         <div className={cx("actions")}>
           {isAuthenticated ? (
             <>
-              <AppLink to="/my-learning" variant="outline">
+              <AppLink
+                to="/my-learning"
+                variant="default"
+                appearance="action"
+                size="sm"
+              >
                 Học tập của tôi
               </AppLink>
 
-              <AppLink to="/my-learning/assessments" variant="outline" className={cx("assessment-shortcut")}>
+              <AppLink
+                to="/my-learning/assessments"
+                variant="primary"
+                className={cx("assessment-shortcut")}
+                appearance="action"
+                showArrow
+                size="sm"
+              >
                 Bài đánh giá
               </AppLink>
 
@@ -164,7 +203,11 @@ export default function Header() {
                 🔔
               </Button>
 
-              <AppLink to="/account" className={cx("user")} aria-label="Tài khoản">
+              <AppLink
+                to="/account"
+                className={cx("user")}
+                aria-label="Tài khoản"
+              >
                 <span className={cx("avatar")}>
                   {user?.id?.charAt(0)?.toUpperCase() ?? "U"}
                 </span>
@@ -174,11 +217,16 @@ export default function Header() {
             </>
           ) : (
             <>
-              <AppLink to="/login" variant="outline">
+              <AppLink to="/login" variant="default" appearance="action">
                 Đăng nhập
               </AppLink>
 
-              <AppLink to="/register" variant="primary">
+              <AppLink
+                to="/register"
+                variant="primary"
+                appearance="action"
+                showArrow
+              >
                 Đăng ký
               </AppLink>
             </>

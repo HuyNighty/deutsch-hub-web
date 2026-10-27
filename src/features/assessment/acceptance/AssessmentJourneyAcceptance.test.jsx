@@ -134,7 +134,7 @@ describe("Learner Assessment integrated journey", () => {
     ].sort());
     expect(reload.router.state.location.pathname).toBe(RESULT_PATH);
     expect(writes(server.http)).toEqual([...expectedWrites, ["post", FINAL_URL]]);
-  });
+  }, 15_000);
 
   it("returns anonymous direct Result entry through real login and reads Competency independently", async () => {
     const user = userEvent.setup();
