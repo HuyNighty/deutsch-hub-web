@@ -69,7 +69,8 @@ describe("Course detail enrollment actions", () => {
     const { http } = mountCourse({ handler: (config) => ok(config, detail) });
     const title = await screen.findByRole("heading", { name: detail.title, level: 1 });
     const main = title.closest("main");
-    expect(main).toHaveAttribute("lang", "vi");
+    expect(screen.getAllByRole("main")).toEqual([main]);
+    expect(title.closest("[lang]")).toHaveAttribute("lang", "vi");
     expect(screen.getByText(detail.description)).toBeVisible();
     expect(screen.getByRole("link", { name: /Quay lại tất cả khóa học/ })).toHaveAttribute("href", "/learn-german");
     expect(screen.getByText("Trình độ A1")).toBeVisible();
@@ -86,8 +87,9 @@ describe("Course detail enrollment actions", () => {
       expect(within(sections[index]).getAllByRole("heading", { level: 4 }).map((node) => node.textContent)).toEqual(section.lessons.map((lesson) => lesson.title));
       for (const lesson of section.lessons) expect(within(sections[index]).getByText(lesson.description)).toBeVisible();
     }
-    expect(within(sections[0]).getByText("2 bài học · 25 phút")).toBeVisible();
-    expect(within(sections[1]).getByText("1 bài học · 12 phút")).toBeVisible();
+    expect(within(sections[0]).getByText("2 bài học")).toBeVisible();
+    expect(within(sections[1]).getByText("1 bài học")).toBeVisible();
+    expect(within(curriculum).queryByText(/bài học · .*phút/)).not.toBeInTheDocument();
     expect(within(curriculum).getByText("17 phút")).toBeVisible();
     const preview = within(curriculum).getByText("Bài học xem trước");
     expect(preview.tagName).toBe("SPAN");
@@ -96,6 +98,25 @@ describe("Course detail enrollment actions", () => {
     expect(within(curriculum).queryByRole("link")).not.toBeInTheDocument();
     expect(within(curriculum).getAllByText("Bài học xem trước")).toHaveLength(1);
     expect(requests(http)).toEqual([["get", viewerUrl]]);
+  });
+
+  it("keeps lesson counts without displaying a partial section duration", async () => {
+    const detail = courseDetail();
+    const [first, second] = detail.sections[0].lessons;
+    const { estimatedMinutes, ...withoutDuration } = second;
+    detail.sections[0].lessons = [
+      first,
+      withoutDuration,
+      { ...second, id: "lesson-zero", title: "Zero-minute lesson", estimatedMinutes: 0 },
+    ];
+    mountCourse({ handler: (config) => ok(config, detail) });
+
+    const section = within(await screen.findByRole("region", { name: "Nội dung khóa học" })).getByRole("article");
+    expect(within(section).getByText("3 bài học", { exact: true })).toBeVisible();
+    expect(within(section).queryByText(/bài học · .*phút/)).not.toBeInTheDocument();
+    expect(within(section).getAllByRole("listitem")).toHaveLength(3);
+    expect(within(section).getByText(`${estimatedMinutes} phút`)).toBeVisible();
+    expect(within(section).getByText("0 phút", { exact: true })).toBeVisible();
   });
 
   it.each([
@@ -232,6 +253,16 @@ describe("Course detail enrollment actions", () => {
     await screen.findByRole("heading", { name: "Không tìm thấy tài nguyên" });
     expect(screen.queryByRole("button", { name: "Xem lại khóa học" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Đăng ký khóa học" })).not.toBeInTheDocument();
+    expect(requests(http)).toEqual([["get", viewerUrl]]);
+  });
+
+  it("keeps a viewer GET 403 neutral and renders no course action", async () => {
+    const { http } = mountCourse({ handler: (config) => fail(config, 403) });
+    const main = screen.getByRole("main");
+    expect(await within(main).findByRole("heading", { name: "Không có quyền truy cập" })).toBeVisible();
+    expect(within(main).getByText("Bạn không có quyền truy cập tài nguyên này.")).toBeVisible();
+    expect(within(main).queryByRole("complementary")).not.toBeInTheDocument();
+    expect(within(main).queryByRole("button")).not.toBeInTheDocument();
     expect(requests(http)).toEqual([["get", viewerUrl]]);
   });
 });

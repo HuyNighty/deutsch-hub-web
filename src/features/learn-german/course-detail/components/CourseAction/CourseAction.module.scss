@@ -1,56 +1,56 @@
 .action {
   position: sticky;
-  top: 100px;
+  top: calc(var(--detail-header-space, 73px) + 1rem);
+  display: grid;
+  min-width: 0;
+  gap: var(--space-4);
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  border: 1px solid var(--detail-line, #d5cec1);
+  border-radius: 8px;
+  background: var(--detail-card, #fffaf2);
+  color: var(--detail-ink, #173d36);
 
-  display: flex;
-  flex-direction: column;
+  > p {
+    overflow-wrap: anywhere;
+  }
 
-  padding: var(--space-6);
+  button {
+    min-height: 44px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
 
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-
-  background: var(--color-surface);
-
-  box-shadow: var(--shadow-sm);
+  button:focus-visible {
+    outline: 3px solid var(--detail-ink, #173d36);
+    outline-offset: 3px;
+  }
 }
 
 .header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  gap: var(--space-3);
+  display: grid;
+  justify-items: start;
+  gap: var(--space-2);
 }
 
 .label {
-  color: var(--color-text-muted);
-
+  color: var(--detail-muted, #315749);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
-
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
 }
 
 .status {
   padding: 0.35rem 0.65rem;
-
   border-radius: var(--radius-pill);
-
-  background: var(--color-feature-learning-soft);
-
-  color: var(--color-feature-learning);
-
-  font-size: var(--font-size-xs);
+  background: #f3e2d0;
+  color: var(--detail-ink, #173d36);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
+  overflow-wrap: anywhere;
 }
 
 .divider {
-  height: 1px;
-
-  margin-block: var(--space-5);
-
-  background: var(--color-border);
+  border-block-start: 1px solid var(--detail-line, #d5cec1);
 }
 
 .button {
