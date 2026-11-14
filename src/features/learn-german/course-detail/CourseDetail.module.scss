@@ -1,56 +1,65 @@
 .page {
-  @include container;
+  --detail-paper: #f7f3eb;
+  --detail-card: #fffaf2;
+  --detail-ink: #173d36;
+  --detail-muted: #315749;
+  --detail-peach: #efc298;
+  --detail-line: #d5cec1;
+  --detail-header-space: 73px;
+  --detail-gutter: clamp(1rem, 4vw, 3rem);
 
-  padding-block: var(--space-10) var(--space-16);
-  padding-block-start: calc(72px + var(--space-10));
+  display: grid;
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  padding-inline: max(var(--detail-gutter), calc((100% - 1200px) / 2));
+  padding-block:
+    calc(var(--detail-header-space) + clamp(1.5rem, 3vw, 3rem))
+    clamp(2.5rem, 6vw, 5rem);
+  background: var(--detail-paper);
+  color: var(--detail-ink);
+  font-family: var(--font-body);
 }
 
 .top {
   display: grid;
-
-  grid-template-columns:
-    minmax(0, 1fr)
-    320px;
-
-  gap: var(--space-10);
-
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, 28%);
   align-items: start;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
 }
 
-.top > :first-child {
-  min-width: 0;
-}
+.status-view {
+  min-height: 24rem;
+  align-content: start;
+  justify-items: center;
+  gap: var(--space-3);
+  text-align: center;
 
-@include lg {
-  .top {
-    grid-template-columns:
-      minmax(0, 1fr)
-      280px;
+  > h2 {
+    font-family: var(--font-display);
+  }
 
-    gap: var(--space-8);
+  > p {
+    max-width: 48ch;
+    color: var(--detail-muted);
+    overflow-wrap: anywhere;
+  }
+
+  > button {
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--detail-ink);
+    border-radius: 4px;
+    background: var(--detail-ink);
+    color: var(--detail-paper);
+  }
+
+  > button:focus-visible {
+    outline: 3px solid var(--detail-ink);
+    outline-offset: 3px;
   }
 }
 
 @include md {
-  .page {
-    padding-block: var(--space-8) var(--space-12);
-    padding-block-start: calc(64px + var(--space-8));
-  }
-
   .top {
-    grid-template-columns: 1fr;
-
-    gap: var(--space-6);
-  }
-}
-
-@include sm {
-  .page {
-    padding-block: var(--space-6) var(--space-10);
-    padding-block-start: calc(64px + var(--space-6));
-  }
-
-  .top {
-    gap: var(--space-6);
+    grid-template-columns: minmax(0, 1fr);
   }
 }

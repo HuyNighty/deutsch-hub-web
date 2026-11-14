@@ -8,22 +8,18 @@ const cx = classNames.bind(styles);
 export default function CourseSection({ section, index }) {
   const lessons = section.lessons ?? [];
 
-  const totalMinutes = lessons.reduce(
-    (total, lesson) => total + (lesson.estimatedMinutes ?? 0),
-    0,
-  );
 
   return (
     <article className={cx("section")}>
       <header className={cx("header")}>
         <div className={cx("number")}>{String(index + 1).padStart(2, "0")}</div>
 
-        <div className={cx("content")}>
+        <div>
           <div className={cx("title-row")}>
             <h3 className={cx("title")}>{section.title}</h3>
 
             <span className={cx("meta")}>
-              {lessons.length} bài học · {totalMinutes} phút
+              {lessons.length} bài học
             </span>
           </div>
 

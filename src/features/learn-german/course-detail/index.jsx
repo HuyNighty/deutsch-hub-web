@@ -19,29 +19,31 @@ export default function CourseDetail() {
   const { course, loading, error, refetch } = useCourseDetail(courseId);
 
   return (
-    <ResourceState
-      loading={loading}
-      error={error}
-      errorProps={{
-        onRetry: refetch,
-      }}
-    >
-      {course && (
-        <main lang="vi" className={cx("page")}>
-          <div className={cx("top")}>
-            <CourseHeader course={course} />
+    <div lang="vi" className={cx("page", { "status-view": loading || error })}>
+      <ResourceState
+        loading={loading}
+        error={error}
+        errorProps={{
+          onRetry: refetch,
+        }}
+      >
+        {course && (
+          <>
+            <div className={cx("top")}>
+              <CourseHeader course={course} />
 
-            <CourseAction
-              courseId={courseId}
-              enrollmentStatus={course.enrollmentStatus}
-            />
-          </div>
+              <CourseAction
+                courseId={courseId}
+                enrollmentStatus={course.enrollmentStatus}
+              />
+            </div>
 
-          <CourseOverview course={course} />
+            <CourseOverview course={course} />
 
-          <CourseSectionList sections={course.sections} />
-        </main>
-      )}
-    </ResourceState>
+            <CourseSectionList sections={course.sections} />
+          </>
+        )}
+      </ResourceState>
+    </div>
   );
 }
