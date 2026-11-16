@@ -613,6 +613,15 @@
 .header.catalogThemeLight .brand-mark { background: #0a6035; color: #fff; }
 .header.catalogThemeDark .brand-mark { background: #d6eb93; color: #0e2b22; }
 .header.catalogThemeDark .mobile-trigger { color: #f8f4df; background: #092c26; border-color: #37574e; }
+/* Dark Catalogue mobile menu must not pair cream links with the global white surface. */
+.header.catalogThemeDark .mobile-navigation {
+  background: #092c26;
+  border-color: #37574e;
+}
+.header.catalogThemeDark .mobile-navigation .nav-link:focus-visible,
+.header.catalogThemeDark .mobile-trigger:focus-visible {
+  outline-color: #eea743;
+}
 .header.catalogThemeDark .nav-link:hover,
 .header.catalogThemeDark .nav-link.active { color: #d6eb93; background: rgba(214,235,147,.10); }
 .header.catalogThemeDark .actions a { color: #f8f4df; border-color: #37574e; }
