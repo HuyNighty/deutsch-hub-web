@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import { AppLink } from "@/shared/ui/components/app-link";
 
 import classNames from "classnames/bind";
@@ -6,51 +7,41 @@ import styles from "./Footer.module.scss";
 const cx = classNames.bind(styles);
 
 const featureLinks = [
-  {
-    label: "Học tiếng Đức",
-    to: "/learn-german",
-    color: "learning",
-  },
-  {
-    label: "Khám phá nước Đức",
-    to: "/explore-germany",
-    color: "content",
-  },
-  {
-    label: "Du học Đức",
-    to: "/study-in-germany",
-    color: "study",
-  },
-  {
-    label: "Giao lưu",
-    to: "/experiences",
-    color: "communication",
-  },
+  { label: "Học tiếng Đức", to: "/learn-german", color: "learning" },
+  { label: "Khám phá nước Đức", to: "/explore-germany", color: "content" },
+  { label: "Du học Đức", to: "/study-in-germany", color: "study" },
+  { label: "Giao lưu", to: "/experiences", color: "communication" },
 ];
 
 const platformLinks = [
-  {
-    label: "Về DeutschHub",
-    to: "/",
-  },
-  {
-    label: "Tài khoản",
-    to: "/account",
-  },
+  { label: "Về DeutschHub", to: "/" },
+  { label: "Tài khoản", to: "/account" },
 ];
 
 export default function Footer() {
+  const { pathname } = useLocation();
+  const isHome = pathname === "/";
+
   return (
-    <footer className={cx("footer")} lang="vi">
+    <footer className={cx("footer", { "home-footer": isHome })} lang="vi">
       <div className={cx("container")}>
         <div className={cx("main")}>
           <div className={cx("brand-section")}>
-            <AppLink to="/" variant="dark" className={cx("brand")} aria-label="Trang chủ DeutschHub">
+            <AppLink
+              to="/"
+              variant="dark"
+              className={cx("brand")}
+              aria-label="Trang chủ DeutschHub"
+            >
               <span className={cx("brand-mark")}>D</span>
-
               <span className={cx("brand-name")}>DeutschHub</span>
             </AppLink>
 
+            <p className={cx("eyebrow")}>DEUTSCHHUB · THE QUIET UNFOLDING</p>
+            <p className={cx("editorial")}>
+              Từ một lời chào,
+              <em>mở ra cả thế giới.</em>
+            </p>
             <p className={cx("description")}>
               Học tiếng Đức, tìm hiểu nước Đức và xây dựng tương lai của bạn
               trên cùng một nền tảng.
@@ -59,7 +50,6 @@ export default function Footer() {
 
           <div className={cx("link-group")}>
             <h2>Khám phá</h2>
-
             <nav aria-label="Điều hướng tính năng">
               <ul>
                 {featureLinks.map((link) => (
@@ -79,7 +69,6 @@ export default function Footer() {
 
           <div className={cx("link-group")}>
             <h2>DeutschHub</h2>
-
             <nav aria-label="Điều hướng DeutschHub">
               <ul>
                 {platformLinks.map((link) => (
@@ -100,7 +89,6 @@ export default function Footer() {
 
         <div className={cx("bottom")}>
           <span>© 2026 DeutschHub</span>
-
           <span>Học tập · Khám phá · Kết nối</span>
         </div>
       </div>

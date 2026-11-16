@@ -1,0 +1,426 @@
+/* DeutschHub Closing J2.5 — Soft Dissolve.
+   Important: only the BLUE SCENE has a photo. The section is solid Forest.
+   No negative margins, section-level mask, or background-image tiling. */
+
+.section {
+  --closing-forest: #143e35;
+  --closing-blue: #5488b3;
+  --closing-paper: #f7f3eb;
+  --closing-peach: #f4c9a9;
+
+  position: relative;
+  z-index: 4;
+  isolation: isolate;
+  overflow: clip;
+  background: var(--closing-forest);
+  color: var(--closing-paper);
+}
+
+.scrollTrack {
+  position: relative;
+  height: 165svh; /* short editorial scene; no extended holding frame */
+}
+
+.stickyViewport {
+  position: sticky;
+  top: 72px; /* height of the fixed site header */
+  width: 100%;
+  height: calc(100svh - 72px);
+  min-height: 0;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--closing-forest); /* fallback under crossfading lake photo */
+}
+
+/* Entire frame is crossfaded with opacity; no clipping seam. */
+.blueScene {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.backgroundPhoto {
+  position: absolute;
+  inset: -2%; /* extra pixels for gentle scale-down, not repeated tiling */
+  background-color: #367b9c;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.blueTint {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(5 32 54 / 44%) 0%,
+      rgb(5 32 54 / 19%) 48%,
+      rgb(5 32 54 / 39%) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgb(5 32 54 / 18%) 0%,
+      transparent 40%,
+      rgb(5 32 54 / 45%) 100%
+    );
+}
+
+.scene {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: min(1660px, 100%);
+  height: 100%;
+  margin-inline: auto;
+  padding: clamp(2.5rem, 5svh, 5.5rem) clamp(1.25rem, 4vw, 4.5rem);
+}
+
+.gallery {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+
+.postcard {
+  position: absolute;
+  width: clamp(144px, 14vw, 220px);
+  margin: 0;
+  padding: 7px 7px 10px;
+  border: 1px solid rgb(231 242 242 / 82%);
+  background: #f3f6f3;
+  box-shadow: 0 20px 46px rgb(5 35 54 / 28%);
+  transform-origin: center 60%;
+}
+
+.photoFrame {
+  width: 100%;
+  aspect-ratio: 0.82;
+  overflow: hidden;
+  background: #abc8c8;
+}
+
+.photoFrame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 47%;
+  filter: saturate(0.86) contrast(0.97);
+}
+
+.photoCaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin: 0.65rem 0.15rem 0;
+  color: #41667a;
+  font: 750 0.6rem/1.4 var(--font-body, Manrope, sans-serif);
+  letter-spacing: 0.03em;
+}
+
+.photoCaption span:last-child {
+  text-align: right;
+}
+
+/* Top clearance is intentional: translated/rotated photos stay inside viewport. */
+.lane {
+  left: 3%;
+  top: 25%;
+  z-index: 1;
+}
+
+.window {
+  right: 3%;
+  top: clamp(115px, 16svh, 180px);
+  z-index: 2;
+}
+
+.garden {
+  right: 5%;
+  bottom: 3%;
+  z-index: 1;
+  width: clamp(116px, 11vw, 174px);
+}
+
+.garden .photoFrame {
+  aspect-ratio: 0.94;
+}
+
+.copy {
+  position: relative;
+  z-index: 3;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(690px, 56%);
+  padding: clamp(1.1rem, 2.1vw, 2.25rem);
+  text-align: center;
+}
+
+/* Organic subtle vignette, not a rectangular glass panel. */
+.copy::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -1.5rem -2rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgb(4 29 49 / 45%) 0%,
+    rgb(4 29 49 / 18%) 48%,
+    transparent 76%
+  );
+  pointer-events: none;
+}
+
+.eyebrow {
+  margin: 0 0 clamp(1rem, 2vw, 1.6rem);
+  color: #e0f0f3;
+  font: 800 0.65rem/1.5 var(--font-body, Manrope, sans-serif);
+  letter-spacing: 0.13em;
+  text-shadow: 0 2px 10px rgb(4 29 49 / 45%);
+}
+
+.title {
+  margin: 0;
+  color: var(--closing-paper);
+  font: 520 clamp(3rem, 5vw, 6.25rem)/1.08
+    var(--font-display, Fraunces, Georgia, serif);
+  letter-spacing: -0.043em;
+  text-wrap: balance;
+  text-shadow: 0 4px 25px rgb(4 29 49 / 38%);
+}
+
+.title em {
+  display: block;
+  margin-top: 0.13em;
+  color: var(--closing-peach);
+  font-style: italic;
+  font-weight: 440;
+}
+
+.description {
+  max-width: 38ch;
+  margin: clamp(1rem, 2vw, 1.8rem) auto 0;
+  color: #f0f7f5;
+  font: 450 clamp(0.88rem, 1vw, 1.04rem)/1.7
+    var(--font-body, Manrope, sans-serif);
+  text-shadow: 0 2px 12px rgb(4 29 49 / 55%);
+}
+
+.actionRow {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(1.25rem, 2.4vw, 2rem);
+}
+
+.section .action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  min-height: 50px;
+  padding: 0.8rem 1.25rem;
+  border: 1px solid var(--closing-blue);
+  border-radius: 4px;
+  background: var(--closing-blue);
+  color: #f6faf8;
+  box-shadow: 0 10px 25px rgb(10 42 65 / 21%);
+  font: 750 0.87rem/1.35 var(--font-body, Manrope, sans-serif);
+  text-decoration: none;
+  transition:
+    background-color 200ms ease,
+    transform 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.section .action:hover {
+  background: #245d80;
+  border-color: #245d80;
+  color: white;
+  box-shadow: 0 14px 30px rgb(10 42 65 / 25%);
+  transform: translateY(-2px);
+}
+
+.section .action:focus-visible {
+  outline: 3px solid var(--closing-peach);
+  outline-offset: 4px;
+}
+
+.actionArrow {
+  color: #d6b48e;
+  font-size: 1.15rem;
+}
+
+.chapterMark {
+  position: absolute;
+  right: 3.5%;
+  bottom: 1.5rem;
+  z-index: 2;
+  color: #f7f3eb;
+  text-shadow: 0 1px 6px #102f48;
+  font: 800 0.62rem/1.5 var(--font-body, Manrope, sans-serif);
+  letter-spacing: 0.13em;
+}
+
+@media (min-width: 1021px) and (max-width: 1240px) {
+  .copy {
+    width: min(620px, 54%);
+  }
+
+  .title {
+    font-size: clamp(2.95rem, 5vw, 5.25rem);
+  }
+
+  .postcard {
+    width: clamp(132px, 13.5vw, 188px);
+  }
+
+  .garden {
+    width: clamp(112px, 11vw, 145px);
+  }
+}
+
+/* Home Motion off, Reduced Motion, or smaller viewports: normal flow. */
+.section[data-closing-motion="off"] .scrollTrack {
+  height: auto;
+}
+
+.section[data-closing-motion="off"] .stickyViewport {
+  position: relative;
+  top: auto;
+  height: auto;
+  min-height: 0;
+}
+
+.section[data-closing-motion="off"] .scene {
+  display: flex;
+  flex-direction: column;
+  gap: 2.3rem;
+  min-height: 0;
+  padding: 5rem 1.5rem 4rem;
+}
+
+.section[data-closing-motion="off"] .copy {
+  order: 0;
+  width: min(740px, 100%);
+  max-width: 100%;
+}
+
+.section[data-closing-motion="off"] .gallery {
+  order: 1;
+  position: relative;
+  inset: auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 1rem;
+  width: min(760px, 100%);
+  margin: 0 auto;
+}
+
+.section[data-closing-motion="off"] .postcard {
+  position: relative;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  width: 100%;
+}
+
+.section[data-closing-motion="off"] .chapterMark {
+  display: none;
+}
+
+/* In static mode the blue photo is visible immediately; no clipped reveal. */
+.section[data-closing-motion="off"] .blueScene {
+  clip-path: none;
+}
+
+@media (max-width: 680px) {
+  .section[data-closing-motion="off"] .scene {
+    gap: 1.5rem;
+    padding: 3.75rem 1rem 3rem;
+  }
+
+  .title {
+    font-size: clamp(2.5rem, 10vw, 4.2rem);
+  }
+
+  .eyebrow {
+    font-size: 0.56rem;
+    letter-spacing: 0.075em;
+  }
+
+  .description {
+    font-size: 0.91rem;
+  }
+
+  .section[data-closing-motion="off"] .gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .section[data-closing-motion="off"] .garden {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: 52%;
+  }
+
+  .photoCaption {
+    font-size: 0.53rem;
+  }
+
+  .actionRow {
+    width: 100%;
+  }
+
+  .section .action {
+    width: min(100%, 320px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backgroundPhoto {
+    will-change: auto;
+  }
+
+  .section .action {
+    transition: none;
+  }
+
+  .section .action:hover {
+    transform: none;
+  }
+}
+
+/* D1-P1: the REAL Closing lives in the SAME pinned viewport as Content. */
+.section[data-handoff="on"] {
+  z-index: auto;
+  isolation: auto;
+  height: 100%;
+  overflow: visible;
+  background: transparent;
+}
+.section[data-handoff="on"] .scrollTrack,
+.section[data-handoff="on"] .stickyViewport {
+  position: relative;
+  top: auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: visible;
+  background: transparent;
+}
+.section[data-handoff="on"] .stickyViewport {
+  isolation: auto;
+}

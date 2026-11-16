@@ -1,0 +1,535 @@
+.chapter {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  background: #e7e2d6;
+  color: #173d36;
+}
+
+@media (min-width: 1021px) and (min-height: 700px) {
+  .chapter[data-motion-enabled="true"] {
+    --home-seam-depth: clamp(170px, 23svh, 280px);
+    z-index: 2;
+    margin-top: calc(-1 * var(--home-seam-depth));
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 var(--home-seam-depth)
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 var(--home-seam-depth)
+    );
+    pointer-events: none;
+  }
+  .chapter[data-motion-enabled="true"] .bridgeAction {
+    pointer-events: auto;
+  }
+}
+
+.forestWash {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: #143e35;
+  pointer-events: none;
+}
+
+/* HOW LONG THE SCROLL STORY LASTS — change to 300svh if needed. */
+.scrollScene {
+  position: relative;
+  z-index: 1;
+  height: 260svh;
+}
+
+.stickyViewport {
+  position: sticky;
+  top: 72px; /* existing fixed Home header */
+  height: calc(100svh - 72px);
+  min-height: 620px;
+  display: flex;
+  align-items: center;
+  isolation: isolate;
+}
+
+/* Full-screen opening background */
+.openingBackground {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  background-color: #e7e2d6;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+
+  pointer-events: none;
+}
+
+/* Soft paper overlay: keeps dark typography readable */
+.openingBackground::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    90deg,
+    rgb(247 243 235 / 92%) 0%,
+    rgb(247 243 235 / 78%) 45%,
+    rgb(247 243 235 / 62%) 100%
+  );
+}
+
+.openingBackground::after {
+  background: linear-gradient(
+    90deg,
+    rgb(247 243 235 / 82%) 0%,
+    rgb(247 243 235 / 55%) 50%,
+    rgb(247 243 235 / 30%) 100%
+  );
+}
+
+.sceneInner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 0.94fr) minmax(0, 1.06fr);
+  align-items: center;
+  gap: clamp(1.75rem, 4vw, 5rem);
+  width: min(1280px, calc(100% - 3rem));
+  height: 100%;
+  margin-inline: auto;
+}
+
+.storyCopy {
+  min-width: 0;
+  pointer-events: none;
+}
+
+.eyebrow,
+.bridgeEyebrow {
+  margin: 0 0 1.4rem;
+  font-family: var(--font-body, Manrope, sans-serif);
+  font-size: 0.69rem;
+  line-height: 1.55;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+}
+.eyebrow {
+  color: #745e48;
+}
+
+.storyTitle,
+.bridgeTitle {
+  margin: 0;
+  font-family: var(--font-display, Fraunces, Georgia, serif);
+  font-style: normal;
+  font-weight: 530;
+  letter-spacing: -0.018em;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+.storyTitle {
+  font-size: clamp(3rem, 4.6vw, 5.5rem);
+}
+.storyTitle em,
+.bridgeTitle em {
+  display: block;
+  margin-top: 0.12em;
+  font-style: italic;
+  font-weight: 440;
+}
+.storyTitle em {
+  color: #a85b41;
+}
+
+.storyDescription,
+.bridgeDescription {
+  font-family: var(--font-body, Manrope, sans-serif);
+  line-height: 1.8;
+}
+.storyDescription {
+  max-width: 435px;
+  margin-top: 1.8rem;
+  color: #38584c;
+  font-size: clamp(0.94rem, 1.08vw, 1.06rem);
+}
+.footnote {
+  max-width: 420px;
+  margin-top: 2.2rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid #a9b3a5;
+  font-family: var(--font-body, Manrope, sans-serif);
+  font-weight: 800;
+  font-size: 0.71rem;
+  letter-spacing: 0.045em;
+}
+
+/* Existing two-image presentation, kept for the opening phase. */
+.oldImageGroup {
+  position: relative;
+  height: min(67svh, 650px);
+  min-height: 470px;
+  pointer-events: none;
+}
+.cityFigure,
+.natureFigure {
+  position: absolute;
+  min-width: 0;
+  margin: 0;
+  will-change: transform;
+}
+.cityFigure {
+  z-index: 1;
+  top: 7%;
+  left: 0;
+  width: 75%;
+}
+.natureFigure {
+  z-index: 2;
+  top: 35%;
+  right: 0;
+  width: 42%;
+}
+.photoFrame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1.14;
+  background: #b1b6a8;
+  border: 8px solid #f7f3eb;
+  box-shadow: 0 14px 30px rgb(18 49 37 / 0.17);
+}
+.natureFigure .photoFrame {
+  aspect-ratio: 0.85;
+}
+.photoFrame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photoIndex {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.8rem;
+  color: #fffdf4;
+  text-shadow: 0 2px 6px #0009;
+  font: 800 0.72rem/1.2 var(--font-body, sans-serif);
+}
+.photoCaption {
+  padding-top: 0.6rem;
+  color: #38584c;
+  font: 800 0.68rem/1.5 var(--font-body, sans-serif);
+  letter-spacing: 0.06em;
+}
+.annotation {
+  position: absolute;
+  z-index: 3;
+  bottom: 8%;
+  left: 15%;
+  display: grid;
+  gap: 0.4rem;
+  width: min(320px, 56%);
+  padding: 1rem 1.2rem;
+  color: #f7f3eb;
+  background: #173d36;
+
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(248, 191, 100, 0.78) 0%,
+      rgb(248, 191, 100, 0.78) 50%,
+      rgb(248, 191, 100, 0.78) 100%
+    ),
+    url("/images/color/orange.jpg");
+
+  background-size: cover;
+  background-position: center 45%;
+  background-repeat: no-repeat;
+  box-shadow: 0 16px 28px rgb(22 51 44 / 0.15);
+}
+.annotation span {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(1.35rem, 2.4vw, 2.15rem);
+  font-style: italic;
+  line-height: 1.15;
+}
+.annotation small {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+/* The photo IS the background: fills the whole sticky viewport. */
+.fullBleed {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  overflow: hidden;
+  background: #143e35;
+  pointer-events: none;
+}
+.backgroundImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  transform-origin: 50% 50%;
+}
+.backgroundOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    /* Darken the scene enough for cream type to stay readable. */
+    linear-gradient(
+      90deg,
+      rgb(10 31 27 / 72%) 0%,
+      rgb(10 31 27 / 58%) 45%,
+      rgb(10 31 27 / 43%) 100%
+    ),
+    /* Blend image to the Forest Green of the following Paths section. */
+    linear-gradient(
+        0deg,
+        rgb(20 62 53 / 94%) 0%,
+        rgb(20 62 53 / 32%) 23%,
+        transparent 55%
+      );
+}
+
+/* Editorial text is OVER the image, not in a left-side card. */
+.bridgeLayer {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(1.5rem, 5vw, 5rem);
+}
+.bridgePanel {
+  width: min(100%, 920px);
+  margin-inline: auto;
+  padding: clamp(1rem, 2.5vw, 2.4rem);
+  text-align: center;
+  color: #f7f3eb;
+}
+/* Optional: enable USE_GLASS_PANEL in JSX for text-heavy photographs. */
+.glassPanel {
+  border: 1px solid rgb(255 250 238 / 19%);
+  background: rgb(7 35 28 / 42%);
+  box-shadow: 0 18px 50px rgb(0 20 14 / 22%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.bridgeEyebrow {
+  color: #f4c99b;
+  text-shadow: 0 2px 12px rgb(0 0 0 / 28%);
+}
+.bridgeTitle {
+  font-size: clamp(3.2rem, 6.8vw, 7.2rem);
+  color: #f7f3eb;
+  text-shadow: 0 5px 20px rgb(0 0 0 / 28%);
+}
+.bridgeTitle em {
+  color: #efc298;
+}
+.bridgeDescription {
+  max-width: 570px;
+  margin: 1.5rem auto 0;
+  color: #f5efe6;
+  font-size: clamp(0.92rem, 1.14vw, 1.08rem);
+  text-shadow: 0 2px 10px rgb(0 0 0 / 35%);
+}
+.bridgeAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid #efc298;
+  color: #f8ddbf;
+  font-family: var(--font-body, Manrope, sans-serif);
+  font-size: 0.87rem;
+  font-weight: 800;
+  text-decoration: none;
+  text-shadow: 0 2px 10px rgb(0 0 0 / 28%);
+}
+.bridgeAction:hover {
+  color: white;
+}
+.bridgeAction:focus-visible {
+  outline: 3px solid #efc298;
+  outline-offset: 5px;
+}
+
+.motionMeter {
+  position: absolute;
+  right: 2rem;
+  top: 0.7rem;
+  z-index: 8;
+  min-width: 220px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #9fa99e;
+  background: #f7f3eb;
+  color: #173d36;
+  font: 800 0.65rem/1.3 var(--font-body, sans-serif);
+  pointer-events: none;
+}
+.motionTrack {
+  height: 4px;
+  margin-top: 0.4rem;
+  background: #c8cfc7;
+  overflow: hidden;
+}
+.motionFill {
+  width: 100%;
+  height: 100%;
+  background: #a85b41;
+  transform-origin: 0 50%;
+}
+
+/* Adjacent Paths section shares Forest Green; no extra tall top padding. */
+:global(section[data-world-m14-paths]) {
+  padding-top: clamp(3.2rem, 5vw, 5rem);
+}
+
+/* Static fallback: original story followed by an 85svh photo scene. */
+[data-motion-enabled="false"] .forestWash {
+  display: none;
+}
+[data-motion-enabled="false"] .scrollScene {
+  height: auto;
+}
+[data-motion-enabled="false"] .stickyViewport {
+  --static-photo-height: max(540px, 85svh);
+  position: relative;
+  top: auto;
+  display: block;
+  height: auto;
+  min-height: 0;
+}
+[data-motion-enabled="false"] .sceneInner {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  height: auto;
+  padding-block: 5rem 7rem;
+}
+[data-motion-enabled="false"] .storyCopy,
+[data-motion-enabled="false"] .oldImageGroup {
+  pointer-events: auto;
+}
+[data-motion-enabled="false"] .oldImageGroup {
+  height: 500px;
+  min-height: 0;
+}
+[data-motion-enabled="false"] .fullBleed {
+  position: relative;
+  inset: auto;
+  height: var(--static-photo-height);
+}
+[data-motion-enabled="false"] .bridgeLayer {
+  position: relative;
+  inset: auto;
+  height: var(--static-photo-height);
+  margin-top: calc(-1 * var(--static-photo-height));
+}
+[data-motion-enabled="false"] .motionMeter {
+  display: none;
+}
+
+@media (max-width: 1020px), (max-height: 699px) {
+  [data-motion-enabled="false"] .sceneInner {
+    grid-template-columns: 1fr;
+    width: min(720px, calc(100% - 3rem));
+    gap: 2.5rem;
+  }
+  [data-motion-enabled="false"] .oldImageGroup {
+    width: min(100%, 640px);
+    height: 520px;
+    margin-inline: auto;
+  }
+}
+@media (max-width: 580px) {
+  [data-motion-enabled="false"] .sceneInner {
+    width: calc(100% - 2rem);
+    gap: 2rem;
+    padding-block: 3rem 4rem;
+  }
+  .storyTitle {
+    font-size: clamp(2.4rem, 10.5vw, 3.6rem);
+  }
+  .bridgeTitle {
+    font-size: clamp(2.6rem, 11vw, 4.4rem);
+  }
+  .storyDescription,
+  .bridgeDescription {
+    font-size: 0.92rem;
+  }
+  [data-motion-enabled="false"] .oldImageGroup {
+    height: 360px;
+  }
+  .cityFigure {
+    width: 78%;
+  }
+  .natureFigure {
+    width: 47%;
+    top: 40%;
+  }
+  .photoFrame {
+    border-width: 5px;
+  }
+  .annotation {
+    left: 6%;
+    bottom: 4%;
+    width: 68%;
+    padding: 0.7rem;
+  }
+  .annotation span {
+    font-size: 1.25rem;
+  }
+  .annotation small {
+    font-size: 0.57rem;
+  }
+  .bridgeLayer {
+    padding: 1.25rem;
+  }
+  .bridgePanel {
+    padding: 1.25rem 0.7rem;
+  }
+  .bridgeEyebrow {
+    font-size: 0.59rem;
+    letter-spacing: 0.06em;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cityFigure,
+  .natureFigure {
+    will-change: auto;
+  }
+  .backgroundImage {
+    transform: none;
+  }
+}
+
+/* DH-SEAMS-S1: WORLD-TO-PATHS — outgoing image dissolves to Forest Green.
+   Spatial (scroll-following) gradient; no section overlap or extra pin. */
+.chapter::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: clamp(190px, 33svh, 340px);
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgb(20 62 53 / 0%) 0%,
+    rgb(20 62 53 / 14%) 28%,
+    rgb(20 62 53 / 55%) 65%,
+    #143e35 100%
+  );
+}
+
+@media (max-width: 1020px), (max-height: 699px) {
+  .chapter::after { height: clamp(110px, 17svh, 210px); }
+}
+/* /DH-SEAMS-S1: WORLD-TO-PATHS */
