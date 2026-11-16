@@ -11,6 +11,12 @@ export default defineConfig({
     restoreMocks: true,
   },
 
+  server: {
+    watch: {
+      usePolling: true,
+    },
+  },
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

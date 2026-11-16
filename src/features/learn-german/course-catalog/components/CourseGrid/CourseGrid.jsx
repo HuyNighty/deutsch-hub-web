@@ -1,18 +1,12 @@
 import classNames from "classnames/bind";
-
 import styles from "./CourseGrid.module.scss";
 import { CourseCard } from "../CourseCard";
-
 const cx = classNames.bind(styles);
 
-function CourseGrid({ courses }) {
+export default function CourseGrid({ courses }) {
   return (
-    <section className={cx("grid")} aria-label="Danh sách khóa học">
-      {courses.map((course) => (
-        <CourseCard key={course.id} course={course} />
-      ))}
-    </section>
+    <div className={cx("grid")}>
+      {courses.map((course) => <CourseCard key={course.id} course={course} />)}
+    </div>
   );
 }
-
-export default CourseGrid;

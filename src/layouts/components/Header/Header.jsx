@@ -4,6 +4,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 
 import { AppLink } from "@/shared/ui/components/app-link";
 import { Button } from "@/shared/ui/components/button";
+import { useCatalogueTheme } from "@/app/providers/CatalogueThemeProvider";
 
 import { useEffect, useRef, useState } from "react";
 
@@ -41,6 +42,8 @@ export default function Header() {
   const { isAuthenticated, user } = useAuth();
 
   const location = useLocation();
+  const { theme, setTheme } = useCatalogueTheme();
+  const isCatalogue = location.pathname === "/learn-german";
 
   const [hasHero, setHasHero] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -91,6 +94,8 @@ export default function Header() {
       className={cx("header", {
         overlay: isOverlay,
         solid: !isOverlay,
+        catalogThemeLight: isCatalogue && theme === "light",
+        catalogThemeDark: isCatalogue && theme === "dark",
       })}
     >
       <div className={cx("container")}>
@@ -102,26 +107,50 @@ export default function Header() {
           </span>
         </Link>
 
-        <div className={cx("mobile-disclosure")} onKeyDown={(event) => {
-          if (event.key === "Escape" && mobileOpen) {
-            event.preventDefault();
-            setMobileOpen(false);
-            mobileTrigger.current.focus();
-          }
-        }}>
-          <button ref={mobileTrigger} type="button" className={cx("mobile-trigger")}
-            aria-label="Điều hướng công khai" aria-expanded={mobileOpen}
-            aria-controls="mobile-public-navigation" onClick={() => setMobileOpen(open => !open)}>
+        <div
+          className={cx("mobile-disclosure")}
+          onKeyDown={(event) => {
+            if (event.key === "Escape" && mobileOpen) {
+              event.preventDefault();
+              setMobileOpen(false);
+              mobileTrigger.current.focus();
+            }
+          }}
+        >
+          <button
+            ref={mobileTrigger}
+            type="button"
+            className={cx("mobile-trigger")}
+            aria-label="Điều hướng công khai"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-public-navigation"
+            onClick={() => setMobileOpen((open) => !open)}
+          >
             <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24">
-              <path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" strokeWidth="2" />
+              <path
+                d="M4 6h16M4 12h16M4 18h16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
             </svg>
           </button>
-          <nav id="mobile-public-navigation" hidden={!mobileOpen}
-            className={cx("mobile-navigation")} aria-label="Điều hướng chính trên thiết bị di động">
-            {navigationItems.map(item => (
-              <NavLink key={item.path} to={item.path} replace={item.path === "/study-in-germany" ? false : undefined}
+          <nav
+            id="mobile-public-navigation"
+            hidden={!mobileOpen}
+            className={cx("mobile-navigation")}
+            aria-label="Điều hướng chính trên thiết bị di động"
+          >
+            {navigationItems.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                replace={item.path === "/study-in-germany" ? false : undefined}
                 onClick={() => setMobileOpen(false)}
-                className={({ isActive }) => cx("nav-link", item.color, { active: isActive })}>
+                className={({ isActive }) =>
+                  cx("nav-link", item.color, { active: isActive })
+                }
+              >
                 {item.label}
               </NavLink>
             ))}
@@ -133,11 +162,8 @@ export default function Header() {
             <NavLink
               key={item.path}
               to={item.path}
-              replace={item.path === "/study-in-germany" ? false : undefined}
               className={({ isActive }) =>
-                cx("nav-link", item.color, {
-                  active: isActive,
-                })
+                cx("nav-link", item.color, { active: isActive })
               }
             >
               {item.label}
@@ -146,13 +172,37 @@ export default function Header() {
         </nav>
 
         <div className={cx("actions")}>
+          {isCatalogue && (
+            <button
+              type="button"
+              className={cx("catalogThemeSwitch")}
+              aria-label={theme === "dark" ? "Chuyển sang giao diện sáng" : "Chuyển sang giao diện tối"}
+              aria-pressed={theme === "dark"}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              title="Đổi giao diện Catalogue"
+            >
+              <span aria-hidden="true">{theme === "dark" ? "☀" : "☾"}</span>
+            </button>
+          )}
           {isAuthenticated ? (
             <>
-              <AppLink to="/my-learning" variant="outline">
+              <AppLink
+                to="/my-learning"
+                variant="default"
+                appearance="action"
+                size="sm"
+              >
                 Học tập của tôi
               </AppLink>
 
-              <AppLink to="/my-learning/assessments" variant="outline" className={cx("assessment-shortcut")}>
+              <AppLink
+                to="/my-learning/assessments"
+                variant="primary"
+                className={cx("assessment-shortcut")}
+                appearance="action"
+                showArrow
+                size="sm"
+              >
                 Bài đánh giá
               </AppLink>
 
@@ -164,7 +214,11 @@ export default function Header() {
                 🔔
               </Button>
 
-              <AppLink to="/account" className={cx("user")} aria-label="Tài khoản">
+              <AppLink
+                to="/account"
+                className={cx("user")}
+                aria-label="Tài khoản"
+              >
                 <span className={cx("avatar")}>
                   {user?.id?.charAt(0)?.toUpperCase() ?? "U"}
                 </span>
@@ -174,11 +228,17 @@ export default function Header() {
             </>
           ) : (
             <>
-              <AppLink to="/login" variant="outline">
+              <AppLink to="/login" className={cx("auth-login")} variant="default" appearance="action">
                 Đăng nhập
               </AppLink>
 
-              <AppLink to="/register" variant="primary">
+              <AppLink
+                to="/register"
+                className={cx("auth-register")}
+                variant="primary"
+                appearance="action"
+                showArrow
+              >
                 Đăng ký
               </AppLink>
             </>

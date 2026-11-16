@@ -1,0 +1,558 @@
+.section {
+  position: relative;
+  z-index: 1;
+  background: #143e35;
+  background-image:
+    linear-gradient(
+      180deg,
+      rgb(10 41 34 / 70%) 0%,
+      rgb(10 41 34 / 78%) 45%,
+      rgb(10 41 34 / 90%) 100%
+    ),
+    url("/images/color/green.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  color: #f7f3eb;
+  padding: clamp(3.2rem, 5vw, 5rem) 0 clamp(5rem, 8vw, 9rem);
+  overflow: clip;
+  isolation: isolate;
+}
+
+.inner {
+  width: min(1280px, calc(100% - 3rem));
+  margin-inline: auto;
+}
+
+.headingStage {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(450px, 0.85fr);
+  align-items: center;
+  gap: clamp(2.5rem, 4vw, 5rem);
+  padding-bottom: clamp(2.8rem, 5.5vw, 5.5rem);
+}
+.heading {
+  min-width: 0;
+  transform-origin: center bottom;
+}
+.eyebrow {
+  margin: 0 0 clamp(1.4rem, 2.6vw, 2.8rem);
+  color: #efc298;
+  font: 800 0.7rem/1.6 var(--font-body, Manrope, sans-serif);
+  letter-spacing: 0.13em;
+}
+.heading h2 {
+  max-width: 800px;
+  margin: 0;
+  color: #f7f3eb;
+  font: 520 clamp(3.4rem, 6.1vw, 7rem)/1.05
+    var(--font-display, Fraunces, Georgia, serif);
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.heading h2 em {
+  color: #efc298;
+  font-style: italic;
+  font-weight: 440;
+}
+.introAside {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.85fr);
+  gap: clamp(1.2rem, 2vw, 2.2rem);
+  align-items: end;
+  min-width: 0;
+}
+.introFigure {
+  margin: 0;
+  min-width: 0;
+  will-change: transform;
+}
+.introPhotoFrame {
+  aspect-ratio: 0.88;
+  max-height: 360px;
+  overflow: hidden;
+  border: 6px solid #f7f3eb;
+  background: #ac9f82;
+  box-shadow: 0 18px 42px rgb(5 24 19 / 30%);
+}
+.introPhotoFrame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 51% 58%;
+}
+.introCaption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-top: 0.7rem;
+  color: #d7e5da;
+  font: 500 0.65rem/1.5 var(--font-body, Manrope, sans-serif);
+}
+.introCaption span:first-child {
+  color: #efc298;
+  font: italic 440 1.3rem/1.15 var(--font-display, Fraunces, Georgia, serif);
+}
+.headingDescription {
+  max-width: 265px;
+  margin: 0 0 1.1rem;
+  font: 400 clamp(0.85rem, 0.9vw, 1rem)/1.8
+    var(--font-body, Manrope, sans-serif);
+  color: #d7e5da;
+}
+.headingRule {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgb(247 243 235 / 28%);
+  transform-origin: left center;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1.04fr 0.96fr;
+  gap: clamp(0.85rem, 1.2vw, 1.25rem);
+  padding-top: clamp(1rem, 2.2vw, 1.75rem);
+  align-items: stretch;
+}
+.cardCell,
+.studyCell {
+  min-width: 0;
+}
+.studyCell {
+  margin-top: clamp(0.85rem, 1.2vw, 1.25rem);
+}
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  min-width: 0;
+  min-height: clamp(525px, 52vw, 690px);
+  padding: clamp(1.45rem, 3vw, 3.2rem);
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgb(0 19 14 / 7%);
+  transform-origin: center center;
+  border-radius: 10px;
+}
+.cardTop {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font: 800 0.68rem/1.55 var(--font-body, Manrope, sans-serif);
+  letter-spacing: 0.12em;
+}
+.cardTop span:last-child {
+  text-align: right;
+}
+.cardContent {
+  position: relative;
+  z-index: 3;
+  margin-top: auto;
+  max-width: 475px;
+}
+.cardContent h3 {
+  margin: 0;
+  font: 520 clamp(2.4rem, 3.7vw, 4.35rem)/1.06
+    var(--font-display, Fraunces, Georgia, serif);
+  letter-spacing: -0.038em;
+  text-wrap: balance;
+}
+.cardContent p {
+  max-width: 390px;
+  margin: 1.05rem 0 0;
+  font: 400 clamp(0.85rem, 1vw, 0.96rem)/1.75
+    var(--font-body, Manrope, sans-serif);
+}
+.cardLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.4rem;
+  margin-top: clamp(1.25rem, 2vw, 2rem);
+  padding: 0 0 0.6rem;
+  color: inherit;
+  border-bottom: 1px solid currentColor;
+  font: 800 0.84rem/1.4 var(--font-body, Manrope, sans-serif);
+  text-decoration: none;
+  transition: opacity 180ms ease;
+}
+.cardLink span {
+  display: inline-block;
+  font-size: 1.15rem;
+  transition: transform 250ms ease;
+}
+.cardLink:hover {
+  opacity: 0.8;
+}
+.cardLink:hover span {
+  transform: translate(3px, -3px);
+}
+.cardLink:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 6px;
+}
+
+.language {
+  color: #163d33;
+  background: #f0e6d5;
+
+  background-image:
+    linear-gradient(
+      180deg,
+      rgb(240 230 213 / 78%) 0%,
+      rgb(240 230 213 / 58%) 50%,
+      rgb(240 230 213 / 93%) 100%
+    ),
+    url("/images/background4.jpg");
+
+  background-size: cover;
+  background-position: center 45%;
+  background-repeat: no-repeat;
+}
+
+.languageArt {
+  position: relative;
+  z-index: 1;
+  align-self: center;
+  width: 100%;
+  margin: clamp(2.5rem, 4vw, 4.4rem) auto 1rem;
+  color: #a65b42;
+  font: italic 440 clamp(5.7rem, 10.5vw, 11.7rem)/0.83
+    var(--font-display, Fraunces, Georgia, serif);
+  letter-spacing: -0.085em;
+  white-space: nowrap;
+  user-select: none;
+}
+.languageArt span {
+  display: block;
+}
+.languageArt span + span {
+  margin-left: 22%;
+}
+
+.culture {
+  color: #f7f3eb;
+  background: #23473d;
+}
+.photoSurface,
+.photoShade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.photoSurface {
+  z-index: -1;
+  overflow: hidden;
+}
+.photo {
+  display: block;
+  position: absolute;
+  inset: -6% 0;
+  width: 100%;
+  height: 112%;
+  object-fit: cover;
+  object-position: 52% 50%;
+  filter: saturate(0.82) contrast(0.96);
+  will-change: transform;
+}
+.photoShade {
+  background: linear-gradient(
+    180deg,
+    rgb(8 30 24 / 38%) 0%,
+    rgb(8 30 24 / 7%) 33%,
+    rgb(8 30 24 / 42%) 56%,
+    rgb(8 30 24 / 92%) 100%
+  );
+}
+.culture .cardContent p {
+  color: #f1f1e8;
+}
+
+.study {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 1rem;
+  min-height: clamp(360px, 29vw, 430px);
+  color: #173d36;
+  background: #d3b28d;
+
+  background-image:
+    linear-gradient(
+      90deg,
+      rgb(8 31 26 / 88%) 0%,
+      rgb(8 31 26 / 70%) 45%,
+      rgb(8 31 26 / 40%) 100%
+    ),
+    url("/images/background6.jpg");
+
+  background-size: cover;
+  background-position: center 50%;
+  background-repeat: no-repeat;
+}
+
+.study .cardTop {
+  color: #f7f3eb;
+  text-shadow: 0 2px 10px rgb(0 0 0 / 35%);
+}
+
+.study .cardContent p {
+  color: #e8e9df;
+}
+
+.studyArt {
+  display: none;
+}
+
+.study .cardTop {
+  grid-column: 1 / -1;
+}
+.study .cardContent {
+  grid-column: 1;
+  align-self: end;
+}
+.studyArt {
+  position: absolute;
+  z-index: 0;
+  top: 17%;
+  right: 7%;
+  display: grid;
+  justify-items: center;
+  color: rgb(102 70 42 / 23%);
+  font: 430 clamp(11rem, 21vw, 24rem)/0.8
+    var(--font-display, Fraunces, Georgia, serif);
+  letter-spacing: -0.08em;
+  pointer-events: none;
+  user-select: none;
+}
+.studyArrow {
+  margin: 0.18em 0 0 0.8em;
+  font: 400 0.34em/1 var(--font-display, Fraunces, Georgia, serif);
+}
+
+@media (max-width: 1250px) and (min-width: 1021px) {
+  .headingStage {
+    grid-template-columns: minmax(0, 1.05fr) minmax(375px, 0.95fr);
+    gap: 2rem;
+  }
+  .introAside {
+    gap: 1rem;
+  }
+  .heading h2 {
+    font-size: clamp(3.4rem, 5.8vw, 5.8rem);
+  }
+}
+
+@media (max-width: 1020px) {
+  .headingStage {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .heading h2 {
+    max-width: 900px;
+  }
+  .introAside {
+    grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+    justify-content: start;
+  }
+  .headingDescription {
+    max-width: 410px;
+  }
+  .card {
+    min-height: 560px;
+  }
+  .study {
+    min-height: 355px;
+  }
+}
+
+@media (max-width: 700px) {
+  .section {
+    padding-bottom: 4.5rem;
+  }
+  .inner {
+    width: calc(100% - 2rem);
+  }
+  .headingStage {
+    padding-bottom: 2rem;
+  }
+  .heading h2 {
+    font-size: clamp(2.85rem, 9.5vw, 4.6rem);
+  }
+  .eyebrow {
+    font-size: 0.59rem;
+    letter-spacing: 0.09em;
+  }
+  .introAside {
+    grid-template-columns: minmax(0, 0.87fr) minmax(0, 1fr);
+    gap: 1rem;
+  }
+  .introPhotoFrame {
+    border-width: 4px;
+  }
+  .introCaption span:last-child {
+    font-size: 0.59rem;
+  }
+  .headingDescription {
+    margin-bottom: 0;
+    font-size: 0.83rem;
+  }
+  .pair {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+  .card {
+    min-height: 510px;
+    padding: 1.55rem;
+  }
+  .languageArt {
+    font-size: clamp(6rem, 20vw, 10rem);
+  }
+  .cardContent h3 {
+    font-size: clamp(2.25rem, 7.5vw, 3.4rem);
+  }
+  .studyCell {
+    margin-top: 0.85rem;
+  }
+  .study {
+    display: flex;
+    min-height: 370px;
+  }
+  .studyArt {
+    right: 5%;
+    top: 26%;
+    font-size: clamp(9rem, 33vw, 16rem);
+  }
+}
+
+@media (max-width: 420px) {
+  .introAside {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .introFigure {
+    width: min(75%, 250px);
+    margin-inline: auto;
+  }
+  .headingDescription {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .card {
+    min-height: 475px;
+  }
+  .languageArt {
+    font-size: 22vw;
+  }
+  .study {
+    min-height: 360px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardLink,
+  .cardLink span {
+    transition: none;
+  }
+  .photo,
+  .introFigure {
+    will-change: auto;
+  }
+}
+
+.language {
+  --path-text: #173d36;
+  --path-muted: #315749;
+  --path-link: #173d36;
+  --path-link-hover: #8a412d;
+}
+
+/* Card 02 + 03: dark photography */
+.culture,
+.study {
+  --path-text: #f7f3eb;
+  --path-muted: #e9e9df;
+  --path-link: #f7f3eb;
+  --path-link-hover: #efc298;
+}
+
+/* Card index and eyebrow */
+.card .cardTop {
+  color: var(--path-text);
+}
+
+/* Main headings */
+.card .cardContent h3 {
+  color: var(--path-text);
+}
+
+/* Descriptions */
+.card .cardContent p {
+  color: var(--path-muted);
+}
+
+/* Override AppLink's default color and spacing */
+.card .cardLink,
+.card .cardLink:visited {
+  color: var(--path-link);
+
+  background: transparent;
+  border-color: currentColor;
+
+  min-height: 44px;
+  padding: 0 0 0.6rem;
+
+  justify-content: flex-start;
+  text-decoration: none;
+}
+
+/* Hover and keyboard focus */
+.card .cardLink:hover,
+.card .cardLink:focus-visible {
+  color: var(--path-link-hover);
+}
+
+/* Stronger legibility on photographic cards */
+.culture .cardContent h3,
+.study .cardContent h3 {
+  text-shadow: 0 2px 16px rgb(0 0 0 / 28%);
+}
+
+/* Preserve the terracotta typographic artwork */
+.language .languageArt {
+  color: #a65b42;
+}
+
+/* If the decorative DE remains visible */
+.study .studyArt {
+  color: rgb(247 243 235 / 16%);
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: clamp(20px, 31svh, 120px);
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    #143e35 0%,
+    rgb(20 62 53 / 90%) 20%,
+    rgb(20 62 53 / 40%) 68%,
+    rgb(20 62 53 / 0%) 100%
+  );
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+}
+/* /DH-SEAMS-S1: PATHS-ENTRY */
