@@ -45,17 +45,28 @@ describe("Catalogue V1.2 — API parity and client-side discovery", () => {
     expect(initialRequests.every(([method, url]) => method === "get" && url === "/courses")).toBe(true);
   });
 
-  it("filters within the fetched courses without a new API call or enrollment mutation", async () => {
-    const { http, user } = setup();
+  it("searches the published dataset on the server, including courses not in page zero", async () => {
+    const remote = {
+      ...catalogCourses[0], id: "remote-catalogue-id",
+      title: "Fernstudium B1", description: "Published course outside page zero.",
+    };
+    const { http, user } = setup({
+      read: (config) => ok(config, {
+        items: config.params?.keyword === "Fern" ? [remote] : catalogCourses,
+        page: 0, size: 20, totalElements: config.params?.keyword ? 1 : 2, totalPages: 1,
+      }),
+    });
     const list = await screen.findByRole("region", { name: "Danh sách khóa học" });
     await within(list).findAllByRole("article");
-    const beforeSearch = requests(http);
-    const [first] = catalogCourses;
-    await user.type(screen.getByRole("searchbox", { name: "Tìm khóa học" }), first.title);
-    expect(within(list).getAllByRole("article")).toHaveLength(1);
-    expect(within(list).getByText(first.title)).toBeVisible();
-    // Searching/filtering happens in memory; it must not trigger another GET.
-    expect(requests(http)).toEqual(beforeSearch);
+    await user.type(screen.getByRole("searchbox", { name: "Tìm khóa học" }), "Fern");
+    expect(await within(list).findByText(remote.title)).toBeVisible();
+    expect(within(list).queryByText(catalogCourses[0].title)).not.toBeInTheDocument();
+    expect(http.mock.calls.some(([config]) =>
+      config.method === "get" && config.url === "/courses" &&
+      config.params?.keyword === "Fern" && config.params?.page === 0 &&
+      config.params?.size === 20,
+    )).toBe(true);
+    expect(requests(http).every(([method]) => method === "get")).toBe(true);
   });
 
   it("keeps course artwork and course identity stable through theme switch and filtering", async () => {
@@ -124,4 +135,70 @@ describe("Catalogue V1.2 — API parity and client-side discovery", () => {
     expect(await screen.findAllByRole("link", { name: /Xem khóa học/ })).toHaveLength(catalogCourses.length);
     expect(requests(http)).toEqual([["get", "/courses"], ["get", "/courses"]]);
   });
+  it("loads the next page on request and deduplicates stable course IDs", async () => {
+    const extra = {
+      ...catalogCourses[0], id: "page-two-course", title: "Gespräche B1",
+      description: "Another published course.", level: "B1",
+    };
+    const { http, user } = setup({
+      read: (config) => ok(config, config.params?.page === 1
+        ? { items: [extra, catalogCourses[0]], page: 1, size: 20, totalElements: 3, totalPages: 2 }
+        : { items: catalogCourses, page: 0, size: 20, totalElements: 3, totalPages: 2 }),
+    });
+    const list = await screen.findByRole("region", { name: "Danh sách khóa học" });
+    expect(await within(list).findAllByRole("article")).toHaveLength(2);
+    expect(http.mock.calls.every(([config]) => config.params?.page === 0)).toBe(true);
+    await user.click(screen.getByRole("button", { name: "Tải thêm khóa học" }));
+    expect(await within(list).findByText(extra.title)).toBeVisible();
+    const cards = within(list).getAllByRole("article");
+    expect(cards).toHaveLength(3);
+    expect(cards.map((card) => within(card).getByRole("heading").textContent))
+      .toEqual([...catalogCourses.map((course) => course.title), extra.title]);
+    expect(screen.getByRole("status")).toHaveTextContent("3 hiển thị · 3/3 khóa học đã tải");
+    expect(screen.queryByRole("button", { name: "Tải thêm khóa học" })).not.toBeInTheDocument();
+    expect(http.mock.calls.some(([config]) =>
+      config.method === "get" && config.url === "/courses" && config.params?.page === 1,
+    )).toBe(true);
+    expect(requests(http).every(([method]) => method === "get")).toBe(true);
+  });
+
+  it("preserves the loaded cards when a later page fails and retries only after user action", async () => {
+    const extra = {
+      ...catalogCourses[0], id: "retry-page-course", title: "Wortschatz B1", level: "B1",
+    };
+    let laterReads = 0;
+    const { user, http } = setup({
+      read: (config) => config.params?.page === 1
+        ? (++laterReads === 1 ? fail(config, 500) :
+          ok(config, { items: [extra], page: 1, size: 20, totalElements: 3, totalPages: 2 }))
+        : ok(config, { items: catalogCourses, page: 0, size: 20, totalElements: 3, totalPages: 2 }),
+    });
+    const list = await screen.findByRole("region", { name: "Danh sách khóa học" });
+    expect(await within(list).findAllByRole("article")).toHaveLength(2);
+    await user.click(screen.getByRole("button", { name: "Tải thêm khóa học" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Không tải được trang tiếp theo");
+    expect(within(list).getAllByRole("article")).toHaveLength(2);
+    expect(laterReads).toBe(1);
+    await user.click(screen.getByRole("button", { name: "Thử tải lại" }));
+    expect(await within(list).findByText(extra.title)).toBeVisible();
+    expect(within(list).getAllByRole("article")).toHaveLength(3);
+    expect(laterReads).toBe(2);
+    expect(requests(http).every(([method]) => method === "get")).toBe(true);
+  });
+
+  it("does not claim a filtered level is absent while more pages remain", async () => {
+    const { user } = setup({
+      read: (config) => ok(config, config.params?.page === 1
+        ? { items: [catalogCourses[0]], page: 1, size: 20, totalElements: 2, totalPages: 2 }
+        : { items: [catalogCourses[1]], page: 0, size: 20, totalElements: 2, totalPages: 2 }),
+    });
+    const list = await screen.findByRole("region", { name: "Danh sách khóa học" });
+    expect(await within(list).findAllByRole("article")).toHaveLength(1);
+    await user.selectOptions(screen.getByRole("combobox", { name: "Lọc trình độ" }), "A1");
+    expect(within(list).getByText("Chưa thấy khóa học phù hợp trong dữ liệu đã tải")).toBeVisible();
+    expect(screen.getByText("Lọc trình độ và sắp xếp chỉ áp dụng cho các khóa học đã tải.")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Tải thêm khóa học" }));
+    expect(await within(list).findByText(catalogCourses[0].title)).toBeVisible();
+  });
+
 });
