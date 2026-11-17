@@ -154,7 +154,7 @@ describe("Catalogue V1.2 — API parity and client-side discovery", () => {
     expect(cards).toHaveLength(3);
     expect(cards.map((card) => within(card).getByRole("heading").textContent))
       .toEqual([...catalogCourses.map((course) => course.title), extra.title]);
-    expect(screen.getByRole("status")).toHaveTextContent("3 hiển thị · 3/3 khóa học đã tải");
+    expect(within(list).getByRole("status")).toHaveTextContent("3 hiển thị · 3/3 khóa học đã tải");
     expect(screen.queryByRole("button", { name: "Tải thêm khóa học" })).not.toBeInTheDocument();
     expect(http.mock.calls.some(([config]) =>
       config.method === "get" && config.url === "/courses" && config.params?.page === 1,
