@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { focusManager, onlineManager } from "@tanstack/react-query";
 import { act, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { router as productionRouter } from "@/app/router/routes";
@@ -184,6 +185,43 @@ describe("Catalogue V1.2 — API parity and client-side discovery", () => {
     expect(within(list).getAllByRole("article")).toHaveLength(3);
     expect(laterReads).toBe(2);
     expect(requests(http).every(([method]) => method === "get")).toBe(true);
+  });
+
+
+  it("does not reload the page stack on refocus or reconnection", async () => {
+    const extra = {
+      ...catalogCourses[0], id: "focus-regression-course",
+      title: "Tandem Deutsch B1",
+    };
+    const { http, user } = setup({
+      read: (config) => ok(config, config.params?.page === 1
+        ? { items: [extra], page: 1, size: 20, totalElements: 3, totalPages: 2 }
+        : { items: catalogCourses, page: 0, size: 20, totalElements: 3, totalPages: 2 }),
+    });
+
+    const list = await screen.findByRole("region", { name: "Danh sách khóa học" });
+    expect(await within(list).findAllByRole("article")).toHaveLength(2);
+    await user.click(screen.getByRole("button", { name: "Tải thêm khóa học" }));
+    expect(await within(list).findByText(extra.title)).toBeVisible();
+
+    const before = requests(http).filter(([method, url]) => method === "get" && url === "/courses");
+    try {
+      await act(async () => {
+        focusManager.setFocused(false);
+        onlineManager.setOnline(false);
+      });
+      await act(async () => {
+        focusManager.setFocused(true);
+        onlineManager.setOnline(true);
+        await Promise.resolve();
+      });
+      expect(requests(http).filter(([method, url]) =>
+        method === "get" && url === "/courses")).toEqual(before);
+      expect(within(list).getAllByRole("article")).toHaveLength(3);
+    } finally {
+      focusManager.setFocused(undefined);
+      onlineManager.setOnline(undefined);
+    }
   });
 
   it("does not claim a filtered level is absent while more pages remain", async () => {
