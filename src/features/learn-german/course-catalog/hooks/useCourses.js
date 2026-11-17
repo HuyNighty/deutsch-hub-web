@@ -1,21 +1,47 @@
-import { useQuery } from "@tanstack/react-query";
-import { getCourses } from "../services/course.service";
+import { useMemo } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { getCoursePage } from "../services/course.service";
 
-export function useCourses() {
-  const {
-    data: courses = [],
-    isLoading: loading,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["courses"],
-    queryFn: getCourses,
+export function useCourses(keyword = "") {
+  const query = useInfiniteQuery({
+    queryKey: ["published-course-pages", keyword],
+    initialPageParam: 0,
+    queryFn: ({ pageParam }) => getCoursePage({ page: pageParam, keyword }),
+    getNextPageParam: (lastPage, allPages) => {
+      const page = Number.isInteger(lastPage?.page) ? lastPage.page : allPages.length - 1;
+      const totalPages = lastPage?.totalPages;
+      return Number.isInteger(totalPages) && page + 1 < totalPages ? page + 1 : undefined;
+    },
+    // Loading further pages is an explicit action; don't silently refetch the full
+    // loaded page stack when the browser regains focus or connectivity.
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: false,
   });
+
+  const pages = query.data?.pages ?? [];
+  const courses = useMemo(() => {
+    const seen = new Set();
+    return (query.data?.pages ?? [])
+      .flatMap((page) => Array.isArray(page?.items) ? page.items : [])
+      .filter((course) => {
+        if (!course?.id || seen.has(course.id)) return false;
+        seen.add(course.id);
+        return true;
+      });
+  }, [query.data]);
+
+  const totalElements = pages[0]?.totalElements ?? courses.length;
 
   return {
     courses,
-    loading,
-    error,
-    refetch,
+    totalElements,
+    loading: query.isPending,
+    error: pages.length === 0 ? query.error : null,
+    refetch: query.refetch,
+    fetchNextPage: query.fetchNextPage,
+    hasNextPage: query.hasNextPage,
+    fetchingNextPage: query.isFetchingNextPage,
+    nextPageError: pages.length > 0 && query.isFetchNextPageError ? query.error : null,
   };
 }

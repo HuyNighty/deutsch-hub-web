@@ -161,6 +161,40 @@
 .filteredEmpty button { background: var(--catalog-cta); color: var(--catalog-cta-ink); border: 0; border-radius: 12px; min-height: 44px; padding: .6rem 1.2rem; font-weight: 700; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
+.pagination {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  text-align: center;
+}
+.paginationNote,
+.paginationError {
+  color: var(--catalog-muted);
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.paginationButton {
+  min-height: 44px;
+  padding: .65rem 1.5rem;
+  border: 1px solid var(--catalog-cta);
+  border-radius: 999px;
+  background: var(--catalog-cta);
+  color: var(--catalog-cta-ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.paginationButton:focus-visible {
+  outline: 3px solid #eea743;
+  outline-offset: 3px;
+}
+.paginationButton:disabled {
+  opacity: .7;
+  cursor: wait;
+}
+
+
 @media (max-width: 1080px) {
   .layout { grid-template-columns: minmax(0,1fr); grid-template-areas: "hero" "discovery" "rail"; }
   .roadmap { min-height: auto; }

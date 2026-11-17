@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import classNames from "classnames/bind";
 
 import ResourceState from "@/shared/ui/state/ResourceState";
@@ -16,24 +16,36 @@ const levels = [
 ];
 
 export default function CourseCatalog() {
-  const { courses, loading, error, refetch } = useCourses();
   const { theme } = useCatalogueTheme();
   const [search, setSearch] = useState("");
+  const [keyword, setKeyword] = useState("");
   const [level, setLevel] = useState("all");
   const [sort, setSort] = useState("default");
 
-  const visibleCourses = useMemo(() => {
-    const keyword = search.trim().toLocaleLowerCase("vi");
-    const filtered = courses.filter((course) => {
-      const matchesLevel = level === "all" || course.level === level;
-      const fields = [course.title, course.description, course.level].filter(Boolean);
-      return matchesLevel && (!keyword || fields.join(" ").toLocaleLowerCase("vi").includes(keyword));
-    });
-    if (sort === "title") return [...filtered].sort((a, b) => a.title.localeCompare(b.title, "vi"));
-    return filtered; // Preserve backend order by default.
-  }, [courses, search, level, sort]);
+  // Debounce only the server request; don't apply a misleading partial local text search.
+  useEffect(() => {
+    const timer = setTimeout(() => setKeyword(search.trim()), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
-  const resetFilters = () => { setSearch(""); setLevel("all"); setSort("default"); };
+  const {
+    courses, totalElements, loading, error, refetch,
+    fetchNextPage, hasNextPage, fetchingNextPage, nextPageError,
+  } = useCourses(keyword);
+  const searchPending = keyword !== search.trim();
+
+  const visibleCourses = useMemo(() => {
+    const filtered = courses.filter((course) => level === "all" || course.level === level);
+    if (sort === "title") return [...filtered].sort((a, b) => a.title.localeCompare(b.title, "vi"));
+    return filtered; // Default order is the backend's published-course ordering.
+  }, [courses, level, sort]);
+
+  const resetFilters = () => {
+    setSearch("");
+    setKeyword("");
+    setLevel("all");
+    setSort("default");
+  };
 
   return (
     <div lang="vi" className={cx("catalog")} data-theme={theme}>
@@ -65,24 +77,50 @@ export default function CourseCatalog() {
 
           <div className={cx("listHeading")}>
             <h2 id="catalogue-list-heading">Danh sách khóa học</h2>
-            {!loading && !error && <p role="status">{visibleCourses.length} khóa học</p>}
+            {!loading && !error && !searchPending && (
+              <p role="status">
+                {visibleCourses.length} hiển thị · {courses.length}/{totalElements} khóa học đã tải
+              </p>
+            )}
           </div>
 
           <ResourceState
-            loading={loading}
+            loading={loading || searchPending}
             error={error}
             empty={courses.length === 0}
             emptyProps={{title: <span lang="vi">Không tìm thấy khóa học</span>,
-              description: <span lang="vi">Hiện chưa có khóa học nào.</span>}}
+              description: <span lang="vi">{keyword ? "Không có khóa học phù hợp với từ khóa." : "Hiện chưa có khóa học nào."}</span>}}
             errorProps={{ onRetry: refetch }}
           >
-            {visibleCourses.length > 0 ? <CourseGrid courses={visibleCourses} /> : (
-              <div className={cx("filteredEmpty")}>
-                <h3>Không có khóa học phù hợp</h3>
-                <p>Thử một từ khóa hoặc trình độ khác.</p>
-                <button type="button" onClick={resetFilters}>Xóa bộ lọc</button>
-              </div>
-            )}
+            <>
+              {visibleCourses.length > 0 ? <CourseGrid courses={visibleCourses} /> : (
+                <div className={cx("filteredEmpty")}>
+                  <h3>Chưa thấy khóa học phù hợp trong dữ liệu đã tải</h3>
+                  <p>{hasNextPage ? "Bạn có thể tải thêm để tìm ở các trang tiếp theo." : "Thử một từ khóa hoặc trình độ khác."}</p>
+                  <button type="button" onClick={resetFilters}>Xóa bộ lọc</button>
+                </div>
+              )}
+              {hasNextPage && (
+                <div className={cx("pagination")}>
+                  <p className={cx("paginationNote")}>
+                    Lọc trình độ và sắp xếp chỉ áp dụng cho các khóa học đã tải.
+                  </p>
+                  {nextPageError && (
+                    <p role="alert" className={cx("paginationError")}>
+                      Không tải được trang tiếp theo. Danh sách đã tải vẫn được giữ nguyên.
+                    </p>
+                  )}
+                  <button
+                    type="button"
+                    className={cx("paginationButton")}
+                    onClick={() => void fetchNextPage()}
+                    disabled={fetchingNextPage}
+                  >
+                    {fetchingNextPage ? "Đang tải thêm…" : nextPageError ? "Thử tải lại" : "Tải thêm khóa học"}
+                  </button>
+                </div>
+              )}
+            </>
           </ResourceState>
         </section>
 
