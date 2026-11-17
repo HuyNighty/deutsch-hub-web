@@ -23,5 +23,7 @@ jobs:
         run: npm run lint
       - name: Full Vitest
         run: npm run test -- --maxWorkers=2
-      - name: Production build
+      - name: Production build (same-origin proxy fixture)
+        env:
+          VITE_API_BASE_URL: /deutsch-hub
         run: npm run build

@@ -27,7 +27,7 @@ export default function ArticleDetail() {
       }}
     >
       {article && (
-        <main className={cx("page")}>
+        <div className={cx("page")}>
           <header className={cx("header")}>
             <div className={cx("category")}>
               <span className={cx("category-line")} />
@@ -95,7 +95,7 @@ export default function ArticleDetail() {
               </aside>
             )}
           </div>
-        </main>
+        </div>
       )}
     </ResourceState>
   );

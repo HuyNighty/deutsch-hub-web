@@ -30,7 +30,7 @@ function ContentPage() {
       />
 
       <div className={styles.content}>
-        <main className={styles.main}>
+        <div className={styles.main}>
           <div id="overview">
             <ContentHero />
           </div>
@@ -70,7 +70,7 @@ function ContentPage() {
               )}
             </ResourceState>
           </section>
-        </main>
+        </div>
       </div>
     </div>
   );
