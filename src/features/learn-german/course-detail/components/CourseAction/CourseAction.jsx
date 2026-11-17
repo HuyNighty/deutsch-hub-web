@@ -41,6 +41,13 @@ export default function CourseAction({ courseId, enrollmentStatus }) {
       );
       break;
 
+    case "DROPPED":
+    case "EXPIRED":
+      // Backend preserves enrollment history and rejects a second POST (50004).
+      // Never offer an action the current API cannot complete.
+      button = <Button size="lg" fullWidth disabled>Không thể đăng ký lại</Button>;
+      break;
+
     default:
       button = (
         <Button size="lg" fullWidth onClick={handleEnroll} loading={loading} disabled={canCheckEnrollment}>
@@ -65,7 +72,11 @@ export default function CourseAction({ courseId, enrollmentStatus }) {
                   ? "Đang học"
                   : enrollmentStatus === "ENROLLED"
                     ? "Đã đăng ký"
-                    : "Khả dụng"}
+                    : enrollmentStatus === "DROPPED"
+                      ? "Đã ngừng học"
+                      : enrollmentStatus === "EXPIRED"
+                        ? "Đã hết hạn"
+                        : "Khả dụng"}
         </span>
       </div>
 
@@ -73,6 +84,9 @@ export default function CourseAction({ courseId, enrollmentStatus }) {
 
       <div className={cx("button")}>{button}</div>
 
+      {(enrollmentStatus === "DROPPED" || enrollmentStatus === "EXPIRED") && !canCheckEnrollment && (
+        <p>Khóa học đã có lịch sử đăng ký. Hiện không thể đăng ký lại qua trang này.</p>
+      )}
       {error && <p role="alert">{error.message}</p>}
       {canCheckEnrollment && (
         <Button variant="outline" fullWidth onClick={checkEnrollment}>

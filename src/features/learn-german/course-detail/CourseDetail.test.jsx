@@ -143,6 +143,23 @@ describe("Course detail enrollment actions", () => {
     expect(client.getMutationCache().getAll()).toEqual([]);
   });
 
+  it.each([
+    ["DROPPED", "Đã ngừng học"],
+    ["EXPIRED", "Đã hết hạn"],
+  ])("rejects impossible repeat enrollment actions for %s without a POST", async (status, label) => {
+    const { user, http, router, client } = mountCourse({ enrollmentStatus: status });
+    const button = await screen.findByRole("button", { name: "Không thể đăng ký lại" });
+
+    expect(screen.getByText(label, { exact: true })).toBeVisible();
+    expect(screen.getByText("Khóa học đã có lịch sử đăng ký. Hiện không thể đăng ký lại qua trang này.")).toBeVisible();
+    expect(button).toBeDisabled();
+    expect(screen.queryByRole("button", { name: "Đăng ký khóa học" })).not.toBeInTheDocument();
+    await user.click(button);
+    expect(router.state.location.pathname).toBe(publicPath);
+    expect(requests(http)).toEqual([["get", viewerUrl]]);
+    expect(client.getMutationCache().getAll()).toEqual([]);
+  });
+
   it("reviews completed lessons through normal lesson and next/previous navigation with read-only mocked responses", async () => {
     const { user, router, http } = mountCourse();
     await user.click(await screen.findByRole("button", { name: "Xem lại khóa học" }));
