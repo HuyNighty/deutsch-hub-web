@@ -12,6 +12,10 @@ export function useCourses(keyword = "") {
       const totalPages = lastPage?.totalPages;
       return Number.isInteger(totalPages) && page + 1 < totalPages ? page + 1 : undefined;
     },
+    // Loading further pages is an explicit action; don't silently refetch the full
+    // loaded page stack when the browser regains focus or connectivity.
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
     retry: false,
   });
 
