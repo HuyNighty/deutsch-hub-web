@@ -211,6 +211,10 @@ The current implementation provides separate API clients for the backend API nam
 
 Authentication-related request and token handling is integrated with the Axios request/response flow.
 
+The backend root is configured with the public build variable `VITE_API_BASE_URL`.
+Development defaults to `http://localhost:8080/deutsch-hub`; production builds require an explicitly configured HTTPS origin or same-origin proxy path.
+See [API environment and deployment notes](docs/frontend/api-environment.md).
+
 ---
 
 # Routing

@@ -1,11 +1,20 @@
 import { describe, it, expect, vi } from "vitest";
 import { act } from "@testing-library/react";
 import { api, apiV2 } from "./axios";
+import { resolveApiBaseUrl } from "./api-base-url";
 import { getAccessToken, getRefreshToken } from "@/shared/auth/token";
 import { deferred, fail, ok, setHttpHandler } from "@/test/http";
 import { mountSession, seedSession, refreshResult } from "@/test/session-fixtures";
 
 describe("authenticated HTTP coordination", () => {
+  it("uses the same configured backend root for V1 and V2 clients", () => {
+    const root = resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL, {
+      development: import.meta.env.DEV,
+    });
+    expect(api.defaults.baseURL).toBe(root + "/api/v1");
+    expect(apiV2.defaults.baseURL).toBe(root + "/api/v2");
+  });
+
   it("shares one refresh across two concurrent v1/v2 401s, persists once and retries both", async () => {
     seedSession();
     const { auth, client } = mountSession();

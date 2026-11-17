@@ -30,5 +30,20 @@ jobs:
       - name: Full Vitest (controlled workers)
         run: npm run test -- --maxWorkers=2
 
-      - name: Vite production build
+      - name: Production API setting fails closed
+        run: |
+          if env -u VITE_API_BASE_URL npm run build > /tmp/missing-api.log 2>&1; then
+            echo "Production build must fail without VITE_API_BASE_URL"
+            exit 1
+          fi
+          grep -q "VITE_API_BASE_URL is required" /tmp/missing-api.log
+          if VITE_API_BASE_URL=http://localhost:8080/deutsch-hub npm run build > /tmp/insecure-api.log 2>&1; then
+            echo "Production build must reject an HTTP/localhost backend"
+            exit 1
+          fi
+          grep -q "requires HTTPS for production" /tmp/insecure-api.log
+
+      - name: Vite production build (same-origin proxy fixture)
+        env:
+          VITE_API_BASE_URL: /deutsch-hub
         run: npm run build

@@ -7,8 +7,11 @@ import {
   terminateAuthSession,
 } from "@/shared/auth/auth-session";
 import { unwrapApiResponse } from "./api-response";
+import { resolveApiBaseUrl } from "./api-base-url";
 
-const API_BASE_URL = "http://localhost:8080/deutsch-hub";
+const API_BASE_URL = resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL, {
+  development: import.meta.env.DEV,
+});
 export const api = axios.create({
   baseURL: `${API_BASE_URL}/api/v1`,
   timeout: 10_000,
