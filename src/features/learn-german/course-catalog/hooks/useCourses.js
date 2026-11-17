@@ -6,7 +6,7 @@ export function useCourses(keyword = "") {
   const query = useInfiniteQuery({
     queryKey: ["published-course-pages", keyword],
     initialPageParam: 0,
-    queryFn: ({ pageParam, signal }) => getCoursePage({ page: pageParam, keyword, signal }),
+    queryFn: ({ pageParam }) => getCoursePage({ page: pageParam, keyword }),
     getNextPageParam: (lastPage, allPages) => {
       const page = Number.isInteger(lastPage?.page) ? lastPage.page : allPages.length - 1;
       const totalPages = lastPage?.totalPages;
