@@ -220,7 +220,8 @@ describe("Catalogue V1.2 — API parity and client-side discovery", () => {
       expect(within(list).getAllByRole("article")).toHaveLength(3);
     } finally {
       focusManager.setFocused(undefined);
-      onlineManager.setOnline(undefined);
+      // OnlineManager takes a boolean; undefined leaves subsequent queries paused.
+      onlineManager.setOnline(true);
     }
   });
 
