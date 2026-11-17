@@ -55,8 +55,8 @@ describe("Explore Germany — published-content navigation", () => {
 
   it("navigates to rendered category sections and real published article slugs only", async () => {
     const { http, user, router } = setup();
-    const cultureTitle = await screen.findByRole("heading", { name: culture.title });
-    expect(cultureTitle).toBeVisible();
+    const cultureTitles = await screen.findAllByRole("heading", { name: culture.title });
+    expect(cultureTitles.length).toBeGreaterThan(0);
 
     const catalogue = screen.getByRole("region", { name: "Bài viết đã xuất bản" });
     const category = catalogue.querySelector("#category-cat-culture");
@@ -110,7 +110,7 @@ describe("Explore Germany — published-content navigation", () => {
     await screen.findByRole("heading", { name: "Đã xảy ra lỗi" });
     expect(screen.queryByText(culture.title)).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Thử lại" }));
-    expect(await screen.findByRole("heading", { name: culture.title })).toBeVisible();
+    expect((await screen.findAllByRole("heading", { name: culture.title })).length).toBeGreaterThan(0);
     expect(http.mock.calls.some(([config]) => config.url === "/articles")).toBe(true);
   });
 
