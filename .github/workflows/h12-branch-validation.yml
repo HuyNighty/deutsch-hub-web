@@ -1,0 +1,43 @@
+name: H12 Production API endpoint validation
+
+on:
+  push:
+    branches: [feat/r35-h12-environment-api-origin]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install
+        run: npm ci --no-audit --no-fund
+      - name: Lint
+        run: npm run lint
+      - name: Full Vitest
+        run: npm run test -- --maxWorkers=2
+      - name: Missing production endpoint must fail
+        run: |
+          if env -u VITE_API_BASE_URL npm run build > /tmp/h12-missing.log 2>&1; then
+            echo "Expected a missing-production-env build failure"
+            exit 1
+          fi
+          grep -q "VITE_API_BASE_URL is required" /tmp/h12-missing.log
+      - name: HTTP localhost in production must fail
+        run: |
+          if VITE_API_BASE_URL=http://localhost:8080/deutsch-hub npm run build > /tmp/h12-unsafe.log 2>&1; then
+            echo "Expected an unsafe-production-URL build failure"
+            exit 1
+          fi
+          grep -q "requires HTTPS for production" /tmp/h12-unsafe.log
+      - name: Production build with a same-origin proxy fixture
+        env:
+          VITE_API_BASE_URL: /deutsch-hub
+        run: npm run build
