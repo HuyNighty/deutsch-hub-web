@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { act, screen, within } from "@testing-library/react";
+import { act, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ContentPage from "./index";
 import { groupPublishedArticles } from "./publishedSections";
@@ -25,16 +25,17 @@ const language = {
 
 function setup(read = (config) => ok(config, {
   content: [culture, language], page: 0, size: 20, totalElements: 2, totalPages: 1,
-})) {
+}), path = "/explore-germany") {
   const http = vi.fn((config) => {
     if (config.method === "get" && config.url === "/articles") return read(config);
     throw new Error(`Unexpected Explore request: ${config.method} ${config.url}`);
   });
   setHttpHandler(http);
   const view = mountSession([
+    { path: "/session-bootstrap", element: <span /> },
     { path: "/explore-germany", element: <ContentPage /> },
     { path: "/explore-germany/:slug", element: <p>Article destination</p> },
-  ], { path: "/explore-germany", strict: false });
+  ], { path, strict: false });
   return { ...view, http, user: userEvent.setup() };
 }
 
@@ -103,15 +104,37 @@ describe("Explore Germany — published-content navigation", () => {
   });
 
   it("shows a recoverable API error and retries the same public request", async () => {
-    let reads = 0;
-    const { user, http } = setup((config) => ++reads === 1
-      ? fail(config, 500)
-      : ok(config, { content: [culture], page: 0, size: 20, totalElements: 1, totalPages: 1 }));
+    const responseStatuses = [];
+    const { user, http, router, auth } = setup((config) => {
+      const status = responseStatuses.length === 0 ? 500 : 200;
+      responseStatuses.push(status);
+      return status === 500
+        ? fail(config, status)
+        : ok(config, { content: [culture], page: 0, size: 20, totalElements: 1, totalPages: 1 });
+    }, "/session-bootstrap");
+
+    await waitFor(() => expect(auth.current.status).toBe("ANONYMOUS"));
+    expect(auth.current.isAuthenticated).toBe(false);
+    expect(http).not.toHaveBeenCalled();
+
+    await act(async () => { await router.navigate("/explore-germany"); });
     await screen.findByRole("heading", { name: "Đã xảy ra lỗi" });
     expect(screen.queryByText(culture.title)).not.toBeInTheDocument();
+    expect(responseStatuses).toEqual([500]);
+    expect(http).toHaveBeenCalledTimes(1);
+    expect(router.state.location.pathname).toBe("/explore-germany");
+
     await user.click(screen.getByRole("button", { name: "Thử lại" }));
     expect((await screen.findAllByRole("heading", { name: culture.title })).length).toBeGreaterThan(0);
-    expect(http.mock.calls.some(([config]) => config.url === "/articles")).toBe(true);
+    expect(responseStatuses).toEqual([500, 200]);
+    expect(http.mock.calls.map(([config]) => [config.method, config.url]))
+      .toEqual([["get", "/articles"], ["get", "/articles"]]);
+    for (const [config] of http.mock.calls) {
+      expect(config.requiresAuth).toBe(false);
+      expect(config.headers.Authorization).toBeUndefined();
+    }
+    expect(auth.current.status).toBe("ANONYMOUS");
+    expect(router.state.location.pathname).toBe("/explore-germany");
   });
 
   it("discloses that navigation only covers the currently loaded page", async () => {
