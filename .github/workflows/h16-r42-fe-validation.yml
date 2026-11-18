@@ -1,0 +1,81 @@
+name: H16-R4.2 FE immutable candidate validation
+
+on:
+  push:
+    branches:
+      - ci/h16-r42-fe-6932843
+
+permissions:
+  contents: read
+
+jobs:
+  immutable-fe-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out pinned FE candidate
+        uses: actions/checkout@v4
+        with:
+          ref: 69328439636b42d5e2574edfdfbbb61f2259aeae
+          persist-credentials: false
+
+      - name: Assert exact immutable source SHA
+        shell: bash
+        env:
+          EXPECTED_SOURCE_SHA: 69328439636b42d5e2574edfdfbbb61f2259aeae
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          echo "Expected source SHA: $EXPECTED_SOURCE_SHA"
+          echo "Checked-out source SHA: $actual"
+          test "$actual" = "$EXPECTED_SOURCE_SHA"
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Oxlint
+        run: npm run lint
+
+      - name: Full Vitest (controlled workers)
+        run: npm run test -- --maxWorkers=2
+
+      - name: Production API guard - missing root must fail
+        shell: bash
+        run: |
+          set -euo pipefail
+          if env -u VITE_API_BASE_URL npm run build > "$RUNNER_TEMP/h16-missing-api.log" 2>&1; then
+            echo "ERROR: production build accepted missing API root"
+            exit 1
+          fi
+          grep -q "VITE_API_BASE_URL is required" "$RUNNER_TEMP/h16-missing-api.log"
+
+      - name: Production API guard - HTTP root must fail
+        shell: bash
+        run: |
+          set -euo pipefail
+          if VITE_API_BASE_URL=http://localhost:8080/deutsch-hub npm run build > "$RUNNER_TEMP/h16-http-api.log" 2>&1; then
+            echo "ERROR: production build accepted HTTP API root"
+            exit 1
+          fi
+          grep -q "requires HTTPS for production" "$RUNNER_TEMP/h16-http-api.log"
+
+      - name: Production API guard - HTTPS loopback must fail
+        shell: bash
+        run: |
+          set -euo pipefail
+          if VITE_API_BASE_URL=https://127.0.0.1/deutsch-hub npm run build > "$RUNNER_TEMP/h16-loopback-api.log" 2>&1; then
+            echo "ERROR: production build accepted loopback API root"
+            exit 1
+          fi
+          grep -q "must not reference a loopback host" "$RUNNER_TEMP/h16-loopback-api.log"
+
+      - name: Production Vite build (approved same-origin root)
+        env:
+          VITE_API_BASE_URL: /deutsch-hub
+        run: npm run build
